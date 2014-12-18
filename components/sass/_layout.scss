@@ -1,0 +1,22 @@
+.page-wrapper {
+	@extend %flex-main;
+    height: 100%;
+    align-items: stretch;
+}
+
+.half-column {
+  width: 50%;
+  float: left;
+}
+
+.full-column {
+  width: 100%;
+  display: block;
+  clear: both;
+  content: "";
+  &:after {
+    display: block;
+    clear: both;
+    content: "";
+  }
+}

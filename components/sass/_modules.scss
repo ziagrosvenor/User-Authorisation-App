@@ -1,0 +1,67 @@
+// Shared ---------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+// Bootstrap tables ------------------------------------------------------------
+// ----------------------------------------------------------------------------
+@import "modules/tables";
+
+// Buttons  -------------------------------------------------------------------
+//  ---------------------------------------------------------------------------
+@import "modules/buttons";
+
+.btn {
+	background-color: $light-blue;
+	color: white;
+	transition: all 0.15s ease-out;
+	text-decoration: none;
+	&:hover {
+		  color: white;
+		  transform: scale(1.1);
+	}
+}
+
+// Navigation -----------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+
+// Forms ----------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+@import "modules/forms";
+
+.list-add-form {
+	label, .input-flex {
+		width: 100%;
+		font-size: 1.4rem;
+	}
+	label {
+		margin-bottom: 0.5rem;
+	}
+	.input-flex {
+		box-sizing: border-box;
+		margin-bottom: 2rem;
+		padding: 1rem;
+	}
+	textarea {
+		height: 10rem;
+	}
+}
+
+.search-bar {
+	padding: 1rem;
+	input {
+		width: 40%;
+		margin: 0 1rem 0 0;
+		padding: 0.5rem;
+	}
+}
+
+.heading {
+	display: inline;
+	padding: 0 0.5rem;
+	font-weight: bold;
+	border-bottom: 2rem;
+}
+
+.comment-content {
+	padding: 1rem 0;
+}

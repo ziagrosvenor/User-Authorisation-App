@@ -1,18 +1,35 @@
-var app, bodyParser, db, express, userModel;
+var MongoStore, app, bodyParser, cookieParser, express, mongoose, session, userModel;
 
 express = require('express');
 
+session = require('express-session');
+
+cookieParser = require('cookie-parser');
+
 bodyParser = require('body-parser');
 
-db = require('./data/database.js')();
+mongoose = require('./data/database.js')();
 
-userModel = require('./data/bind-models.js')(db);
+MongoStore = require('connect-mongo')(session);
+
+userModel = require('./data/bind-models.js')(mongoose.db);
 
 app = express();
 
 app.set('view engine', 'jade');
 
 app.set('views', __dirname + '/views');
+
+app.use(cookieParser());
+
+app.use(session({
+  secret: '73f70b7v9s',
+  resave: true,
+  saveUninitialized: true,
+  store: new MongoStore({
+    db: mongoose.con
+  })
+}));
 
 app.use(bodyParser.json());
 

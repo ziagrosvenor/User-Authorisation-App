@@ -1,7 +1,7 @@
 express = require('express')
 bodyParser = require('body-parser')
 db = require('./data/database.js')()
-models = require('./data/bind-models.js')(db)
+userModel = require('./data/bind-models.js')(db)
 
 app = express()
 

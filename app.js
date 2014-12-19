@@ -55,13 +55,14 @@ app.get('/', function(req, res) {
 
 app.get('/admin', function(req, res) {
   return res.render('admin', {
-    username: req.username
+    username: req.session.username
   });
 });
 
 app.post('/login', passport.authenticate('local', {
-  failRedirect: '/'
+  failureRedirect: '/'
 }), function(req, res) {
+  req.session.username = req.body.username;
   return res.redirect('/admin');
 });
 

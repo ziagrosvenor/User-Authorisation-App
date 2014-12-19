@@ -30,10 +30,11 @@ app.get '/', (req, res) ->
 	res.render('index')
 
 app.get '/admin', (req, res) ->
-	res.render('admin', username: req.username)
+	res.render('admin', username: req.session.username)
 
 app.post '/login',
-	passport.authenticate('local', failRedirect: '/'),
+	passport.authenticate('local', failureRedirect: '/'),
 	(req, res) ->
+		req.session.username = req.body.username
 		res.redirect '/admin'
 module.exports = app

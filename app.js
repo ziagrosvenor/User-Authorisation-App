@@ -1,10 +1,12 @@
-var MongoStore, app, bodyParser, cookieParser, express, mongoose, session, userModel;
+var MongoStore, app, auth, bodyParser, cookieParser, express, mongoose, passport, session, userModel;
 
 express = require('express');
 
 session = require('express-session');
 
 cookieParser = require('cookie-parser');
+
+auth = require('./auth.js');
 
 bodyParser = require('body-parser');
 
@@ -13,6 +15,8 @@ mongoose = require('./data/database.js')();
 MongoStore = require('connect-mongo')(session);
 
 userModel = require('./data/bind-models.js')(mongoose.db);
+
+passport = auth(userModel);
 
 app = express();
 
@@ -23,6 +27,10 @@ app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
 
 app.use(cookieParser());
+
+app.use(passport.initialize());
+
+app.use(passport.session());
 
 app.use(session({
   secret: '73f70b7v9s',
@@ -43,6 +51,18 @@ app.use(express["static"](__dirname, 'public'));
 
 app.get('/', function(req, res) {
   return res.render('index');
+});
+
+app.get('/admin', function(req, res) {
+  return res.render('admin', {
+    username: req.username
+  });
+});
+
+app.post('/login', passport.authenticate('local', {
+  failRedirect: '/'
+}), function(req, res) {
+  return res.redirect('/admin');
 });
 
 module.exports = app;

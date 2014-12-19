@@ -8,16 +8,16 @@ userModel = require('./data/bind-models.js')(mongoose.db)
 
 app = express()
 
+app.use express.static 'public' 
 app.set('view engine', 'jade')
 app.set('views', __dirname + '/views')
 app.use(cookieParser())
-app.use(session
+app.use session
 	secret: '73f70b7v9s'
 	resave: true
 	saveUninitialized: true
 	store: new MongoStore
-		db: mongoose.con
-		)
+		mongoose_connection: mongoose.con
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.static(__dirname, 'public'));

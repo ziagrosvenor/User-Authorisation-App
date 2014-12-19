@@ -16,6 +16,8 @@ userModel = require('./data/bind-models.js')(mongoose.db);
 
 app = express();
 
+app.use(express["static"]('public'));
+
 app.set('view engine', 'jade');
 
 app.set('views', __dirname + '/views');
@@ -27,7 +29,7 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   store: new MongoStore({
-    db: mongoose.con
+    mongoose_connection: mongoose.con
   })
 }));
 

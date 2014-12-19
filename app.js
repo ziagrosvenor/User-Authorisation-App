@@ -28,6 +28,12 @@ app.set('views', __dirname + '/views');
 
 app.use(cookieParser());
 
+app.use(bodyParser.json());
+
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
 app.use(passport.initialize());
 
 app.use(passport.session());
@@ -41,19 +47,14 @@ app.use(session({
   })
 }));
 
-app.use(bodyParser.json());
-
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-
-app.use(express["static"](__dirname, 'public'));
-
 app.get('/', function(req, res) {
   return res.render('index');
 });
 
 app.get('/admin', function(req, res) {
+  if (!req.session.username) {
+    res.redirect('/');
+  }
   return res.render('admin', {
     username: req.session.username
   });

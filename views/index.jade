@@ -1,19 +1,12 @@
-html
-head
-	meta(charset="UTF-8")
-	meta(name="viewport" content="width=device-width, initial-scale=1")
-	link(href="css/global.css" rel="stylesheet")
-	title User Authorisation
-body
-	.page-wrapper
-		h1(class="page-header") Welcome
-		form(class="form" action="/admin")
-			.form-group
-				label Username
-				input(type="text" class="form-control")
-			.form-group
-				label Password
-				input(type="password" class="form-control")
-			button(type="submit" class="btn") submit 
-
-
+extends layout
+- var title = User Auth App
+block content
+	h1(class="page-header") Welcome
+	form(class="form" action="/login" method="POST")
+		.form-group
+			label(for="username") Username
+			input(id="username" name="username" type="text" class="form-control")
+		.form-group
+			label(for="password") Password
+			input(id="password" name="password" type="password" class="form-control")
+		button(type="submit" class="btn") submit

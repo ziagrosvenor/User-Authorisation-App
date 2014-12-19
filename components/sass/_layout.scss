@@ -1,7 +1,6 @@
 .page-wrapper {
-	@extend %flex-main;
-    height: 100%;
-    align-items: stretch;
+	width: 60%;
+  margin: 3rem auto;
 }
 
 .half-column {

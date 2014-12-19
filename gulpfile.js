@@ -18,6 +18,10 @@ var coffeeDataSources = [
 	'components/coffee/server/models/bind-models.coffee'
 ];
 
+// var coffeeTestSources = [
+//   'components/coffee/test/Routes-Spec.coffee'
+// ];
+
 var sassSources = [
 	'components/sass/*.scss'
 ];
@@ -82,6 +86,10 @@ gulp.task('coffee', function () {
 		.pipe(coffee({ bare: true })
 			.on('error', gutil.log))
 		.pipe(gulp.dest(__dirname + '/data'));
+  // gulp.src(coffeeTestSources)
+  //   .pipe(coffee({ bare: true })
+  //     .on('error', gutil.log))
+  //   .pipe(gulp.dest(__dirname + '/test'));
 });
 
 gulp.task('watch', function() {

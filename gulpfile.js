@@ -4,13 +4,11 @@ var gulp = require('gulp'),
 	concat = require('gulp-concat'),
 	sass = require('gulp-sass'),
 	coffee = require('gulp-coffee'),
+  coffeelint = require('gulp-coffeelint'),
 	nodemon = require('gulp-nodemon'),
 	browserSync = require('browser-sync');
 
-var coffeeServerSources = [
-	'components/coffee/server/app.coffee',
-	'components/coffee/server/server.coffee'
-];
+var coffeeServerSources = 'components/coffee/server/*.coffee';
 
 var coffeeDataSources = [
 	'components/coffee/server/database.coffee',
@@ -18,9 +16,9 @@ var coffeeDataSources = [
 	'components/coffee/server/models/bind-models.coffee'
 ];
 
-// var coffeeTestSources = [
-//   'components/coffee/test/Routes-Spec.coffee'
-// ];
+var coffeeTestSources = [
+  'components/coffee/test/Routes-Spec.coffee'
+];
 
 var sassSources = [
 	'components/sass/*.scss'
@@ -77,6 +75,7 @@ gulp.task('sass', function () {
 		.pipe(gulp.dest('public/css'));
 });
 
+// Compiles CoffeeScript
 gulp.task('coffee', function () {
 	gulp.src(coffeeServerSources)
 		.pipe(coffee({ bare: true })
@@ -86,16 +85,23 @@ gulp.task('coffee', function () {
 		.pipe(coffee({ bare: true })
 			.on('error', gutil.log))
 		.pipe(gulp.dest(__dirname + '/data'));
-  // gulp.src(coffeeTestSources)
-  //   .pipe(coffee({ bare: true })
-  //     .on('error', gutil.log))
-  //   .pipe(gulp.dest(__dirname + '/test'));
+  gulp.src(coffeeTestSources)
+    .pipe(coffee({ bare: true })
+      .on('error', gutil.log))
+    .pipe(gulp.dest(__dirname + '/test'));
 });
 
 gulp.task('watch', function() {
 	gulp.watch(sassSources, ['sass']);
 	gulp.watch(coffeeServerSources, ['coffee']);
 	gulp.watch(coffeeDataSources, ['coffee']);
+  gulp.watch(coffeeTestSources, ['coffee']);
 });
 
-gulp.task('default', ['sass', 'coffee', 'browser-sync', 'watch']);
+gulp.task('lint', function() {
+  gulp.src('./components/coffee/**/*.coffee')
+    .pipe(coffeelint())
+    .pipe(coffeelint.reporter());
+});
+
+gulp.task('default', ['lint', 'sass', 'coffee', 'browser-sync', 'watch']);

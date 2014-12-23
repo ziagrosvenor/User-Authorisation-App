@@ -5,7 +5,7 @@ module.exports = function() {
   con = Mongoose.connection;
   con.on('error', console.error.bind(console, 'connection error'));
   return {
-    db: Mongoose,
+    model: Mongoose,
     con: con
   };
 };

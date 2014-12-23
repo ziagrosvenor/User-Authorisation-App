@@ -1,13 +1,17 @@
 express = require 'express'
+# Session middleware
 session = require 'express-session'
 cookieParser = require 'cookie-parser'
-auth = require './auth.js'
+# Parsing HTTP request body
 bodyParser = require 'body-parser'
-mongoose = require('./data/database.js')()
+# Database 
+Db = require('./data/database.js')()
 MongoStore = require('connect-mongo')(session)
-userModel = require('./data/bind-models.js')(mongoose.db)
+UserModel = require('./data/bind-models.js')(Db.model)
+# Module function returns passport instance.
+auth = require './auth.js'
 
-passport = auth(userModel)
+passport = auth(UserModel)
 app = express()
 
 app.use express.static 'public' 
@@ -23,7 +27,7 @@ app.use session
 	resave: true
 	saveUninitialized: true
 	store: new MongoStore
-		mongoose_connection: mongoose.con
+		mongoose_connection: Db.con
 
 app.get '/', (req, res) ->
 	res.render 'index'
@@ -38,4 +42,5 @@ app.post '/login',
 	(req, res) ->
 		req.session.username = req.body.username
 		res.redirect '/admin'
+		
 module.exports = app

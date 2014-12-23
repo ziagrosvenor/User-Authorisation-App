@@ -1,4 +1,4 @@
-var MongoStore, app, auth, bodyParser, cookieParser, express, mongoose, passport, session, userModel;
+var Db, MongoStore, UserModel, app, auth, bodyParser, cookieParser, express, passport, session;
 
 express = require('express');
 
@@ -6,17 +6,17 @@ session = require('express-session');
 
 cookieParser = require('cookie-parser');
 
-auth = require('./auth.js');
-
 bodyParser = require('body-parser');
 
-mongoose = require('./data/database.js')();
+Db = require('./data/database.js')();
 
 MongoStore = require('connect-mongo')(session);
 
-userModel = require('./data/bind-models.js')(mongoose.db);
+UserModel = require('./data/bind-models.js')(Db.model);
 
-passport = auth(userModel);
+auth = require('./auth.js');
+
+passport = auth(UserModel);
 
 app = express();
 
@@ -43,7 +43,7 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   store: new MongoStore({
-    mongoose_connection: mongoose.con
+    mongoose_connection: Db.con
   })
 }));
 

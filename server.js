@@ -1,6 +1,8 @@
-var app, server;
+var Db, app, server;
 
-app = require('./app');
+Db = require('./data/database.js')();
+
+app = require('./app.js')(Db);
 
 server = app.listen(3000, function() {
   return console.log('listening....');

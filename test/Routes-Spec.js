@@ -1,29 +1,67 @@
-var app, server, should, supertest;
+var app, request, should, superagent;
 
-server = require('../server');
-
-app = require('../app');
+app = require('./test-server');
 
 should = require('should');
 
-supertest = require('supertest');
+request = require('supertest');
 
-describe('authAppRoutes', function() {
-  it('should return 200 message for base URL', function(done) {
-    return supertest(app).get('/').expect(200).end(function(err, res) {
+superagent = require('superagent');
+
+describe('Public route access', function() {
+  it('should respond with a 200 message', function(done) {
+    return request(app).get('/').expect(200).end(function(err, res) {
       res.status.should.equal(200);
       return done();
     });
   });
-  it('should issue a redirect message', function(done) {
-    return supertest(app).post('/login').expect(302).end(function(err, res) {
+  it('should respond with a 302 message', function(done) {
+    return request(app).post('/login').expect(302).end(function(err, res) {
       res.status.should.equal(302);
+      res.header['location'].should.equal('/');
       return done();
     });
   });
-  return it('should issue a page not found message', function(done) {
-    return supertest(app).get('/kjdkdj').expect(404).end(function(err, res) {
+  return it('should respond with a 404 message', function(done) {
+    return request(app).get('/kjdkdj').expect(404).end(function(err, res) {
       res.status.should.equal(404);
+      return done();
+    });
+  });
+});
+
+describe('Protected routes', function() {
+  var user1, user2;
+  user1 = superagent.agent();
+  user2 = superagent.agent();
+  before(function(done) {
+    user1.post('http://localhost:2999/login').send({
+      username: 'zia',
+      password: 'auth'
+    }).end(function(err, res) {
+      if (err) {
+        throw err;
+      }
+    });
+    return user2.post('http://localhost:2999/login').send({
+      username: 'foo',
+      password: 'bar'
+    }).end(function(err, res) {
+      if (err) {
+        throw err;
+      }
+      return done();
+    });
+  });
+  it('should respond with a 200 message', function(done) {
+    return user1.get('http://localhost:2999/admin').end(function(err, res) {
+      res.status.should.equal(200);
+      return done();
+    });
+  });
+  return it('should respond with a 302 message', function(done) {
+    return user2.get('http://localhost:2999/admin').end(function(err, res) {
+      res.status.should.equal(302);
       return done();
     });
   });

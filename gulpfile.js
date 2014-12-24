@@ -8,7 +8,9 @@ var gulp = require('gulp'),
 	nodemon = require('gulp-nodemon'),
 	browserSync = require('browser-sync');
 
-var coffeeServerSources = 'components/coffee/server/*.coffee';
+var coffeeServerSources = [
+  'components/coffee/server/*.coffee'
+];
 
 var coffeeDataSources = [
 	'components/coffee/server/database.coffee',
@@ -17,7 +19,7 @@ var coffeeDataSources = [
 ];
 
 var coffeeTestSources = [
-  'components/coffee/test/Routes-Spec.coffee'
+  'components/coffee/test/*.coffee'
 ];
 
 var sassSources = [
@@ -96,6 +98,7 @@ gulp.task('watch', function() {
 	gulp.watch(coffeeServerSources, ['coffee']);
 	gulp.watch(coffeeDataSources, ['coffee']);
   gulp.watch(coffeeTestSources, ['coffee']);
+  gulp.watch('components/coffee/server/**/*.coffee', ['lint']);
 });
 
 gulp.task('lint', function() {

@@ -2,7 +2,6 @@ app = require './test-server'
 
 should = require 'should'
 request = require 'supertest'
-superagent = require 'superagent'
 
 describe('Public route access', () ->
 	it('should respond with a 200 message', (done) ->
@@ -36,32 +35,15 @@ describe('Public route access', () ->
 
 describe 'Protected routes', () ->
 
-	user1 = superagent.agent()
-	user2 = superagent.agent()
+	user1 = request.agent(app)
 
-	before (done) ->
-		user1.post('http://localhost:2999/login')
-		.send(username: 'zia', password: 'auth')
+	it 'should respond with a 302 message, redirecting to /admin', (done) ->
+		user1
+		.post('/login')
+		.send({username: 'zia', password: 'auth'})
 		.end (err, res) ->
 			if err
 				throw err
-		user2.post('http://localhost:2999/login')
-		.send(username: 'foo', password: 'bar')
-		.end (err, res) ->
-			if err 
-				throw err
-			done()
-
-	it 'should respond with a 200 message', (done) ->
-		user1
-		.get('http://localhost:2999/admin')
-		.end (err, res) ->
-			res.status.should.equal(200)
-			done()
-
-	it 'should respond with a 302 message', (done) ->
-		user2
-		.get('http://localhost:2999/admin')
-		.end (err, res) ->
 			res.status.should.equal(302)
+			res.header['location'].should.equal('/admin')
 			done()

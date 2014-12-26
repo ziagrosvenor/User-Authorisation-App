@@ -10,7 +10,7 @@
 @import "modules/buttons";
 
 .btn {
-	background-color: $light-blue;
+	background-color: lighten($light-blue, 10%);
 	color: white;
 	transition: all 0.15s ease-out;
 	text-decoration: none;
@@ -22,7 +22,9 @@
 
 // Navigation -----------------------------------------------------------------
 //-----------------------------------------------------------------------------
-
+.nav {
+	background-color: $light-blue;
+}
 
 // Forms ----------------------------------------------------------------------
 // ----------------------------------------------------------------------------
@@ -46,15 +48,6 @@
 	}
 }
 
-.search-bar {
-	padding: 1rem;
-	input {
-		width: 40%;
-		margin: 0 1rem 0 0;
-		padding: 0.5rem;
-	}
-}
-
 .heading {
 	display: inline;
 	padding: 0 0.5rem;
@@ -64,4 +57,19 @@
 
 .comment-content {
 	padding: 1rem 0;
+}
+
+.form-group {
+  width: 30%;
+  margin: 1rem 0 1.5rem 0;
+  padding-right: 0.5rem;
+
+  	label {
+  		color: white;
+  		font-size: 0.9rem;
+  		font-weight: 300;
+  	}
+	.btn {
+		margin-top: 1.5rem;
+	}
 }

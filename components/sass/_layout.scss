@@ -1,6 +1,8 @@
 .page-wrapper {
-	width: 60%;
-  margin: 3rem auto;
+	width: 85%;
+  margin: auto;
+
+  @extend %flex-main;
 }
 
 .half-column {
@@ -18,4 +20,9 @@
     clear: both;
     content: "";
   }
+}
+
+.login-form {
+  width: 80%;
+  @extend %flex-main;
 }

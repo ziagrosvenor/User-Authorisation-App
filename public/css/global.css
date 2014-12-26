@@ -1,3 +1,8 @@
+.page-wrapper, .login-form {
+  display: flex;
+  justify-content: flex-start;
+  flex-flow: row wrap; }
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -253,8 +258,8 @@ address {
   line-height: 1.42857; }
 
 .page-wrapper {
-  width: 60%;
-  margin: 3rem auto; }
+  width: 85%;
+  margin: auto; }
 
 .half-column {
   width: 50%;
@@ -269,6 +274,9 @@ address {
     display: block;
     clear: both;
     content: ""; }
+
+.login-form {
+  width: 80%; }
 
 table {
   background-color: transparent; }
@@ -567,13 +575,16 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   width: 100%; }
 
 .btn {
-  background-color: #34495e;
+  background-color: #46627f;
   color: white;
   transition: all 0.15s ease-out;
   text-decoration: none; }
   .btn:hover {
     color: white;
     transform: scale(1.1); }
+
+.nav {
+  background-color: #34495e; }
 
 fieldset {
   padding: 0;
@@ -962,13 +973,6 @@ textarea, select[multiple] {
 .list-add-form textarea {
   height: 10rem; }
 
-.search-bar {
-  padding: 1rem; }
-  .search-bar input {
-    width: 40%;
-    margin: 0 1rem 0 0;
-    padding: 0.5rem; }
-
 .heading {
   display: inline;
   padding: 0 0.5rem;
@@ -977,3 +981,14 @@ textarea, select[multiple] {
 
 .comment-content {
   padding: 1rem 0; }
+
+.form-group {
+  width: 30%;
+  margin: 1rem 0 1.5rem 0;
+  padding-right: 0.5rem; }
+  .form-group label {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 300; }
+  .form-group .btn {
+    margin-top: 1.5rem; }

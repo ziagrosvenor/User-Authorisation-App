@@ -1,0 +1,1 @@
+$(document).ready(function(){return $("#signup-form").validate({rules:{firstname:"required",surname:"required",email:{required:!0,email:!0},confirmEmail:{required:!0,equalTo:"email"},password:{required:!0,minlength:6},confirmPassword:{required:!0,minlength:6,equalTo:"password"}}})});

@@ -14,5 +14,8 @@ Temporary Items
 .sass-cache
 *.css.map
 
-## Grunt ##
+## Npm ##
 node_modules/*
+
+## Bower ##
+public/bower_components/*/*

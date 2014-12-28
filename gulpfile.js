@@ -22,6 +22,11 @@ var coffeeTestSources = [
   'components/coffee/test/*.coffee'
 ];
 
+var coffeePublicSources = [
+  
+  'components/coffee/public/*.coffee'
+];
+
 var sassSources = [
 	'components/sass/*.scss'
 ];
@@ -91,11 +96,18 @@ gulp.task('coffee', function () {
     .pipe(coffee({ bare: true })
       .on('error', gutil.log))
     .pipe(gulp.dest(__dirname + '/test'));
+  gulp.src(coffeePublicSources)
+    .pipe(coffee({ bare: true })
+      .on('error', gutil.log))
+    .pipe(concat('global.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest(__dirname + '/public/js/'));
 });
 
 gulp.task('watch', function() {
 	gulp.watch(sassSources, ['sass']);
 	gulp.watch(coffeeServerSources, ['coffee']);
+  gulp.watch(coffeePublicSources, ['coffee']);
 	gulp.watch(coffeeDataSources, ['coffee']);
   gulp.watch(coffeeTestSources, ['coffee']);
   gulp.watch('components/coffee/server/**/*.coffee', ['lint']);

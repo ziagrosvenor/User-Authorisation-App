@@ -8,7 +8,7 @@
        "Lucida Grande", 
        sans-serif;
 
-$base-color: #ecf0f1;
+$base-color: lighten(#ecf0f1, 5%);
 
 * {
   box-sizing: border-box;
@@ -43,6 +43,10 @@ body, html {
   }
 }
 
+img {
+  @extend %l-full;
+  height: auto;
+}
   // Headings
   // -------------------------
   h1, h2, h3, h4, h5, h6,

@@ -11,4 +11,27 @@ block content
 					label(for="password") Password
 					input(id="password" name="password" type="password" class="form-control")
 				.form-group
-					button(type="submit" class="btn") submit
+					button(type="submit" class="btn") login
+	section(class="page-wrapper")
+		h1 Sign Up
+		form(class="form signup-form" action="/signup" method="POST")
+				.form-group.name
+					label(for="f-name") First Name
+					input(id="f-name" name="s-name" type="text" placeholder="First name" required class="form-control")
+				.form-group.name
+					label(for="s-name") Surname
+					input(id="s-name" name="s-name" type="text" placeholder="Surname" required class="form-control")
+				.form-group.signup-group
+					label(for="email") Email
+					input(id="email" name="email" type="email" placeholder="joe@email.com" required class="form-control")
+				.form-group.signup-group
+					label(for="v-email") Re-type Email
+					input(id="v-email" name="v-email" type="email" placeholder="joe@email.com" required class="form-control")
+				.form-group.signup-group
+					label(for="password") Password
+					input(id="password" name="password" type="password" placeholder="password" required class="form-control")
+				.form-group.signup-group
+					label(for="v-password") Re-type Password
+					input(id="v-password" name="v-password" type="password" placeholder="password" required class="form-control")
+				.form-group.signup-group
+					button(type="submit" class="btn btn-lg") Sign Up

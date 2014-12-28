@@ -34,6 +34,12 @@
 	justify-content: center;
 }
 
+%flex-space {
+	display: flex;
+  	justify-content: space-between;
+  	flex-flow: row wrap;
+}
+
 %one-third {
 	width: 33.33%;
 }
@@ -44,4 +50,8 @@
 
 %l-full {
 	width: 100%;
+}
+
+%l-half {
+	width: 50%;
 }

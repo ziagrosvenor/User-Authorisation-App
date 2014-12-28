@@ -15,8 +15,8 @@
 	transition: all 0.15s ease-out;
 	text-decoration: none;
 	&:hover {
-		  color: white;
-		  transform: scale(1.1);
+		color: white;
+		transform: scale(1.1);
 	}
 }
 
@@ -90,9 +90,14 @@
 			float: left;
 		}
 	}
-
 	.btn {
-		background-color: #2ECC71;
+		background-color: $brand-success;
+	}
+	input.error {
+		border-color: $brand-warning;
+	}
+	input.valid {
+		border-color: $brand-success;
 	}
 }
 

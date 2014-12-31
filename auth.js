@@ -1,31 +1,33 @@
 module.exports = function(User) {
-  var LocalStrategy, passport;
+  var LocalStrategy, bcrypt, passport;
   passport = require('passport');
+  bcrypt = require('bcrypt');
   LocalStrategy = require('passport-local').Strategy;
   passport.use(new LocalStrategy(function(username, password, done) {
     return User.findOne({
-      username: username
+      email: username
     }, function(err, user) {
       if (err) {
         return done(err);
       }
       if (!user) {
+        console.log('no user');
         return done(null, false);
       }
-      if (user.password !== password) {
+      if (bcrypt.compareSync(password, user.password) === false) {
         return done(null, false, {
-          message: 'Unknown user #{username}'
+          message: 'Unknown user #{user.firstname}'
         });
       }
       return done(null, user);
     });
   }));
   passport.serializeUser(function(user, done) {
-    return done(null, user.username);
+    return done(null, user.email);
   });
-  passport.deserializeUser(function(username, done) {
+  passport.deserializeUser(function(email, done) {
     return done(null, {
-      username: username
+      username: email
     });
   });
   return passport;

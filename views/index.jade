@@ -5,7 +5,7 @@ block content
 		.page-wrapper
 			form(class="form login-form" action="/login" method="POST")
 				.form-group
-					label(for="username") Username
+					label(for="username") Email
 					input(id="username" name="username" type="text" class="form-control")
 				.form-group
 					label(for="password") Password
@@ -30,8 +30,5 @@ block content
 				.form-group.signup-group
 					label(for="password") Password
 					input(id="password" name="password" type="password" placeholder="password" required class="form-control")
-				.form-group.signup-group
-					label(for="confirmPassword") Re-type Password
-					input(id="confirmPassword" name="confirmPassword" type="password" placeholder="password" required class="form-control")
 				.form-group.signup-group
 					button(type="submit" class="btn btn-lg") Sign Up

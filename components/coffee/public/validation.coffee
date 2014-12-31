@@ -8,11 +8,7 @@ $(document).ready () ->
       	email: true
       confirmEmail:
       	required: true
-      	equalTo: 'email'
+      	equalTo: '#email'
       password:
       	required: true
       	minlength: 6
-      confirmPassword:
-      	required: true
-      	minlength: 6
-      	equalTo: 'password'

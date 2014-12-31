@@ -100,7 +100,7 @@ gulp.task('coffee', function () {
     .pipe(coffee({ bare: true })
       .on('error', gutil.log))
     .pipe(concat('global.js'))
-    .pipe(uglify())
+    // .pipe(uglify())
     .pipe(gulp.dest(__dirname + '/public/js/'));
 });
 

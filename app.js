@@ -1,12 +1,15 @@
 module.exports = function(Db) {
-  var MongoStore, app, auth, bodyParser, cookieParser, express, passport, session;
+  var MongoStore, User, app, auth, bcrypt, bodyParser, cookieParser, express, passport, session, time;
   express = require('express');
   session = require('express-session');
   cookieParser = require('cookie-parser');
   bodyParser = require('body-parser');
   MongoStore = require('connect-mongo')(session);
   auth = require('./auth.js');
-  passport = auth(Db.models.User);
+  bcrypt = require('bcrypt');
+  User = Db.models.User;
+  time = new Date;
+  passport = auth(User);
   app = express();
   app.use(express["static"]('public'));
   app.set('view engine', 'jade');
@@ -42,6 +45,24 @@ module.exports = function(Db) {
   }), function(req, res) {
     req.session.username = req.body.username;
     return res.redirect('/admin');
+  });
+  app.post('/signup', function(req, res) {
+    var newUser;
+    newUser = new User({
+      firstName: req.body.firstname,
+      surname: req.body.surname,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10)),
+      timestamp: time.getTime()
+    });
+    newUser.save(function(err) {
+      if (err) {
+        return console.error(err);
+      } else {
+        return console.log('User saved');
+      }
+    });
+    return res.redirect('/');
   });
   return app;
 };

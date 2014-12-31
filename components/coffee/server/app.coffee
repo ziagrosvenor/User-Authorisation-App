@@ -15,7 +15,11 @@ module.exports = (Db) ->
   # Module function returns passport instance.
   auth = require './auth.js'
 
-  passport = auth(Db.models.User)
+  bcrypt = require 'bcrypt'
+
+  User = Db.models.User
+  time = new Date
+  passport = auth(User)
   app = express()
 
   app.use express.static 'public'
@@ -46,5 +50,22 @@ module.exports = (Db) ->
     (req, res) ->
       req.session.username = req.body.username
       res.redirect '/admin'
+
+  app.post '/signup',
+    (req, res) ->
+      newUser = new User
+        firstName: req.body.firstname
+        surname: req.body.surname
+        email: req.body.email
+        password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
+        timestamp: time.getTime()
+
+      newUser.save (err) ->
+        if err
+          console.error(err)
+        else
+          console.log('User saved')
+
+      res.redirect '/'
 
   app

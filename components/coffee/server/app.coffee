@@ -16,6 +16,9 @@ module.exports = (Db) ->
   auth = require './auth.js'
 
   bcrypt = require 'bcrypt'
+  Entities = require('html-entities').XmlEntities
+
+  entities = new Entities
 
   User = Db.models.User
   time = new Date
@@ -53,19 +56,18 @@ module.exports = (Db) ->
 
   app.post '/signup',
     (req, res) ->
+      password = entities.encode(req.body.password);
+      
       newUser = new User
-        firstName: req.body.firstname
-        surname: req.body.surname
-        email: req.body.email
-        password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
+        firstName: entities.encode(req.body.firstname)
+        surname: entities.encode(req.body.surname)
+        email: entities.encode(req.body.email)
+        password: bcrypt.hashSync(password, bcrypt.genSaltSync(10))
         timestamp: time.getTime()
 
       newUser.save (err) ->
         if err
-          console.error(err)
+          res.send message: 'fail'
         else
-          console.log('User saved')
-
-      res.redirect '/'
-
+          res.send message: 'success'
   app

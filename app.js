@@ -1,5 +1,5 @@
 module.exports = function(Db) {
-  var MongoStore, User, app, auth, bcrypt, bodyParser, cookieParser, express, passport, session, time;
+  var Entities, MongoStore, User, app, auth, bcrypt, bodyParser, cookieParser, entities, express, passport, session, time;
   express = require('express');
   session = require('express-session');
   cookieParser = require('cookie-parser');
@@ -7,6 +7,8 @@ module.exports = function(Db) {
   MongoStore = require('connect-mongo')(session);
   auth = require('./auth.js');
   bcrypt = require('bcrypt');
+  Entities = require('html-entities').XmlEntities;
+  entities = new Entities;
   User = Db.models.User;
   time = new Date;
   passport = auth(User);
@@ -47,22 +49,26 @@ module.exports = function(Db) {
     return res.redirect('/admin');
   });
   app.post('/signup', function(req, res) {
-    var newUser;
+    var newUser, password;
+    password = entities.encode(req.body.password);
     newUser = new User({
-      firstName: req.body.firstname,
-      surname: req.body.surname,
-      email: req.body.email,
-      password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10)),
+      firstName: entities.encode(req.body.firstname),
+      surname: entities.encode(req.body.surname),
+      email: entities.encode(req.body.email),
+      password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),
       timestamp: time.getTime()
     });
-    newUser.save(function(err) {
+    return newUser.save(function(err) {
       if (err) {
-        return console.error(err);
+        return res.send({
+          message: 'fail'
+        });
       } else {
-        return console.log('User saved');
+        return res.send({
+          message: 'success'
+        });
       }
     });
-    return res.redirect('/');
   });
   return app;
 };

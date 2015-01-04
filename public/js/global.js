@@ -1,5 +1,8 @@
 $(document).ready(function() {
-  return $('#signup-form').validate({
+  var form, message;
+  message = '';
+  form = $('#signup-form');
+  return form.validate({
     rules: {
       firstname: 'required',
       surname: 'required',
@@ -15,6 +18,17 @@ $(document).ready(function() {
         required: true,
         minlength: 6
       }
+    },
+    submitHandler: function() {
+      $.post('/signup', form.serialize(), function(data) {
+        console.log(data);
+        message = data.message;
+        if (message === "success") {
+          return form.html('You can now login');
+        } else {
+          return form.append('Email already registered');
+        }
+      }, 'json');
     }
   });
 });

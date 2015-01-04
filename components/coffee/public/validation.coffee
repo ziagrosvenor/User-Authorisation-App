@@ -1,5 +1,8 @@
 $(document).ready () ->
-  $('#signup-form').validate
+  message = '';
+  form = $('#signup-form')
+
+  form.validate
   	rules:
       firstname: 'required'
       surname: 'required'
@@ -12,3 +15,18 @@ $(document).ready () ->
       password:
       	required: true
       	minlength: 6
+    submitHandler: () -> 
+        $.post '/signup',
+          form.serialize(),
+          (data) ->
+            console.log(data)
+            message = data.message
+            if message == "success"
+              form.html('You can now login')
+            else
+              form.append('Email already registered')
+          , 'json'
+        return
+
+
+  

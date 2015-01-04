@@ -1,7 +1,7 @@
 module.exports = (User) ->
 	passport = require 'passport'
 	bcrypt = require 'bcrypt'
-	LocalStrategy = require('passport-local').Strategy;
+	LocalStrategy = require('passport-local').Strategy
 
 	passport.use new LocalStrategy (username, password, done) ->
 		User.findOne( email: username , (err, user) ->

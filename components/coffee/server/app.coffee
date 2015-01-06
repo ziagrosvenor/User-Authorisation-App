@@ -15,7 +15,13 @@ module.exports = (Db) ->
   # Module function returns passport instance.
   auth = require './auth.js'
 
+  # Various security middleware for Express
+  helmet = require 'helmet'
+
+  # For password encryption.
   bcrypt = require 'bcrypt'
+
+  # For XML entity encoding.
   Entities = require('html-entities').XmlEntities
 
   entities = new Entities
@@ -25,9 +31,14 @@ module.exports = (Db) ->
   passport = auth(User)
   app = express()
 
-  app.use express.static 'public'
   app.set 'view engine', 'jade'
   app.set 'views', __dirname + '/views'
+  app.use express.static 'public'
+  app.use helmet.crossdomain()
+  app.use helmet.frameguard('SAMEORIGIN')
+  app.use helmet.hidePoweredBy(setTo: 'PHP 4.2.0')
+  app.use helmet.hsts(maxAge: 31536000)
+  app.use helmet.xssFilter(setOnOldIE: true)
   app.use cookieParser()
   app.use bodyParser.json()
   app.use bodyParser.urlencoded(extended: true)
@@ -56,7 +67,7 @@ module.exports = (Db) ->
 
   app.post '/signup',
     (req, res) ->
-      password = entities.encode(req.body.password);
+      password = entities.encode(req.body.password)
       
       newUser = new User
         firstName: entities.encode(req.body.firstname)

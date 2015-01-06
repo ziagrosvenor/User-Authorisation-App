@@ -1,11 +1,12 @@
 module.exports = function(Db) {
-  var Entities, MongoStore, User, app, auth, bcrypt, bodyParser, cookieParser, entities, express, passport, session, time;
+  var Entities, MongoStore, User, app, auth, bcrypt, bodyParser, cookieParser, entities, express, helmet, passport, session, time;
   express = require('express');
   session = require('express-session');
   cookieParser = require('cookie-parser');
   bodyParser = require('body-parser');
   MongoStore = require('connect-mongo')(session);
   auth = require('./auth.js');
+  helmet = require('helmet');
   bcrypt = require('bcrypt');
   Entities = require('html-entities').XmlEntities;
   entities = new Entities;
@@ -13,9 +14,20 @@ module.exports = function(Db) {
   time = new Date;
   passport = auth(User);
   app = express();
-  app.use(express["static"]('public'));
   app.set('view engine', 'jade');
   app.set('views', __dirname + '/views');
+  app.use(express["static"]('public'));
+  app.use(helmet.crossdomain());
+  app.use(helmet.frameguard('SAMEORIGIN'));
+  app.use(helmet.hidePoweredBy({
+    setTo: 'PHP 4.2.0'
+  }));
+  app.use(helmet.hsts({
+    maxAge: 31536000
+  }));
+  app.use(helmet.xssFilter({
+    setOnOldIE: true
+  }));
   app.use(cookieParser());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({

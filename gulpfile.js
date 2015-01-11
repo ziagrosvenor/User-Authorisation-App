@@ -1,9 +1,11 @@
 var gulp = require('gulp'),
 	gutil = require('gulp-util'),
 	uglify = require('gulp-uglify'),
+  browserify = require('gulp-browserify'),
 	concat = require('gulp-concat'),
 	sass = require('gulp-sass'),
 	coffee = require('gulp-coffee'),
+  cjsx = require('gulp-cjsx'),
   coffeelint = require('gulp-coffeelint'),
 	nodemon = require('gulp-nodemon'),
 	browserSync = require('browser-sync');
@@ -23,8 +25,11 @@ var coffeeTestSources = [
 ];
 
 var coffeePublicSources = [
-  
   'components/coffee/public/*.coffee'
+];
+
+var coffeeReactSources = [
+  'components/coffee/public/app/**/**.coffee'
 ];
 
 var sassSources = [
@@ -82,20 +87,37 @@ gulp.task('sass', function () {
 		.pipe(gulp.dest('public/css'));
 });
 
+gulp.task('cjsx', function () {
+  gulp.src(coffeeReactSources)
+    .pipe(cjsx({bare: true})
+      .on('error', gutil.log))
+    .pipe(gulp.dest(__dirname + '/components/js/'));
+});
+
+gulp.task('browserify', function () {
+  gulp.src('components/js/main.js')
+    .pipe(browserify())
+    .pipe(concat('main.js'))
+    .pipe(gulp.dest(__dirname + '/public/js/'));
+});
+
 // Compiles CoffeeScript
 gulp.task('coffee', function () {
 	gulp.src(coffeeServerSources)
 		.pipe(coffee({ bare: true })
 			.on('error', gutil.log))
 		.pipe(gulp.dest(__dirname));
+
 	gulp.src(coffeeDataSources)
 		.pipe(coffee({ bare: true })
 			.on('error', gutil.log))
 		.pipe(gulp.dest(__dirname + '/data'));
+
   gulp.src(coffeeTestSources)
     .pipe(coffee({ bare: true })
       .on('error', gutil.log))
     .pipe(gulp.dest(__dirname + '/test'));
+    
   gulp.src(coffeePublicSources)
     .pipe(coffee({ bare: true })
       .on('error', gutil.log))
@@ -108,6 +130,8 @@ gulp.task('watch', function() {
 	gulp.watch(sassSources, ['sass']);
 	gulp.watch(coffeeServerSources, ['coffee']);
   gulp.watch(coffeePublicSources, ['coffee']);
+  gulp.watch(coffeeReactSources, ['cjsx']);
+  gulp.watch('components/js/**/**.js', ['browserify']);
 	gulp.watch(coffeeDataSources, ['coffee']);
   gulp.watch(coffeeTestSources, ['coffee']);
   gulp.watch('components/coffee/server/**/*.coffee', ['lint']);
@@ -119,4 +143,4 @@ gulp.task('lint', function() {
     .pipe(coffeelint.reporter());
 });
 
-gulp.task('default', ['lint', 'sass', 'coffee', 'browser-sync', 'watch']);
+gulp.task('default', ['lint', 'sass', 'coffee', 'cjsx', 'browserify', 'browser-sync', 'watch']);

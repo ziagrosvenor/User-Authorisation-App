@@ -4,7 +4,7 @@ module.exports = (User) ->
 	LocalStrategy = require('passport-local').Strategy
 
 	passport.use new LocalStrategy (username, password, done) ->
-		User.findOne( email: username , (err, user) ->
+		User.findOne email: username , (err, user) ->
 			if err 
 				return done(err)
 			if !user
@@ -13,7 +13,6 @@ module.exports = (User) ->
 			if bcrypt.compareSync(password, user.password) == false
 				return done(null, false, message: 'Unknown user #{user.firstname}')
 			return done(null, user)
-		)
 
 	passport.serializeUser (user, done) ->
 		done null, user.email

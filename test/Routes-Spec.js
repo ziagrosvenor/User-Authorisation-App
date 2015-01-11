@@ -33,8 +33,8 @@ describe('Protected routes', function() {
   user = request.agent(app);
   it('should respond with a 302 message, redirecting to /admin', function(done) {
     return user.post('/login').send({
-      username: 'zia',
-      password: 'auth'
+      username: 'foo@foo.com',
+      password: 'foobar'
     }).end(function(err, res) {
       if (err) {
         throw err;
@@ -64,8 +64,8 @@ describe('Session', function() {
   user = request.agent(app);
   before(function(done) {
     return user.post('/login').send({
-      username: 'zia',
-      password: 'auth'
+      username: 'foo@foo.com',
+      password: 'foobar'
     }).end(function(err, res) {
       if (err) {
         throw err;

@@ -1,5 +1,4 @@
 module.exports = (Schema) ->
-
 	# Define scheme for user
 	UserSchema = new Schema
 		firstName:

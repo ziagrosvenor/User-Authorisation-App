@@ -37,7 +37,7 @@ describe 'Protected routes', () ->
 	it 'should respond with a 302 message, redirecting to /admin', (done) ->
 		user
 		.post('/login')
-		.send({username: 'zia', password: 'auth'})
+		.send({username: 'foo@foo.com', password: 'foobar'})
 		.end (err, res) ->
 			if err
 				throw err
@@ -63,7 +63,7 @@ describe 'Session', () ->
 	before (done) ->
 		user
 		.post('/login')
-		.send({username: 'zia', password: 'auth'})
+		.send({username: 'foo@foo.com', password: 'foobar'})
 		.end (err, res) ->
 			if err
 				throw err

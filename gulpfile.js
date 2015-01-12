@@ -15,9 +15,11 @@ var coffeeServerSources = [
 ];
 
 var coffeeDataSources = [
-	'components/coffee/server/database.coffee',
-	'components/coffee/server/models/user-model.coffee',
-	'components/coffee/server/models/bind-models.coffee'
+	'components/coffee/server/models/*.coffee',
+];
+
+var coffeeRouteSources = [
+  'components/coffee/server/routes/*.coffee',
 ];
 
 var coffeeTestSources = [
@@ -87,16 +89,12 @@ gulp.task('sass', function () {
 		.pipe(gulp.dest('public/css'));
 });
 
-gulp.task('cjsx', function () {
-  gulp.src(coffeeReactSources)
-    .pipe(cjsx({bare: true})
-      .on('error', gutil.log))
-    .pipe(gulp.dest(__dirname + '/components/js/'));
-});
-
 gulp.task('browserify', function () {
-  gulp.src('components/js/main.js')
-    .pipe(browserify())
+  gulp.src('components/coffee/public/app/main.coffee', {read: false})
+    .pipe(browserify({
+      transform: ['coffee-reactify'],
+      extensions: ['.coffee']
+    }))
     .pipe(concat('main.js'))
     .pipe(gulp.dest(__dirname + '/public/js/'));
 });
@@ -113,6 +111,11 @@ gulp.task('coffee', function () {
 			.on('error', gutil.log))
 		.pipe(gulp.dest(__dirname + '/data'));
 
+  gulp.src(coffeeRouteSources)
+  .pipe(coffee({ bare: true })
+    .on('error', gutil.log))
+  .pipe(gulp.dest(__dirname + '/routes'));
+
   gulp.src(coffeeTestSources)
     .pipe(coffee({ bare: true })
       .on('error', gutil.log))
@@ -122,7 +125,6 @@ gulp.task('coffee', function () {
     .pipe(coffee({ bare: true })
       .on('error', gutil.log))
     .pipe(concat('global.js'))
-    // .pipe(uglify())
     .pipe(gulp.dest(__dirname + '/public/js/'));
 });
 
@@ -130,17 +132,16 @@ gulp.task('watch', function() {
 	gulp.watch(sassSources, ['sass']);
 	gulp.watch(coffeeServerSources, ['coffee']);
   gulp.watch(coffeePublicSources, ['coffee']);
-  gulp.watch(coffeeReactSources, ['cjsx']);
-  gulp.watch('components/js/**/**.js', ['browserify']);
+  gulp.watch('components/coffee/public/app/**/**.coffee', ['browserify']);
 	gulp.watch(coffeeDataSources, ['coffee']);
   gulp.watch(coffeeTestSources, ['coffee']);
-  gulp.watch('components/coffee/server/**/*.coffee', ['lint']);
+  // gulp.watch('components/coffee/server/**/*.coffee', ['lint']);
 });
 
-gulp.task('lint', function() {
-  gulp.src('./components/coffee/**/*.coffee')
-    .pipe(coffeelint())
-    .pipe(coffeelint.reporter());
-});
+// gulp.task('lint', function() {
+//   gulp.src('./components/coffee/**/*.coffee')
+//     .pipe(coffeelint())
+//     .pipe(coffeelint.reporter());
+// });
 
-gulp.task('default', ['lint', 'sass', 'coffee', 'cjsx', 'browserify', 'browser-sync', 'watch']);
+gulp.task('default', ['sass', 'coffee', 'browserify', 'browser-sync', 'watch']);

@@ -1,4 +1,7 @@
 module.exports = (db) ->
   Schema = db.Schema
   UserSchema = require('./user-model.js')(Schema)
-  db.model('UserModel', UserSchema)
+  PostSchema = require('./post-model.js')(Schema)
+  
+  User: db.model('UserModel', UserSchema)
+  Posts: db.model('PostModel', PostSchema)

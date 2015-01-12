@@ -1,13 +1,14 @@
 module.exports = function() {
-  var Mongoose, UserModel, con, db;
+  var Models, Mongoose, con, db;
   Mongoose = require('mongoose');
   db = Mongoose.connect('mongodb://localhost/blog');
   con = Mongoose.connection;
   con.on('error', console.error.bind(console, 'connection error'));
-  UserModel = require('./bind-models.js')(Mongoose);
+  Models = require('./bind-models.js')(Mongoose);
   return {
     models: {
-      User: UserModel
+      User: Models.User,
+      Posts: Models.Posts
     },
     con: con
   };

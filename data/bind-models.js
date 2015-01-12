@@ -1,6 +1,10 @@
 module.exports = function(db) {
-  var Schema, UserSchema;
+  var PostSchema, Schema, UserSchema;
   Schema = db.Schema;
   UserSchema = require('./user-model.js')(Schema);
-  return db.model('UserModel', UserSchema);
+  PostSchema = require('./post-model.js')(Schema);
+  return {
+    User: db.model('UserModel', UserSchema),
+    Posts: db.model('PostModel', PostSchema)
+  };
 };

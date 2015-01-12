@@ -1,5 +1,5 @@
 AppConstants = require '../constants/app-constants'
-AppDispatcher = require '../dispatchers/app-dispatcher.js'
+AppDispatcher = require '../dispatchers/app-dispatcher'
 
 AppActions =
 	addPost: (post) ->

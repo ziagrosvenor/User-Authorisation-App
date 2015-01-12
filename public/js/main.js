@@ -225,6 +225,7 @@ module.exports = AppDispatcher;
 
 
 },{"./dispatcher":7,"react/lib/merge":150}],7:[function(require,module,exports){
+
 var Promise = require('es6-promise').Promise;
 var merge = require('react/lib/merge');
 
@@ -280,6 +281,11 @@ Dispatcher.prototype = merge(Dispatcher.prototype, {
 });
 
 module.exports = Dispatcher;
+;
+
+
+
+
 },{"es6-promise":11,"react/lib/merge":150}],8:[function(require,module,exports){
 var Q, request;
 

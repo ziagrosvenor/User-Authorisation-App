@@ -287,6 +287,12 @@ address {
     clear: both;
     content: ""; }
 
+.postModule {
+  margin: 1rem; }
+
+.is-hidden {
+  display: none; }
+
 table {
   background-color: transparent; }
 
@@ -591,6 +597,9 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   .btn:hover {
     color: white;
     transform: scale(1.1); }
+
+.btn-notify {
+  background-color: #e27c79 !important; }
 
 .nav {
   background-color: #446CB3; }

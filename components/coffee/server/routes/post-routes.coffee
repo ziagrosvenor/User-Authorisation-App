@@ -1,14 +1,16 @@
 module.exports = (Post) ->
   # For timestamp
   time = new Date
-  # For XML entity encoding.
-  # Entities = require('html-entities').XmlEntities
-  # entities = new Entities
+  # For XML entity encoding. Preventing persisted XSS
+  Entities = require('html-entities').XmlEntities
+  entities = new Entities
+  
   create: (req, res) ->
+    data = req.body
     post = new Post
-      userId: req.body.userId
-      title: req.body.title
-      content: req.body.content
+      userId: data.userId
+      title: entities.encode(data.title)
+      content: entities.encode(data.content)
       timestamp: time.getTime()
 
     post.save (err) ->
@@ -22,3 +24,13 @@ module.exports = (Post) ->
   	  if err
   	  	return console.error(err)
   	  res.send(posts)
+
+  delete: (req, res) ->
+    Post.findById req.body.id, (err, posts) ->
+      if err
+        return console.error(err)
+      posts.remove (err, post) ->
+        if err
+          return handleError(err)
+        console.log('deleted')
+    return

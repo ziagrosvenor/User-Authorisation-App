@@ -1,13 +1,16 @@
 module.exports = function(Post) {
-  var time;
+  var Entities, entities, time;
   time = new Date;
+  Entities = require('html-entities').XmlEntities;
+  entities = new Entities;
   return {
     create: function(req, res) {
-      var post;
+      var data, post;
+      data = req.body;
       post = new Post({
-        userId: req.body.userId,
-        title: req.body.title,
-        content: req.body.content,
+        userId: data.userId,
+        title: entities.encode(data.title),
+        content: entities.encode(data.content),
         timestamp: time.getTime()
       });
       post.save(function(err) {
@@ -24,6 +27,19 @@ module.exports = function(Post) {
           return console.error(err);
         }
         return res.send(posts);
+      });
+    },
+    "delete": function(req, res) {
+      Post.findById(req.body.id, function(err, posts) {
+        if (err) {
+          return console.error(err);
+        }
+        return posts.remove(function(err, post) {
+          if (err) {
+            return handleError(err);
+          }
+          return console.log('deleted');
+        });
       });
     }
   };

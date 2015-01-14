@@ -138,10 +138,10 @@ gulp.task('watch', function() {
   // gulp.watch('components/coffee/server/**/*.coffee', ['lint']);
 });
 
-// gulp.task('lint', function() {
-//   gulp.src('./components/coffee/**/*.coffee')
-//     .pipe(coffeelint())
-//     .pipe(coffeelint.reporter());
-// });
+gulp.task('lint', function() {
+  gulp.src('./components/coffee/public/*.coffee')
+    .pipe(coffeelint())
+    .pipe(coffeelint.reporter());
+});
 
-gulp.task('default', ['sass', 'coffee', 'browserify', 'browser-sync', 'watch']);
+gulp.task('default', ['lint', 'sass', 'coffee', 'browserify', 'browser-sync', 'watch']);

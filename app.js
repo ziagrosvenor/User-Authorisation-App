@@ -51,6 +51,6 @@ module.exports = function(Db) {
     failureRedirect: '/'
   }), userRoutes.login);
   app.post('/signup', userRoutes.signup);
-  app.route('/api/posts').get(postRoutes.read).post(postRoutes.create)["delete"](postRoutes["delete"]);
+  app.route('/api/posts').get(postRoutes.read).post(postRoutes.create).put(postRoutes.update)["delete"](postRoutes["delete"]);
   return app;
 };

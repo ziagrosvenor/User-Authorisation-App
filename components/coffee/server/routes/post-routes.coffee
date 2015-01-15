@@ -24,7 +24,11 @@ module.exports = (Post) ->
   	  if err
   	  	return console.error(err)
   	  res.send(posts)
-
+  update: (req, res) ->
+    Post.findOneAndUpdate _id: req.body._id, req.body, upsert: true, (err, post) ->
+      if err
+        return console.error(err)
+      res.send(post)
   delete: (req, res) ->
     Post.findById req.body.id, (err, posts) ->
       if err

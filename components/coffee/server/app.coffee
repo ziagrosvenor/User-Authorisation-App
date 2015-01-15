@@ -66,6 +66,7 @@ module.exports = (Db) ->
   app.route '/api/posts'
     .get postRoutes.read
     .post postRoutes.create
+    .put postRoutes.update
     .delete postRoutes.delete
 
   app

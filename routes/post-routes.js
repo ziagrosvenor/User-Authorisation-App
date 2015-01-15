@@ -29,6 +29,18 @@ module.exports = function(Post) {
         return res.send(posts);
       });
     },
+    update: function(req, res) {
+      return Post.findOneAndUpdate({
+        _id: req.body._id
+      }, req.body, {
+        upsert: true
+      }, function(err, post) {
+        if (err) {
+          return console.error(err);
+        }
+        return res.send(post);
+      });
+    },
     "delete": function(req, res) {
       Post.findById(req.body.id, function(err, posts) {
         if (err) {

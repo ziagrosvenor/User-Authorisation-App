@@ -21,6 +21,18 @@ module.exports = () ->
         else
           deferred.reject('Status code {res.status}')
     return deferred.promise
+  update: (data) ->
+    deferred = Q.defer()
+    console.log(data)
+    request.put('/api/posts')
+      .send(data)
+      .set('Accept', 'application/json')
+      .end (res) ->
+        if res.status == 200
+          deferred.resolve(res.body)
+        else
+          deferred.reject('Status code {res.status}')
+    return deferred.promise
   delete: (postId) ->
     deferred = Q.defer()
     request.del('/api/posts')

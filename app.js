@@ -51,6 +51,16 @@ module.exports = function(Db) {
     failureRedirect: '/'
   }), userRoutes.login);
   app.post('/signup', userRoutes.signup);
+  app.get('/api/user', function(req, res) {
+    if (!req.session) {
+      return;
+    }
+    return User.find({
+      email: req.session.username
+    }, function(err, user) {
+      return res.send(user);
+    });
+  });
   app.route('/api/posts').get(postRoutes.read).post(postRoutes.create).put(postRoutes.update)["delete"](postRoutes["delete"]);
   return app;
 };

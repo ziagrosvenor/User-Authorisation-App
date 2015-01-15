@@ -62,6 +62,12 @@ module.exports = (Db) ->
     userRoutes.login
 
   app.post '/signup', userRoutes.signup
+
+  app.get '/api/user', (req, res) ->
+    if !req.session
+      return
+    User.find email: req.session.username, (err, user) ->
+      res.send(user)
   
   app.route '/api/posts'
     .get postRoutes.read

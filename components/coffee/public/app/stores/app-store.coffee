@@ -3,6 +3,7 @@ AppDispatcher = require '../dispatchers/app-dispatcher'
 merge = require 'react/lib/merge'
 EventEmitter = require('events').EventEmitter
 _posts = require('../factory/app-factory')()
+_user = require('../factory/user-factory')()
 
 CHANGE_EVENT = 'change'
 
@@ -27,6 +28,8 @@ AppStore = merge EventEmitter.prototype,
 		this.removeListener(CHANGE_EVENT, callback)
 	getPosts: () ->
 		return _posts.get()
+	getUser: () ->
+		return _user.get()
 	dispatcherIndex: AppDispatcher.register (payload) ->
 		action = payload.action
 

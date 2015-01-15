@@ -10,11 +10,7 @@ Post = require '../post-shared/post-item'
 PostList = React.createClass
   render: ->
     posts = this.props.data.map (post, i) ->
-      <Post title={post.title} 
-        content={post.content} 
-        key={i} 
-        id={post._id}
-        index={post._id}/>
+      <Post data={post} key={i}/>
     <div className='postList'>
       {posts}
     </div>

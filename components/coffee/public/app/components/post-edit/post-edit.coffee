@@ -5,48 +5,54 @@ AppStore = require('../../stores/app-store')
 StoreWatchMixin = require '../../mixins/store-watch-mixin'
 Post = require '../post-shared/post-item'
 
-
 PostEditForm = React.createClass
-  getInitialState: ->
-    title: this.props.data.title
-    content: this.props.data.content
+  handleChange: (e) ->
+    title = this.refs.title.getDOMNode().value
+    content = this.refs.content.getDOMNode().value
+
+    if title == '' 
+      title = @props.data.title
+    if content == ''
+      content = @props.data.content
+
+    this.props.onFormChange
+      _id: @props.data._id
+      userId: 'ldldlkd'
+      title: title
+      content: content
+      timestamp: @props.data.timestamp
+    return
 
   handleSubmit: (e) ->
     e.preventDefault()
 
-    title = this.refs.title.getDOMNode().value.trim()
-    content = this.refs.content.getDOMNode().value.trim()
+    title = @refs.title.getDOMNode().value.trim()
+    content = @refs.content.getDOMNode().value.trim()
 
     if !title || !content
       return
 
-    this.props.onFormSubmit
+    @props.onFormSubmit
+      _id: @props.data._id
       userId: 'ldldlkd'
       title: title
       content: content
+      timestamp: @props.data.timestamp
 
-    this.refs.title.getDOMNode().value = ''
-    this.refs.content.getDOMNode().value = ''
-
+    @refs.title.getDOMNode.value = ''
+    @refs.content.getDOMNode.value = ''
     return
-  handleChange: (e) ->
-    this.setProps this.props.data.title = e.target.value
-  render: ->
-    title = this.props.data.title
-    content = this.props.data.content
 
-    <form className='postForm form' onSubmit={this.handleSubmit}>
+  render: ->
+    <form className='postForm form' onSubmit={this.handleSubmit}  >
       <div className='form-group'>
-        <input className='form-control' 
-          type='text' 
-          value={title}
-          onChange={this.handleChange}
+        <input className='form-control'
+          onChange={@handleChange} 
+          type='text'
           ref='title'/>
       </div>
       <div className='form-group'>
-        <textarea className='form-control' 
-          value={content} 
-          ref='content'/>
+        <textarea className='form-control' ref='content' onChange={@handleChange}/>
       </div>
       <input className='btn' type='submit' value='Update'/>
     </form>
@@ -56,20 +62,26 @@ getPost = ->
     for obj in result
       if obj._id == this.props.id
         data = obj
-    
+
     this.setState
       data: data
       
 PostEdit = React.createClass
   mixins: [new StoreWatchMixin(getPost)]
   onEdit: (post) ->
-    console.log(post)
+    if @isMounted()
+      this.setState
+        data: post
+  onSubmit: (post) ->
+    AppActions.updatePost(post)
   render: ->
     <div className='postModule'>
       <h1>Edit!</h1>
-      <PostEditForm 
+      <Post data={this.state.data} />
+      <PostEditForm
         data={this.state.data}
-        onFormSubmit={this.onEdit}
+        onFormChange={this.onEdit}
+        onFormSubmit={this.onSubmit}
       />
     </div>
 

@@ -6,12 +6,16 @@ _posts = require('../factory/app-factory')()
 
 CHANGE_EVENT = 'change'
 
-_deletePost = (index) ->
-	_posts.delete(index)
-	return
-
 _addPost = (post) ->
 	_posts.post(post)
+	return
+
+_updatePost = (post) ->
+	_posts.update(post)
+	return
+
+_deletePost = (index) ->
+	_posts.delete(index)
 	return
 
 AppStore = merge EventEmitter.prototype,
@@ -28,6 +32,7 @@ AppStore = merge EventEmitter.prototype,
 
 		switch action.actionType
 			when AppConstants.ADD_POST then _addPost(payload.action.post)
+			when AppConstants.UPDATE_POST then _updatePost(payload.action.post)
 			when AppConstants.DELETE_POST then _deletePost(payload.action.index)
 
 		AppStore.emitChange()

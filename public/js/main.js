@@ -12,10 +12,10 @@ AppActions = {
       post: post
     });
   },
-  updatePost: function(index) {
+  updatePost: function(post) {
     return AppDispatcher.handleViewAction({
       actionType: AppConstants.UPDATE_POST,
-      index: index
+      post: post
     });
   },
   deletePost: function(index) {
@@ -170,6 +170,42 @@ StoreWatchMixin = require('../../mixins/store-watch-mixin');
 Post = require('../post-shared/post-item');
 
 PostEditForm = React.createClass({
+  handleChange: function(e) {
+    var content, title;
+    title = this.refs.title.getDOMNode().value;
+    content = this.refs.content.getDOMNode().value;
+    if (title === '') {
+      title = this.props.data.title;
+    }
+    if (content === '') {
+      content = this.props.data.content;
+    }
+    this.props.onFormChange({
+      _id: this.props.data._id,
+      userId: 'ldldlkd',
+      title: title,
+      content: content,
+      timestamp: this.props.data.timestamp
+    });
+  },
+  handleSubmit: function(e) {
+    var content, title;
+    e.preventDefault();
+    title = this.refs.title.getDOMNode().value.trim();
+    content = this.refs.content.getDOMNode().value.trim();
+    if (!title || !content) {
+      return;
+    }
+    this.props.onFormSubmit({
+      _id: this.props.data._id,
+      userId: 'ldldlkd',
+      title: title,
+      content: content,
+      timestamp: this.props.data.timestamp
+    });
+    this.refs.title.getDOMNode.value = '';
+    this.refs.content.getDOMNode.value = '';
+  },
   render: function() {
     return React.createElement("form", {
       "className": 'postForm form',
@@ -178,15 +214,15 @@ PostEditForm = React.createClass({
       "className": 'form-group'
     }, React.createElement("input", {
       "className": 'form-control',
+      "onChange": this.handleChange,
       "type": 'text',
-      "value": this.props.data.title,
       "ref": 'title'
     })), React.createElement("div", {
       "className": 'form-group'
     }, React.createElement("textarea", {
       "className": 'form-control',
-      "value": this.props.data.content,
-      "ref": 'content'
+      "ref": 'content',
+      "onChange": this.handleChange
     })), React.createElement("input", {
       "className": 'btn',
       "type": 'submit',
@@ -214,12 +250,25 @@ getPost = function() {
 
 PostEdit = React.createClass({
   mixins: [new StoreWatchMixin(getPost)],
+  onEdit: function(post) {
+    if (this.isMounted()) {
+      return this.setState({
+        data: post
+      });
+    }
+  },
+  onSubmit: function(post) {
+    return AppActions.updatePost(post);
+  },
   render: function() {
-    console.log(this.state.data);
     return React.createElement("div", {
       "className": 'postModule'
-    }, React.createElement("h1", null, "Edit!"), React.createElement(PostEditForm, {
+    }, React.createElement("h1", null, "Edit!"), React.createElement(Post, {
       "data": this.state.data
+    }), React.createElement(PostEditForm, {
+      "data": this.state.data,
+      "onFormChange": this.onEdit,
+      "onFormSubmit": this.onSubmit
     }));
   }
 });
@@ -248,11 +297,8 @@ PostList = React.createClass({
     var posts;
     posts = this.props.data.map(function(post, i) {
       return React.createElement(Post, {
-        "title": post.title,
-        "content": post.content,
-        "key": i,
-        "id": post._id,
-        "index": post._id
+        "data": post,
+        "key": i
       });
     });
     return React.createElement("div", {
@@ -369,10 +415,10 @@ Post = React.createClass({
   render: function() {
     return React.createElement("div", {
       "className": "post"
-    }, React.createElement("h2", null, this.props.title), React.createElement("p", null, this.props.content), React.createElement(DeletePost, {
-      "index": this.props.id
+    }, React.createElement("h2", null, this.props.data.title), React.createElement("p", null, this.props.data.content), React.createElement(DeletePost, {
+      "index": this.props.data._id
     }), React.createElement(UpdatePost, {
-      "id": this.props.id
+      "id": this.props.data._id
     }));
   }
 });
@@ -500,6 +546,19 @@ module.exports = function() {
       });
       return deferred.promise;
     },
+    update: function(data) {
+      var deferred;
+      deferred = Q.defer();
+      console.log(data);
+      request.put('/api/posts').send(data).set('Accept', 'application/json').end(function(res) {
+        if (res.status === 200) {
+          return deferred.resolve(res.body);
+        } else {
+          return deferred.reject('Status code {res.status}');
+        }
+      });
+      return deferred.promise;
+    },
     "delete": function(postId) {
       var deferred;
       deferred = Q.defer();
@@ -565,7 +624,7 @@ module.exports = StoreWatchMixin;
 
 
 },{"../stores/app-store":14,"react":203}],14:[function(require,module,exports){
-var AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, merge, _addPost, _deletePost, _posts;
+var AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, merge, _addPost, _deletePost, _posts, _updatePost;
 
 AppConstants = require('../constants/app-constants');
 
@@ -579,12 +638,16 @@ _posts = require('../factory/app-factory')();
 
 CHANGE_EVENT = 'change';
 
-_deletePost = function(index) {
-  _posts["delete"](index);
-};
-
 _addPost = function(post) {
   _posts.post(post);
+};
+
+_updatePost = function(post) {
+  _posts.update(post);
+};
+
+_deletePost = function(index) {
+  _posts["delete"](index);
 };
 
 AppStore = merge(EventEmitter.prototype, {
@@ -606,6 +669,9 @@ AppStore = merge(EventEmitter.prototype, {
     switch (action.actionType) {
       case AppConstants.ADD_POST:
         _addPost(payload.action.post);
+        break;
+      case AppConstants.UPDATE_POST:
+        _updatePost(payload.action.post);
         break;
       case AppConstants.DELETE_POST:
         _deletePost(payload.action.index);

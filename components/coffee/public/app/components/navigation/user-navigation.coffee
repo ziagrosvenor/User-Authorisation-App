@@ -14,13 +14,12 @@ UserOptions = React.createClass
       'btn': true
       'btn-notify': this.props.status == 1
     <div className='userOptions'>
-      <button className={btnClasses} onClick={this.handleClick}>User</button>
+      <button className={btnClasses} onClick={this.handleClick}>Hi there, {@props.name}</button>
       <ul className={dropdownClasses}>
-        <li> {this.props.name} </li>
         <li> Messages: {this.props.messages} </li>
         <li> Logout </li>
       </ul>
-    </div>    
+    </div>
 
 UserNavigation = React.createClass
   getInitialState: ->
@@ -37,7 +36,7 @@ UserNavigation = React.createClass
     <nav className='nav'>
       <div className='page-wrapper'>
         <UserOptions 
-          name={this.state.name}
+          name={@props.user.firstName}
           messages={this.state.messages}
           status={this.state.status}
           dropdown={this.state.dropdown}

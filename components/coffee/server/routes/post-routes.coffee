@@ -52,5 +52,4 @@ module.exports = (Post, User) ->
     Post.findByIdAndRemove req.body.id, (err, result) ->
       if err
         return console.error(err)
-      console.log(result)
-    return
+      res.send(result)

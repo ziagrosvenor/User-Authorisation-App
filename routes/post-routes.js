@@ -64,11 +64,11 @@ module.exports = function(Post, User) {
       });
     },
     "delete": function(req, res) {
-      Post.findByIdAndRemove(req.body.id, function(err, result) {
+      return Post.findByIdAndRemove(req.body.id, function(err, result) {
         if (err) {
           return console.error(err);
         }
-        return console.log(result);
+        return res.send(result);
       });
     }
   };

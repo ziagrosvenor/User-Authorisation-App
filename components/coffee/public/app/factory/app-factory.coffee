@@ -43,4 +43,4 @@ module.exports = () ->
           deferred.resolve(res.body)
         else
           console.error('fail')
-      return deferred.promise
+    return deferred.promise

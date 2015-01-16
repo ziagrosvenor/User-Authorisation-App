@@ -1,4 +1,4 @@
-module.exports = function(Post) {
+module.exports = function(Post, User) {
   var Entities, entities, time;
   time = new Date;
   Entities = require('html-entities').XmlEntities;
@@ -14,9 +14,30 @@ module.exports = function(Post) {
         timestamp: time.getTime()
       });
       post.save(function(err) {
+        var item;
         if (err) {
           return console.error(err);
         }
+        if (!req.session) {
+          return;
+        }
+        item = {
+          type: 'Post created',
+          seen: false,
+          timestamp: time.getTime()
+        };
+        User.update({
+          email: req.session.username
+        }, {
+          $push: {
+            activity: item
+          }
+        }, function(err, data) {
+          if (err) {
+            return console.error(err);
+          }
+          return console.log(data);
+        });
       });
       console.log(post);
       return res.send(post);
@@ -30,6 +51,7 @@ module.exports = function(Post) {
       });
     },
     update: function(req, res) {
+      console.log(req.body);
       return Post.findOneAndUpdate({
         _id: req.body._id
       }, req.body, {
@@ -42,16 +64,11 @@ module.exports = function(Post) {
       });
     },
     "delete": function(req, res) {
-      Post.findById(req.body.id, function(err, posts) {
+      Post.findByIdAndRemove(req.body.id, function(err, result) {
         if (err) {
           return console.error(err);
         }
-        return posts.remove(function(err, post) {
-          if (err) {
-            return handleError(err);
-          }
-          return console.log('deleted');
-        });
+        return console.log(result);
       });
     }
   };

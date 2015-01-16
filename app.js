@@ -11,7 +11,7 @@ module.exports = function(Db) {
   Posts = Db.models.Posts;
   auth = require('./auth.js');
   userRoutes = require('./routes/user-routes')(User);
-  postRoutes = require('./routes/post-routes')(Posts);
+  postRoutes = require('./routes/post-routes')(Posts, User);
   passport = auth(User);
   app = express();
   app.set('view engine', 'jade');

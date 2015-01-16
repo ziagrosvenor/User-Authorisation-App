@@ -22,9 +22,9 @@ module.exports = (Db) ->
   # Module function returns passport instance.
   auth = require './auth.js'
 
-  # Modules returns user middlewares as methods
+  # Modules returns user and post route middlewares as methods
   userRoutes = require('./routes/user-routes')(User)
-  postRoutes = require('./routes/post-routes')(Posts)
+  postRoutes = require('./routes/post-routes')(Posts, User)
 
   passport = auth(User)
   app = express()

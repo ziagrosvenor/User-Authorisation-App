@@ -1,4 +1,4 @@
-module.exports = (Post) ->
+module.exports = (Post, User) ->
   # For timestamp
   time = new Date
   # For XML entity encoding. Preventing persisted XSS
@@ -16,6 +16,24 @@ module.exports = (Post) ->
     post.save (err) ->
       if err
         return console.error(err)
+      if !req.session
+        return
+      
+      item =
+        type: 'Post created'
+        seen: false
+        timestamp: time.getTime()
+
+      User.update email: req.session.username,
+        $push: 
+          activity: item
+              
+        (err, data) ->
+          if err
+            return console.error(err)
+          console.log(data)
+    
+      return
     console.log(post)
     res.send(post)
 
@@ -25,16 +43,14 @@ module.exports = (Post) ->
   	  	return console.error(err)
   	  res.send(posts)
   update: (req, res) ->
+    console.log(req.body)
     Post.findOneAndUpdate _id: req.body._id, req.body, upsert: true, (err, post) ->
       if err
         return console.error(err)
       res.send(post)
   delete: (req, res) ->
-    Post.findById req.body.id, (err, posts) ->
+    Post.findByIdAndRemove req.body.id, (err, result) ->
       if err
         return console.error(err)
-      posts.remove (err, post) ->
-        if err
-          return handleError(err)
-        console.log('deleted')
+      console.log(result)
     return

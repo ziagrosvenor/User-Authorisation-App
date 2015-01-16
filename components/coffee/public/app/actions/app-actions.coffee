@@ -10,9 +10,9 @@ AppActions =
         AppDispatcher.handleViewAction
             actionType: AppConstants.UPDATE_POST
             post: post
-    deletePost: (index) ->
+    deletePost: (id) ->
         AppDispatcher.handleViewAction
             actionType: AppConstants.DELETE_POST
-            index: index
+            id: id
 
 module.exports = AppActions

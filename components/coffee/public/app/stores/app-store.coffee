@@ -15,8 +15,8 @@ _updatePost = (post) ->
 	_posts.update(post)
 	return
 
-_deletePost = (index) ->
-	_posts.delete(index)
+_deletePost = (id) ->
+	_posts.delete(id)
 	return
 
 AppStore = merge EventEmitter.prototype,
@@ -36,7 +36,7 @@ AppStore = merge EventEmitter.prototype,
 		switch action.actionType
 			when AppConstants.ADD_POST then _addPost(payload.action.post)
 			when AppConstants.UPDATE_POST then _updatePost(payload.action.post)
-			when AppConstants.DELETE_POST then _deletePost(payload.action.index)
+			when AppConstants.DELETE_POST then _deletePost(payload.action.id)
 
 		AppStore.emitChange()
 		return true

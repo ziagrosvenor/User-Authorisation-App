@@ -5,7 +5,7 @@ Link = require('react-router-component').Link
 
 DeletePost = React.createClass
   handleClick: () ->
-    AppActions.deletePost(this.props.index)
+    AppActions.deletePost(this.props.id)
   render: () ->
     <div className='btn' onClick={this.handleClick}>X</div>
 
@@ -20,7 +20,7 @@ Post = React.createClass
     <div className="post">
       <h2>{this.props.data.title}</h2>
       <p>{this.props.data.content}</p>
-      <DeletePost index={this.props.data._id}/>
+      <DeletePost id={this.props.data._id}/>
       <UpdatePost id={this.props.data._id}/>
     </div>
 

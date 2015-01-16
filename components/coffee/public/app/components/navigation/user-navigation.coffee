@@ -13,18 +13,20 @@ UserOptions = React.createClass
     btnClasses = React.addons.classSet
       'btn': true
       'btn-notify': this.props.status == 1
+    if @props.activity
+      activity = Array.prototype.map.apply(@props.activity, [ (item, i) ->
+        <li key={i}> {item.type} </li>
+      ])
     <div className='userOptions'>
       <button className={btnClasses} onClick={this.handleClick}>Hi there, {@props.name}</button>
       <ul className={dropdownClasses}>
-        <li> Messages: {this.props.messages} </li>
+        {activity}
         <li> Logout </li>
       </ul>
     </div>
 
 UserNavigation = React.createClass
   getInitialState: ->
-    name: 'User'
-    messages: 3
     status: 1
     dropdown: false
   handleOptionsClick: ->
@@ -37,7 +39,7 @@ UserNavigation = React.createClass
       <div className='page-wrapper'>
         <UserOptions 
           name={@props.user.firstName}
-          messages={this.state.messages}
+          activity={@props.user.activity}
           status={this.state.status}
           dropdown={this.state.dropdown}
           onOptionsClick={this.handleOptionsClick}

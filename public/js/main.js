@@ -18,10 +18,10 @@ AppActions = {
       post: post
     });
   },
-  deletePost: function(index) {
+  deletePost: function(id) {
     return AppDispatcher.handleViewAction({
       actionType: AppConstants.DELETE_POST,
-      index: index
+      id: id
     });
   }
 };
@@ -124,7 +124,7 @@ UserOptions = React.createClass({
     return this.props.onOptionsClick();
   },
   render: function() {
-    var btnClasses, dropdownClasses;
+    var activity, btnClasses, dropdownClasses;
     dropdownClasses = React.addons.classSet({
       'is-hidden': this.props.dropdown === false
     });
@@ -132,6 +132,15 @@ UserOptions = React.createClass({
       'btn': true,
       'btn-notify': this.props.status === 1
     });
+    if (this.props.activity) {
+      activity = Array.prototype.map.apply(this.props.activity, [
+        function(item, i) {
+          return React.createElement("li", {
+            "key": i
+          }, " ", item.type, " ");
+        }
+      ]);
+    }
     return React.createElement("div", {
       "className": 'userOptions'
     }, React.createElement("button", {
@@ -139,15 +148,13 @@ UserOptions = React.createClass({
       "onClick": this.handleClick
     }, "Hi there, ", this.props.name), React.createElement("ul", {
       "className": dropdownClasses
-    }, React.createElement("li", null, " Messages: ", this.props.messages, " "), React.createElement("li", null, " Logout ")));
+    }, activity, React.createElement("li", null, " Logout ")));
   }
 });
 
 UserNavigation = React.createClass({
   getInitialState: function() {
     return {
-      name: 'User',
-      messages: 3,
       status: 1,
       dropdown: false
     };
@@ -167,7 +174,7 @@ UserNavigation = React.createClass({
       "className": 'page-wrapper'
     }, React.createElement(UserOptions, {
       "name": this.props.user.firstName,
-      "messages": this.state.messages,
+      "activity": this.props.user.activity,
       "status": this.state.status,
       "dropdown": this.state.dropdown,
       "onOptionsClick": this.handleOptionsClick
@@ -415,7 +422,7 @@ Link = require('react-router-component').Link;
 
 DeletePost = React.createClass({
   handleClick: function() {
-    return AppActions.deletePost(this.props.index);
+    return AppActions.deletePost(this.props.id);
   },
   render: function() {
     return React.createElement("div", {
@@ -439,7 +446,7 @@ Post = React.createClass({
     return React.createElement("div", {
       "className": "post"
     }, React.createElement("h2", null, this.props.data.title), React.createElement("p", null, this.props.data.content), React.createElement(DeletePost, {
-      "index": this.props.data._id
+      "id": this.props.data._id
     }), React.createElement(UpdatePost, {
       "id": this.props.data._id
     }));
@@ -697,8 +704,8 @@ _updatePost = function(post) {
   _posts.update(post);
 };
 
-_deletePost = function(index) {
-  _posts["delete"](index);
+_deletePost = function(id) {
+  _posts["delete"](id);
 };
 
 AppStore = merge(EventEmitter.prototype, {
@@ -728,7 +735,7 @@ AppStore = merge(EventEmitter.prototype, {
         _updatePost(payload.action.post);
         break;
       case AppConstants.DELETE_POST:
-        _deletePost(payload.action.index);
+        _deletePost(payload.action.id);
     }
     AppStore.emitChange();
     return true;

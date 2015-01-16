@@ -1,5 +1,10 @@
 module.exports = function(Schema) {
-  var UserSchema;
+  var Activity, UserSchema;
+  Activity = new Schema({
+    type: String,
+    seen: Boolean,
+    timestamp: Number
+  });
   UserSchema = new Schema({
     firstName: {
       type: String,
@@ -19,6 +24,7 @@ module.exports = function(Schema) {
       type: String,
       required: true
     },
+    activity: [Activity],
     timestamp: Number
   });
   return UserSchema;

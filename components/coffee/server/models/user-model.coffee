@@ -1,4 +1,8 @@
 module.exports = (Schema) ->
+    Activity = new Schema
+        type: String
+        seen: Boolean
+        timestamp: Number
     # Define scheme for user
     UserSchema = new Schema
         firstName:
@@ -15,6 +19,7 @@ module.exports = (Schema) ->
         password:
             type: String
             required: true
+        activity: [Activity]
         timestamp: Number   
 
     UserSchema

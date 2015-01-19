@@ -14,5 +14,8 @@ AppActions =
         AppDispatcher.handleViewAction
             actionType: AppConstants.DELETE_POST
             id: id
+    activitySeen: (id) ->
+        AppDispatcher.handleViewAction
+            actionType: AppConstants.ACTIVITY_SEEN
 
 module.exports = AppActions

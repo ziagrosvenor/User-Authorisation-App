@@ -4,6 +4,7 @@ merge = require 'react/lib/merge'
 EventEmitter = require('events').EventEmitter
 _posts = require('../factory/app-factory')()
 _user = require('../factory/user-factory')()
+_users = require('../factory/users-factory')()
 
 CHANGE_EVENT = 'change'
 
@@ -19,6 +20,10 @@ _deletePost = (id) ->
 	_posts.delete(id)
 	return
 
+_updateUserActivity = ->
+	_user.updateActivity()
+	return
+
 AppStore = merge EventEmitter.prototype,
 	emitChange: ->
 		this.emit(CHANGE_EVENT)
@@ -30,6 +35,8 @@ AppStore = merge EventEmitter.prototype,
 		return _posts.get()
 	getUser: () ->
 		return _user.get()
+	getUsers: () ->
+		return _users.get()		
 	dispatcherIndex: AppDispatcher.register (payload) ->
 		action = payload.action
 
@@ -37,6 +44,7 @@ AppStore = merge EventEmitter.prototype,
 			when AppConstants.ADD_POST then _addPost(payload.action.post)
 			when AppConstants.UPDATE_POST then _updatePost(payload.action.post)
 			when AppConstants.DELETE_POST then _deletePost(payload.action.id)
+			when AppConstants.ACTIVITY_SEEN then _updateUserActivity()
 
 		AppStore.emitChange()
 		return true

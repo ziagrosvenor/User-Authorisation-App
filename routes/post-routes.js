@@ -36,10 +36,8 @@ module.exports = function(Post, User) {
           if (err) {
             return console.error(err);
           }
-          return console.log(data);
         });
       });
-      console.log(post);
       return res.send(post);
     },
     read: function(req, res) {

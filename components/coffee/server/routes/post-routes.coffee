@@ -31,10 +31,8 @@ module.exports = (Post, User) ->
         (err, data) ->
           if err
             return console.error(err)
-          console.log(data)
     
       return
-    console.log(post)
     res.send(post)
 
   read: (req, res) ->

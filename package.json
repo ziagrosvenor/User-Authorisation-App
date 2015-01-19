@@ -45,6 +45,7 @@
     "helmet": "^0.5.4",
     "html-entities": "^1.1.1",
     "jade": "^1.8.2",
+    "lodash": "^2.4.1",
     "mongo": "^0.1.0",
     "mongoose": "^3.8.20",
     "passport": "^0.2.1",

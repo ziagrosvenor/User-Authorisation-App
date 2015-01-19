@@ -1,4 +1,3 @@
-`
 var Promise = require('es6-promise').Promise;
 var merge = require('react/lib/merge');
 
@@ -54,4 +53,3 @@ Dispatcher.prototype = merge(Dispatcher.prototype, {
 });
 
 module.exports = Dispatcher;
-`

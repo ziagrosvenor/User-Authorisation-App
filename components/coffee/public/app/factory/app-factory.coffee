@@ -23,7 +23,6 @@ module.exports = () ->
     return deferred.promise
   update: (data) ->
     deferred = Q.defer()
-    console.log(data)
     request.put('/api/posts')
       .send(data)
       .set('Accept', 'application/json')

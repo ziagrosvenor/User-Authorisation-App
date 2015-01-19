@@ -68,7 +68,35 @@ module.exports = (Db) ->
       return
     User.find email: req.session.username, (err, user) ->
       res.send(user)
-  
+
+  app.get '/api/users', (req, res) ->
+    if !req.session
+      return
+    User.find (err, users) ->
+      if err
+        console.error(err)
+        res.status(404)
+        res.send(success: false)
+      res.send(users)
+
+  app.put '/api/user', (req, res) ->
+    if !req.session
+      return
+
+    User.update
+      email: req.session.username,
+      "activity.seen": false,
+        $set:
+          "activity.$.seen": true
+      ,
+      upsert: false,
+      multi: true
+      (err, num) ->
+        if err 
+          return console.error(err)
+        console.log(num)
+        res.send(success: true)
+
   app.route '/api/posts'
     .get postRoutes.read
     .post postRoutes.create

@@ -61,6 +61,45 @@ module.exports = function(Db) {
       return res.send(user);
     });
   });
+  app.get('/api/users', function(req, res) {
+    if (!req.session) {
+      return;
+    }
+    return User.find(function(err, users) {
+      if (err) {
+        console.error(err);
+        res.status(404);
+        res.send({
+          success: false
+        });
+      }
+      return res.send(users);
+    });
+  });
+  app.put('/api/user', function(req, res) {
+    if (!req.session) {
+      return;
+    }
+    return User.update({
+      email: req.session.username,
+      "activity.seen": false
+    }, {
+      $set: {
+        "activity.$.seen": true
+      }
+    }, {
+      upsert: false,
+      multi: true
+    }, function(err, num) {
+      if (err) {
+        return console.error(err);
+      }
+      console.log(num);
+      return res.send({
+        success: true
+      });
+    });
+  });
   app.route('/api/posts').get(postRoutes.read).post(postRoutes.create).put(postRoutes.update)["delete"](postRoutes["delete"]);
   return app;
 };

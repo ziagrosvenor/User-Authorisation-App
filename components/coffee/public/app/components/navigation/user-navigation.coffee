@@ -3,22 +3,33 @@ React = require 'react/addons'
 AppActions = require '../../actions/app-actions'
 AppStore = require('../../stores/app-store')
 Link = require('react-router-component').Link
+_ = require 'lodash'
 
 UserOptions = React.createClass
+  getInitialState: ->
+    dropdown: false
   handleClick: ->
-    this.props.onOptionsClick()
+    AppActions.activitySeen()
+    if @isMounted()
+      @setState
+        dropdown: !this.state.dropdown
   render: () ->
+    unseen = _.find(@props.activity, seen: false)
+    if typeof unseen == 'object'
+      status = 1
     dropdownClasses = React.addons.classSet
-      'is-hidden': this.props.dropdown == false
+      'is-active': this.state.dropdown == true
+      'is-hidden': this.state.dropdown == false
     btnClasses = React.addons.classSet
       'btn': true
-      'btn-notify': this.props.status == 1
+      'btn-notify': status == 1
     if @props.activity
-      activity = Array.prototype.map.apply(@props.activity, [ (item, i) ->
-        <li key={i}> {item.type} </li>
-      ])
-    <div className='userOptions'>
-      <button className={btnClasses} onClick={this.handleClick}>Hi there, {@props.name}</button>
+      activity = _.map @props.activity, (item, i) ->
+        if i < 5
+          <li key={i}> {item.type} </li>
+
+    <div>
+      <button className={btnClasses} onClick={this.handleClick}>Activity</button>
       <ul className={dropdownClasses}>
         {activity}
         <li> Logout </li>
@@ -26,23 +37,12 @@ UserOptions = React.createClass
     </div>
 
 UserNavigation = React.createClass
-  getInitialState: ->
-    status: 1
-    dropdown: false
-  handleOptionsClick: ->
-    if this.isMounted()
-      this.setState
-        status: 0
-        dropdown: !this.state.dropdown
   render: () ->
     <nav className='nav'>
       <div className='page-wrapper'>
         <UserOptions 
           name={@props.user.firstName}
           activity={@props.user.activity}
-          status={this.state.status}
-          dropdown={this.state.dropdown}
-          onOptionsClick={this.handleOptionsClick}
         />
       </div>
     </nav>

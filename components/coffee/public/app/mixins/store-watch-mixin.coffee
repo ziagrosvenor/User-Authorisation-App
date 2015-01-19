@@ -1,8 +1,9 @@
 React = require 'react'
 AppStore = require '../stores/app-store'
 
-StoreWatchMixin = (cb) ->
+StoreWatchMixin = (cb, users) ->
   getData: cb
+  getUsers: users
   getInitialState: () ->
     data: []
   componentWillMount: () ->
@@ -11,7 +12,11 @@ StoreWatchMixin = (cb) ->
     AppStore.removeChangeListener(this._onChange)       
   _onChange: () ->
     this.getData()
+    if users
+      @getUsers()
   componentDidMount: () ->
     this.getData()
+    if users
+      @getUsers()
 
 module.exports = StoreWatchMixin

@@ -1,4 +1,4 @@
-.page-wrapper, .login-form, .signup-form {
+.page-wrapper, .login-form, .signup-form, .searchList .search-item {
   display: flex;
   justify-content: flex-start;
   flex-flow: row wrap; }
@@ -601,7 +601,42 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 .btn-notify {
   background-color: #e27c79 !important; }
 
+.iconNav {
+  width: 50px;
+  height: 50px;
+  margin: 15px 0;
+  fill: #000; }
+
+.isAlert {
+  fill: tomato !important; }
+
+.iconClose {
+  width: 30px;
+  height: 30px; }
+
 .nav {
+  background-color: #446CB3; }
+
+.is-active {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10; }
+
+.dropdown {
+  position: fixed;
+  z-index: 10;
+  top: 70px;
+  left: 15px;
+  background-color: #ddd;
+  padding: 10px; }
+
+.search {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
   background-color: #446CB3; }
 
 fieldset {
@@ -1004,12 +1039,13 @@ textarea, select[multiple] {
   width: 30%;
   margin: 1rem 0 1.5rem 0;
   padding-right: 0.5rem; }
-  .login-form .form-group label {
-    color: white;
-    font-size: 0.9rem;
-    font-weight: 300; }
   .login-form .form-group .btn {
     margin-top: 1.5rem; }
+
+.nav label {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 300; }
 
 .signup-form .signup-group label {
   display: block; }
@@ -1024,3 +1060,24 @@ textarea, select[multiple] {
 
 .name:nth-child(1) {
   padding-right: 0.5rem; }
+
+.search-bar {
+  margin: 5px auto;
+  width: 70%; }
+  .search-bar .iconClose {
+    position: absolute;
+    top: 30px;
+    left: 15px; }
+
+.searchList {
+  background-color: white; }
+  .searchList img {
+    width: 50px;
+    height: 50px; }
+  .searchList .search-item {
+    padding: 1rem; }
+    .searchList .search-item:hover {
+      color: white;
+      background-color: #6588c5; }
+    .searchList .search-item .item-details {
+      padding-left: 0.5rem; }

@@ -5,12 +5,17 @@ AppStore = require('../../stores/app-store')
 StoreWatchMixin = require '../../mixins/store-watch-mixin'
 Link = require('react-router-component').Link
 Post = require '../post-shared/post-item'
+DeletePost = require '../post-shared/delete-post-btn'
+EditPost = require '../post-shared/edit-btn'
 # AddPost = require '../components/app-updatepost'
 
 PostList = React.createClass
   render: ->
     posts = this.props.data.map (post, i) ->
-      <Post data={post} key={i}/>
+      <Post data={post} key={i}> 
+        <DeletePost id={post._id}/>
+        <EditPost id={post._id}/>
+      </Post> 
     <div className='postList'>
       {posts}
     </div>

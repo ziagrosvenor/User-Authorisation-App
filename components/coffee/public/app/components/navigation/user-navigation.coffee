@@ -1,11 +1,16 @@
 # @cjsx React.DOM
 React = require 'react/addons'
-AppActions = require '../../actions/app-actions'
-AppStore = require('../../stores/app-store')
-Link = require('react-router-component').Link
 _ = require 'lodash'
 
-UserOptions = React.createClass
+AppActions = require '../../actions/app-actions'
+AppStore = require('../../stores/app-store')
+
+Link = require('react-router-component').Link
+Search = require './search-users'
+IconSearch = require '../icons/search-icon'
+IconAlert = require '../icons/alert-icon'
+
+UserActivity = React.createClass
   getInitialState: ->
     dropdown: false
   handleClick: ->
@@ -18,33 +23,54 @@ UserOptions = React.createClass
     if typeof unseen == 'object'
       status = 1
     dropdownClasses = React.addons.classSet
+      'dropdown': true
       'is-active': this.state.dropdown == true
       'is-hidden': this.state.dropdown == false
-    btnClasses = React.addons.classSet
-      'btn': true
-      'btn-notify': status == 1
+    iconClasses = React.addons.classSet
+      'iconNav': true
+      'isAlert': status == 1
     if @props.activity
       activity = _.map @props.activity, (item, i) ->
         if i < 5
           <li key={i}> {item.type} </li>
 
     <div>
-      <button className={btnClasses} onClick={this.handleClick}>Activity</button>
+      <IconAlert className={iconClasses} onClick={this.handleClick}/>
       <ul className={dropdownClasses}>
         {activity}
-        <li> Logout </li>
       </ul>
+    </div>
+
+UserSearch = React.createClass
+  getInitialState: ->
+    dropdown: false
+  handleClick: ->
+    if @isMounted()
+      @setState
+        dropdown: !this.state.dropdown
+  render: () ->
+    dropdownClasses = React.addons.classSet
+      'search': true
+      'is-active': this.state.dropdown == true
+      'is-hidden': this.state.dropdown == false
+    iconClasses = React.addons.classSet
+      'iconNav': true
+    <div>
+      <IconSearch className={iconClasses} onClick={this.handleClick}/>
+      <div className={dropdownClasses}>
+        <Search users={@props.users} onIconClick={@handleClick}/>
+      </div>
     </div>
 
 UserNavigation = React.createClass
   render: () ->
     <nav className='nav'>
       <div className='page-wrapper'>
-        <UserOptions 
+        <UserActivity 
           name={@props.user.firstName}
           activity={@props.user.activity}
         />
+        <UserSearch users={@props.users}/>
       </div>
     </nav>
-
 module.exports = UserNavigation

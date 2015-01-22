@@ -11,13 +11,17 @@ Search = React.createClass
     if @props.users
       @props.users.map (user, i) ->
         username = user.firstName + ' ' + user.surname
-        if username.indexOf(searchTerm) > -1
+        if username.indexOf(searchTerm) > -1 and searchTerm isnt ''
           users.push(user)
 
     if @isMounted()
       @setState
         users: users
   handleClick: ->
+    @refs.searchField.getDOMNode().value = ''
+    if @isMounted()
+      @setState
+        users: []
     @props.onIconClick()
   render: ->
     userList = this.state.users.map (user, i) ->
@@ -33,7 +37,7 @@ Search = React.createClass
       <div className="form-group search-bar">
         <IconClose className="iconClose" onClick={@handleClick}/>
         <label>Search Users</label>
-        <input className="form-control" type="text" onChange={@handleChange}/>
+        <input className="form-control" type="text" ref='searchField' onChange={@handleChange}/>
         <ul className='searchList'>{userList}</ul>
       </div>
       

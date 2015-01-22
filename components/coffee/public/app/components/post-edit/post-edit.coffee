@@ -29,8 +29,14 @@ PostEditForm = React.createClass
     title = @refs.title.getDOMNode().value.trim()
     content = @refs.content.getDOMNode().value.trim()
 
-    if !title || !content
+    if !title and !content
       return
+
+    if !title
+      title = @props.data.title
+
+    if !content
+      content = @props.data.content 
 
     @props.onFormSubmit
       _id: @props.data._id

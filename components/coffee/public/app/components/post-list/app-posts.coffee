@@ -14,7 +14,7 @@ PostList = React.createClass
     posts = this.props.data.map (post, i) ->
       <Post data={post} key={i}> 
         <DeletePost id={post._id}/>
-        <EditPost id={post._id}/>
+        <EditPost id={post.id}/>
       </Post> 
     <div className='postList'>
       {posts}

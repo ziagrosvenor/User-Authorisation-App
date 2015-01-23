@@ -441,44 +441,35 @@ Post = require('../post-shared/post-item');
 
 PostEditForm = React.createClass({
   handleChange: function(e) {
-    var content, title;
+    var content, post, title;
     title = this.refs.title.getDOMNode().value;
     content = this.refs.content.getDOMNode().value;
-    if (title === '') {
-      title = this.props.data.title;
+    post = this.props.data;
+    if (title !== '') {
+      post['title'] = title;
     }
-    if (content === '') {
-      content = this.props.data.content;
+    if (content !== '') {
+      post['content'] = content;
     }
-    this.props.onFormChange({
-      _id: this.props.data._id,
-      userId: 'ldldlkd',
-      title: title,
-      content: content,
-      timestamp: this.props.data.timestamp
-    });
+    return this.props.onFormChange(post);
   },
   handleSubmit: function(e) {
-    var content, title;
+    var content, post, title;
     e.preventDefault();
     title = this.refs.title.getDOMNode().value.trim();
     content = this.refs.content.getDOMNode().value.trim();
+    post = this.props.data;
     if (!title && !content) {
       return;
     }
-    if (!title) {
-      title = this.props.data.title;
+    if (title) {
+      post['title'] = title;
     }
-    if (!content) {
-      content = this.props.data.content;
+    if (content) {
+      post['content'] = content;
     }
-    this.props.onFormSubmit({
-      _id: this.props.data._id,
-      userId: 'ldldlkd',
-      title: title,
-      content: content,
-      timestamp: this.props.data.timestamp
-    });
+    post['updated'] = Date.now();
+    this.props.onFormSubmit(post);
     this.refs.title.getDOMNode.value = '';
     this.refs.content.getDOMNode.value = '';
   },
@@ -507,25 +498,25 @@ PostEditForm = React.createClass({
   }
 });
 
-getPost = function() {
-  return AppStore.getPosts().then((function(_this) {
-    return function(result) {
-      var data, obj, _i, _len;
-      for (_i = 0, _len = result.length; _i < _len; _i++) {
-        obj = result[_i];
-        if (obj._id === _this.props.id) {
-          data = obj;
-        }
-      }
-      return _this.setState({
-        data: data
-      });
-    };
-  })(this));
+getPost = function(id) {
+  return AppStore.getPostById(id);
 };
 
 PostEdit = React.createClass({
-  mixins: [new StoreWatchMixin(getPost)],
+  getInitialState: function() {
+    return {
+      data: getPost(this.props.id)
+    };
+  },
+  componentWillMount: function() {
+    return AppStore.addChangeListener(this._onChange);
+  },
+  componentWillUnmount: function() {
+    return AppStore.removeChangeListener(this._onChange);
+  },
+  _onChange: function() {
+    return this.setState(getPost(this.props.id));
+  },
   onEdit: function(post) {
     if (this.isMounted()) {
       return this.setState({
@@ -582,7 +573,7 @@ PostList = React.createClass({
       }, React.createElement(DeletePost, {
         "id": post._id
       }), React.createElement(EditPost, {
-        "id": post._id
+        "id": post.id
       }));
     });
     return React.createElement("div", {
@@ -1027,7 +1018,7 @@ AJAXUtils.getCurrentUser();
 
 AJAXUtils.getCurrentUserPosts();
 
-SocketUtils.listenForCreatedPost();
+SocketUtils.listenForServerEvents();
 
 React.render(React.createElement(APP, null), document.getElementById('main'));
 
@@ -1109,8 +1100,12 @@ _addPost = function(newPost) {
   });
 };
 
-_updatePost = function(post) {
-  _posts.update(post);
+_updatePost = function(updatedPost) {
+  return posts.map(function(post, i) {
+    if (post.id === updatedPost.id) {
+      return posts[i] = updatedPost;
+    }
+  });
 };
 
 _deletePost = function(id) {
@@ -1142,6 +1137,16 @@ AppStore = merge(EventEmitter.prototype, {
   },
   getPosts: function() {
     return posts;
+  },
+  getPostById: function(id) {
+    var postToGet;
+    postToGet = {};
+    posts.forEach(function(post) {
+      if (post.id === id) {
+        return postToGet = post;
+      }
+    });
+    return postToGet;
   },
   getUsers: function() {
     return _users.get();
@@ -1270,9 +1275,12 @@ ServerActions = require('../actions/server-actions');
 socket = require('socket.io-client')();
 
 SocketUtils = {
-  listenForCreatedPost: function() {
-    return socket.on('post_saved', function(data) {
+  listenForServerEvents: function() {
+    socket.on('post_saved', function(data) {
       return ServerActions.recieveCreatedPost(data);
+    });
+    return socket.on('post_updated', function(data) {
+      return console.log(data);
     });
   }
 };

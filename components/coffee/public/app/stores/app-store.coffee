@@ -23,9 +23,10 @@ _addPost = (newPost) ->
 			posts[i] = newPost
 		return
 
-_updatePost = (post) ->
-	_posts.update(post)
-	return
+_updatePost = (updatedPost) ->
+	posts.map (post, i) ->
+		if post.id == updatedPost.id
+			posts[i] = updatedPost
 
 _deletePost = (id) ->
 	_posts.delete(id)
@@ -38,6 +39,7 @@ AppStore = merge EventEmitter.prototype,
 		this.on(CHANGE_EVENT, callback)
 	removeChangeListener: (callback) ->
 		this.removeListener(CHANGE_EVENT, callback)
+
 	getNewPostData: (post) ->
 		timestamp = Date.now()
 		id: 'p_' + timestamp
@@ -50,11 +52,22 @@ AppStore = merge EventEmitter.prototype,
 
 	getPosts: () ->
 		return posts
+
+	getPostById: (id) ->
+		postToGet = {}
+
+		posts.forEach (post) ->
+			if post.id == id
+				postToGet = post
+
+		return postToGet
+
 	getUsers: () ->
-		_users.get()		
+		_users.get()	
+
 	dispatcherIndex: AppDispatcher.register (payload) ->
 		action = payload.action
-
+		
 		switch action.actionType
 			when AppConstants.CREATE_POST then _addPost(payload.action.post)
 			when AppConstants.RECIEVE_POST then _addPost(payload.action.post)

@@ -7,43 +7,37 @@ Post = require '../post-shared/post-item'
 
 PostEditForm = React.createClass
   handleChange: (e) ->
-    title = this.refs.title.getDOMNode().value
-    content = this.refs.content.getDOMNode().value
+    title = @refs.title.getDOMNode().value
+    content = @refs.content.getDOMNode().value
+    post = @props.data
 
-    if title == '' 
-      title = @props.data.title
-    if content == ''
-      content = @props.data.content
+    if title isnt '' 
+      post['title'] = title
 
-    this.props.onFormChange
-      _id: @props.data._id
-      userId: 'ldldlkd'
-      title: title
-      content: content
-      timestamp: @props.data.timestamp
-    return
+    if content isnt ''
+      post['content'] = content
+
+    @props.onFormChange(post)
 
   handleSubmit: (e) ->
     e.preventDefault()
 
     title = @refs.title.getDOMNode().value.trim()
     content = @refs.content.getDOMNode().value.trim()
+    post = @props.data
 
     if !title and !content
       return
 
-    if !title
-      title = @props.data.title
+    if title
+      post['title'] = title
 
-    if !content
-      content = @props.data.content 
+    if content
+      post['content'] = content
 
-    @props.onFormSubmit
-      _id: @props.data._id
-      userId: 'ldldlkd'
-      title: title
-      content: content
-      timestamp: @props.data.timestamp
+    post['updated'] = Date.now()
+
+    @props.onFormSubmit(post)
 
     @refs.title.getDOMNode.value = ''
     @refs.content.getDOMNode.value = ''
@@ -63,23 +57,30 @@ PostEditForm = React.createClass
       <input className='btn' type='submit' value='Update'/>
     </form>
 
-getPost = ->
-  AppStore.getPosts().then (result) =>
-    for obj in result
-      if obj._id == this.props.id
-        data = obj
-
-    this.setState
-      data: data
+getPost = (id) ->
+  AppStore.getPostById(id)
       
 PostEdit = React.createClass
-  mixins: [new StoreWatchMixin(getPost)]
+  getInitialState: () ->
+    data: getPost(@props.id)
+
+  componentWillMount: () ->
+    AppStore.addChangeListener(this._onChange)
+
+  componentWillUnmount: () ->
+    AppStore.removeChangeListener(this._onChange) 
+
+  _onChange: () ->
+    @setState(getPost(@props.id))
+
   onEdit: (post) ->
     if @isMounted()
       this.setState
         data: post
+        
   onSubmit: (post) ->
     AppActions.updatePost(post)
+        
   render: ->
     <div className='postModule'>
       <h1>Edit!</h1>

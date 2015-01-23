@@ -6,6 +6,6 @@ React = require 'react'
 
 AJAXUtils.getCurrentUser()
 AJAXUtils.getCurrentUserPosts()
-SocketUtils.listenForCreatedPost()
+SocketUtils.listenForServerEvents()
 
 React.render <APP/>, document.getElementById('main')

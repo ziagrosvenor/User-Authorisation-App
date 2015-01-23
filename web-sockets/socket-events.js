@@ -8,7 +8,7 @@ time = new Date;
 
 module.exports = function(io, Posts, User) {
   return io.on('connection', function(socket) {
-    return socket.on('new_post', function(post) {
+    socket.on('new_post', function(post) {
       post = new Posts({
         id: post.id,
         authorId: post.authorId,
@@ -40,6 +40,18 @@ module.exports = function(io, Posts, User) {
           }
         });
         return socket.emit('post_saved', post);
+      });
+    });
+    return socket.on('update_post', function(post) {
+      return Posts.findOneAndUpdate({
+        _id: post._id
+      }, post, {
+        upsert: false
+      }, function(err, post) {
+        if (err) {
+          return console.error(err);
+        }
+        return socket.emit('post_updated', post);
       });
     });
   });

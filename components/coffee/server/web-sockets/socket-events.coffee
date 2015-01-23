@@ -33,3 +33,9 @@ module.exports = (io, Posts, User) ->
               return console.error(err)
 
         socket.emit 'post_saved', post
+
+    socket.on 'update_post', (post) ->
+      Posts.findOneAndUpdate _id: post._id, post, upsert: false, (err, post) ->
+        if err
+          return console.error(err)
+        socket.emit 'post_updated', post

@@ -73,4 +73,5 @@ UserNavigation = React.createClass
         <UserSearch users={@props.users}/>
       </div>
     </nav>
+    
 module.exports = UserNavigation

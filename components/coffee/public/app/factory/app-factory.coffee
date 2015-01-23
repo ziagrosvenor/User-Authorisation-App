@@ -1,7 +1,7 @@
 request = require 'superagent'
 Q = require 'q'
 
-module.exports = () ->
+module.exports =
   get: () ->
     deferred = Q.defer()
     request.get '/api/posts', (res) ->

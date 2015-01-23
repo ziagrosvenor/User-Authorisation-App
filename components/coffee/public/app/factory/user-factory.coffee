@@ -12,6 +12,7 @@ module.exports = ->
         deferred.reject('Status #{req.body.status}')
 
     return deferred.promise
+    
   updateActivity: ->
     deferred = Q.defer()
 

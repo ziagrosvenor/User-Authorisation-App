@@ -22,6 +22,10 @@ var coffeeRouteSources = [
   'components/coffee/server/routes/*.coffee',
 ];
 
+var coffeeSocketSources = [
+  'components/coffee/server/web-sockets/*.coffee',
+];
+
 var coffeeTestSources = [
   'components/coffee/test/*.coffee'
 ];
@@ -71,6 +75,10 @@ gulp.task('browser-sync', ['nodemon'], function () {
     // watch the following files; changes will be injected (css & images) or cause browser to refresh
     files: ['public/**/*.*', 'views/*.jade'],
 
+    ghostMode: {
+      links: false
+    },
+
     // informs browser-sync to proxy our expressjs app which would run at the following location
     proxy: 'http://localhost:3000',
 
@@ -116,6 +124,11 @@ gulp.task('coffee', function () {
     .on('error', gutil.log))
   .pipe(gulp.dest(__dirname + '/routes'));
 
+  gulp.src(coffeeSocketSources)
+  .pipe(coffee({ bare: true })
+    .on('error', gutil.log))
+  .pipe(gulp.dest(__dirname + '/web-sockets'));
+
   gulp.src(coffeeTestSources)
     .pipe(coffee({ bare: true })
       .on('error', gutil.log))
@@ -132,6 +145,8 @@ gulp.task('watch', function() {
 	gulp.watch(sassSources, ['sass']);
 	gulp.watch(coffeeServerSources, ['coffee']);
   gulp.watch(coffeePublicSources, ['coffee']);
+  gulp.watch(coffeeRouteSources, ['coffee']);
+  gulp.watch(coffeeSocketSources, ['coffee']);
   gulp.watch('components/coffee/public/app/**/**.coffee', ['browserify']);
 	gulp.watch(coffeeDataSources, ['coffee']);
   gulp.watch(coffeeTestSources, ['coffee']);

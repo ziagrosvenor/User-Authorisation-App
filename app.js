@@ -1,17 +1,14 @@
 module.exports = function(Db) {
-  var MongoStore, Posts, User, app, auth, bodyParser, cookieParser, express, helmet, passport, postRoutes, session, time, userRoutes;
+  var MongoStore, Posts, User, app, auth, bodyParser, cookieParser, express, helmet, http, io, passport, postRoutes, session, sessionStore, socketEvents, userRoutes;
   express = require('express');
   session = require('express-session');
   cookieParser = require('cookie-parser');
   bodyParser = require('body-parser');
   MongoStore = require('connect-mongo')(session);
   helmet = require('helmet');
-  time = new Date;
   User = Db.models.User;
   Posts = Db.models.Posts;
   auth = require('./auth.js');
-  userRoutes = require('./routes/user-routes')(User);
-  postRoutes = require('./routes/post-routes')(Posts, User);
   passport = auth(User);
   app = express();
   app.set('view engine', 'jade');
@@ -33,16 +30,28 @@ module.exports = function(Db) {
   app.use(helmet.xssFilter({
     setOnOldIE: true
   }));
-  app.use(passport.initialize());
-  app.use(passport.session());
-  app.use(session({
+  sessionStore = session({
     secret: '73f70b7v9s',
     resave: true,
     saveUninitialized: true,
     store: new MongoStore({
       mongoose_connection: Db.con
     })
-  }));
+  });
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(sessionStore);
+  http = require('http').Server(app);
+  io = require('socket.io')(http);
+  userRoutes = require('./routes/user-routes')(User);
+  postRoutes = require('./routes/post-routes')(Posts, User);
+  io.use(function(socket, next) {
+    if (socket.request.headers.cookie) {
+      return next();
+    }
+    return next(new Error('authentication error'));
+  });
+  socketEvents = require('./web-sockets/socket-events')(io, Posts, User);
   app.get('/', function(req, res) {
     return res.render('index');
   });
@@ -55,7 +64,7 @@ module.exports = function(Db) {
     if (!req.session) {
       return;
     }
-    return User.find({
+    return User.findOne({
       email: req.session.username
     }, function(err, user) {
       return res.send(user);
@@ -101,5 +110,5 @@ module.exports = function(Db) {
     });
   });
   app.route('/api/posts').get(postRoutes.read).post(postRoutes.create).put(postRoutes.update)["delete"](postRoutes["delete"]);
-  return app;
+  return http;
 };

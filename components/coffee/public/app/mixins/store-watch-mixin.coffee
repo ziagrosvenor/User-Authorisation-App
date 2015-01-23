@@ -2,20 +2,18 @@ React = require 'react'
 AppStore = require '../stores/app-store'
 
 StoreWatchMixin = (cb, users) ->
-  getData: cb
   getUsers: users
   getInitialState: () ->
-    data: []
+    cb()
   componentWillMount: () ->
     AppStore.addChangeListener(this._onChange)
   componentWillUnmount: () ->
     AppStore.removeChangeListener(this._onChange)       
   _onChange: () ->
-    this.getData()
+    @setState(cb())
     if users
       @getUsers()
   componentDidMount: () ->
-    this.getData()
     if users
       @getUsers()
 

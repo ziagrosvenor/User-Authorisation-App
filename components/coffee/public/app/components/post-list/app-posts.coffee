@@ -31,7 +31,6 @@ PostForm = React.createClass
       return
 
     this.props.onPostSubmit
-      userId: 'ldldlkd'
       title: title
       content: content
 
@@ -51,11 +50,8 @@ PostForm = React.createClass
     </form>
 
 getPosts = ->
-  AppStore.getPosts().then (result) =>        
-    if this.isMounted()
-      this.setState
-        data: result
-
+  posts: AppStore.getPosts()     
+  
 PostModule = React.createClass
   mixins: [new StoreWatchMixin(getPosts)]
   handlePostSubmit: (post) ->
@@ -64,7 +60,7 @@ PostModule = React.createClass
     <div className="postModule">
       <h1>Posts!</h1>
       <PostForm onPostSubmit={this.handlePostSubmit} />
-      <PostList data={this.state.data} />
+      <PostList data={this.state.posts} />
     </div>
 
 module.exports = PostModule

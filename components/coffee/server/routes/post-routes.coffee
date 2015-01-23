@@ -36,12 +36,11 @@ module.exports = (Post, User) ->
     res.send(post)
 
   read: (req, res) ->
-    Post.find (err, posts) ->
+    Post.find authorEmail: req.session.username, (err, posts) ->
   	  if err
   	  	return console.error(err)
   	  res.send(posts)
   update: (req, res) ->
-    console.log(req.body)
     Post.findOneAndUpdate _id: req.body._id, req.body, upsert: true, (err, post) ->
       if err
         return console.error(err)

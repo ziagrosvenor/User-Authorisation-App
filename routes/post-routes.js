@@ -41,7 +41,9 @@ module.exports = function(Post, User) {
       return res.send(post);
     },
     read: function(req, res) {
-      return Post.find(function(err, posts) {
+      return Post.find({
+        authorEmail: req.session.username
+      }, function(err, posts) {
         if (err) {
           return console.error(err);
         }
@@ -49,7 +51,6 @@ module.exports = function(Post, User) {
       });
     },
     update: function(req, res) {
-      console.log(req.body);
       return Post.findOneAndUpdate({
         _id: req.body._id
       }, req.body, {

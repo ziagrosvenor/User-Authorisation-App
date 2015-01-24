@@ -1,12 +1,22 @@
 React = require 'react'
-Nav = require './navigation/user-navigation.coffee'
-Search = require './navigation/search-users.coffee'
+UserStore = require '../stores/user-store'
+UsersStore = require '../stores/users-store'
+StoreWatchMixin = require '../mixins/store-watch-mixin'
+Nav = require './navigation/user-navigation'
+Search = require './navigation/search-users'
 Link = require('react-router-component').Link
 
+getCurrentUser = ->
+  currentUser: UserStore.getUser()
+
+getAllUsers = ->
+  otherUsers: UsersStore.getAllUsers()
+
 Template = React.createClass
+  mixins: [new StoreWatchMixin(getCurrentUser, getAllUsers)]
   render: ->
     <div>
-      <Nav user={@props.user} users={@props.users}/>
+      <Nav user={@state.currentUser} users={@state.otherUsers}/>
       <div>
         {this.props.children}
       </div>

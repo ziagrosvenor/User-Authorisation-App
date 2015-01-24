@@ -13,13 +13,17 @@ IconAlert = require '../icons/alert-icon'
 UserActivity = React.createClass
   getInitialState: ->
     dropdown: false
+
   handleClick: ->
-    AppActions.activitySeen()
     if @isMounted()
       @setState
         dropdown: !this.state.dropdown
-  render: () ->
+
+    AppActions.activitySeen()
+
+  render: ->
     unseen = _.find(@props.activity, seen: false)
+    console.log unseen
     if typeof unseen == 'object'
       status = 1
     dropdownClasses = React.addons.classSet
@@ -48,7 +52,8 @@ UserSearch = React.createClass
     if @isMounted()
       @setState
         dropdown: !this.state.dropdown
-  render: () ->
+
+  render: ->
     dropdownClasses = React.addons.classSet
       'search': true
       'is-active': this.state.dropdown == true
@@ -63,7 +68,7 @@ UserSearch = React.createClass
     </div>
 
 UserNavigation = React.createClass
-  render: () ->
+  render: ->
     <nav className='nav'>
       <div className='page-wrapper'>
         <UserActivity 

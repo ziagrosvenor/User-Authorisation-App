@@ -6,6 +6,6 @@ SocketUtils =
     socket.on 'post_saved', (data) ->
       ServerActions.recieveCreatedPost(data)
     socket.on 'post_updated', (data) ->
-      console.log data
+      ServerActions.recieveUpdatedPost(data)
 
 module.exports = SocketUtils

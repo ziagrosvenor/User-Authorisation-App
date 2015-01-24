@@ -1,20 +1,23 @@
 React = require 'react'
 AppStore = require '../stores/app-store'
 
-StoreWatchMixin = (cb, users) ->
-  getUsers: users
-  getInitialState: () ->
+StoreWatchMixin = (cb, cbTwo) ->
+  getInitialState: ->
     cb()
-  componentWillMount: () ->
+
+  componentWillMount: ->
     AppStore.addChangeListener(this._onChange)
-  componentWillUnmount: () ->
-    AppStore.removeChangeListener(this._onChange)       
-  _onChange: () ->
+
+  componentWillUnmount: ->
+    AppStore.removeChangeListener(this._onChange)  
+         
+  _onChange: ->
     @setState(cb())
-    if users
-      @getUsers()
-  componentDidMount: () ->
-    if users
-      @getUsers()
+    if cbTwo
+      @setState(cbTwo())
+
+  componentDidMount: ->
+    if cbTwo
+      @setState(cbTwo())
 
 module.exports = StoreWatchMixin

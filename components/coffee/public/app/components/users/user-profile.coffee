@@ -3,19 +3,11 @@ AppStore = require '../../stores/app-store'
 StoreWatchMixin = require '../../mixins/store-watch-mixin'
 _ = require 'lodash'
 
-getUser = ->
-  AppStore.getUser().then (data) =>
-    for obj in data
-      user = obj
-    if @isMounted()
-      @setState
-        data: user
+getCurrentUser = ->
+  currentUser: UserStore.getUser()
 
 getAllUsers = ->
-  AppStore.getUsers().then (users) =>
-    if @isMounted()
-      @setState
-        users: users
+  otherUsers: UsersStore.getAllUsers()
 
 UserProfile = React.createClass
   mixins: [new StoreWatchMixin(getUser, getAllUsers)]
@@ -29,7 +21,7 @@ UserProfile = React.createClass
             <li key={i}>{item.type} on {new Date(item.timestamp).getHours()}</li>
 
           <div>
-            <h1> {user.firstName} {user.surname} </h1>
+            <h1>{user.firstName} {user.surname}</h1>
             <p>Joined in {new Date(user.timestamp).getFullYear()}</p>
             <ul>{activity}</ul>
           </div>

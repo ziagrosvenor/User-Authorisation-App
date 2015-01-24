@@ -721,7 +721,7 @@ module.exports = Post;
 
 
 },{"react":219,"react-router-component":37}],15:[function(require,module,exports){
-var AppStore, React, StoreWatchMixin, UserProfile, getAllUsers, getUser, _;
+var AppStore, React, StoreWatchMixin, UserProfile, getAllUsers, getCurrentUser, _;
 
 React = require('react');
 
@@ -731,33 +731,16 @@ StoreWatchMixin = require('../../mixins/store-watch-mixin');
 
 _ = require('lodash');
 
-getUser = function() {
-  return AppStore.ge3tUser().then((function(_this) {
-    return function(data) {
-      var obj, user, _i, _len;
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        obj = data[_i];
-        user = obj;
-      }
-      if (_this.isMounted()) {
-        return _this.setState({
-          data: user
-        });
-      }
-    };
-  })(this));
+getCurrentUser = function() {
+  return {
+    currentUser: UserStore.getUser()
+  };
 };
 
 getAllUsers = function() {
-  return AppStore.getUsers().then((function(_this) {
-    return function(users) {
-      if (_this.isMounted()) {
-        return _this.setState({
-          users: users
-        });
-      }
-    };
-  })(this));
+  return {
+    otherUsers: UsersStore.getAllUsers()
+  };
 };
 
 UserProfile = React.createClass({
@@ -1157,9 +1140,6 @@ AppStore = merge(EventEmitter.prototype, {
       }
     });
     return postToGet;
-  },
-  getUsers: function() {
-    return _users.get();
   },
   dispatcherIndex: AppDispatcher.register(function(payload) {
     var action;

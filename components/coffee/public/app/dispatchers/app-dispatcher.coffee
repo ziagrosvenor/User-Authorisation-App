@@ -11,4 +11,4 @@ AppDispatcher = merge Dispatcher.prototype,
       source: 'SERVER_ACTION'
       action: action
       
-module.exports = AppDispatcher;
+module.exports = AppDispatcher

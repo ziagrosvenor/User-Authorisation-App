@@ -4,8 +4,7 @@ AJAXUtils = require './web-api-utils/ajax-utils'
 SocketUtils = require './web-api-utils/websocket-utils'
 React = require 'react'
 
-AJAXUtils.getCurrentUser()
-AJAXUtils.getCurrentUserPosts()
+AJAXUtils.getInitialData()
 SocketUtils.listenForServerEvents()
 
 React.render <APP/>, document.getElementById('main')

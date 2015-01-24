@@ -64,9 +64,6 @@ AppStore = merge EventEmitter.prototype,
 
 		return postToGet
 
-	getUsers: () ->
-		_users.get()	
-
 	dispatcherIndex: AppDispatcher.register (payload) ->
 		action = payload.action
 		

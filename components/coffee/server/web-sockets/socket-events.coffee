@@ -39,3 +39,9 @@ module.exports = (io, Posts, User) ->
         if err
           return console.error(err)
         socket.emit 'post_updated', post
+
+    socket.on 'delete_post', (id) ->
+      Posts.findByIdAndRemove id, (err, result) ->
+        if err
+          return console.error(err)
+        socket.emit 'post_deleted'

@@ -4,7 +4,7 @@ UserStore = require './user-store'
 merge = require 'react/lib/merge'
 EventEmitter = require('events').EventEmitter
 _posts = require '../factory/app-factory'
-_users = require('../factory/users-factory')()
+_users = require '../factory/users-factory'
 
 CHANGE_EVENT = 'change'
 
@@ -29,8 +29,10 @@ _updatePost = (updatedPost) ->
 			posts[i] = updatedPost
 
 _deletePost = (id) ->
-	_posts.delete(id)
-	return
+	posts.map (post, i) ->
+		if post._id is id
+			posts.splice(i, 1)
+			return
 
 AppStore = merge EventEmitter.prototype,
 	emitChange: ->
@@ -69,11 +71,12 @@ AppStore = merge EventEmitter.prototype,
 		action = payload.action
 		
 		switch action.actionType
-			when AppConstants.CREATE_POST then _addPost(payload.action.post)
-			when AppConstants.RECIEVE_POST then _addPost(payload.action.post)
-			when AppConstants.UPDATE_POST then _updatePost(payload.action.post)
-			when AppConstants.DELETE_POST then _deletePost(payload.action.id)
-			when AppConstants.RECIEVE_POSTS then _addPosts(payload.action.posts)	
+			when AppConstants.RECIEVE_POSTS then _addPosts(payload.action.posts)
+			when AppConstants.VIEW_CREATE_POST then _addPost(payload.action.post)
+			when AppConstants.RECIEVE_CREATED_POST then _addPost(payload.action.post)
+			when AppConstants.VIEW_UPDATE_POST then _updatePost(payload.action.post)
+			when AppConstants.RECIEVE_UPDATED_POST then _updatePost(payload.action.post)
+			when AppConstants.VIEW_DELETE_POST then _deletePost(payload.action.id)
 
 		AppStore.emitChange()
 		return true

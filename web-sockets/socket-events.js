@@ -42,7 +42,7 @@ module.exports = function(io, Posts, User) {
         return socket.emit('post_saved', post);
       });
     });
-    return socket.on('update_post', function(post) {
+    socket.on('update_post', function(post) {
       return Posts.findOneAndUpdate({
         _id: post._id
       }, post, {
@@ -52,6 +52,14 @@ module.exports = function(io, Posts, User) {
           return console.error(err);
         }
         return socket.emit('post_updated', post);
+      });
+    });
+    return socket.on('delete_post', function(id) {
+      return Posts.findByIdAndRemove(id, function(err, result) {
+        if (err) {
+          return console.error(err);
+        }
+        return socket.emit('post_deleted');
       });
     });
   });

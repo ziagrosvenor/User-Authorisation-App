@@ -10,7 +10,7 @@ getAllUsers = ->
   otherUsers: UsersStore.getAllUsers()
 
 UserProfile = React.createClass
-  mixins: [new StoreWatchMixin(getUser, getAllUsers)]
+  mixins: [new StoreWatchMixin(getCurrentUser, getAllUsers)]
   render: ->
     if @state.users and @props.id
       users = @state.users

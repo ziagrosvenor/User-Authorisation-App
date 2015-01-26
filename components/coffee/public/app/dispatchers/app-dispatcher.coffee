@@ -1,7 +1,7 @@
-Dispatcher = require './dispatcher'
-assign = require 'object-assign'
+Dispatcher = require('flux').Dispatcher
+assign = require('object-assign')
 
-AppDispatcher = assign {}, Dispatcher.prototype,
+AppDispatcher = assign new Dispatcher(),
   handleViewAction: (action) ->
     this.dispatch
       source: 'VIEW_ACTION'

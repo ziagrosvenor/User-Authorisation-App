@@ -1,9 +1,7 @@
 pathToApp = '../components/coffee/public/app/'
 jest.dontMock(pathToApp + 'stores/app-store')
 jest.dontMock(pathToApp + 'constants/app-constants')
-jest.dontMock('react/lib/merge')
 jest.dontMock('object-assign')
-jest.dontMock('es6-promise')
 
 describe 'PostStore', ->
   AppConstants = require(pathToApp + 'constants/app-constants')
@@ -23,7 +21,6 @@ describe 'PostStore', ->
       content: 'test'
 
   beforeEach () ->
-    Dispatcher = require(pathToApp + 'dispatchers/dispatcher')
     AppDispatcher = require(pathToApp + 'dispatchers/app-dispatcher')
     PostStore = require(pathToApp + 'stores/app-store')
     callback = AppDispatcher.register.mock.calls[0][0]

@@ -3,8 +3,6 @@ AppDispatcher = require '../dispatchers/app-dispatcher'
 UserStore = require './user-store'
 assign = require 'object-assign'
 EventEmitter = require('events').EventEmitter
-_posts = require '../factory/app-factory'
-_users = require '../factory/users-factory'
 
 CHANGE_EVENT = 'change'
 

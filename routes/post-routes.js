@@ -54,7 +54,7 @@ module.exports = function(Post, User) {
       return Post.findOneAndUpdate({
         _id: req.body._id
       }, req.body, {
-        upsert: true
+        upsert: false
       }, function(err, post) {
         if (err) {
           return console.error(err);

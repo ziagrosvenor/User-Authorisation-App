@@ -13,9 +13,10 @@ _addPosts = (rawPosts) ->
 		posts.push(post)
 
 _addPost = (newPost) ->
-	if !newPost._id
+	if !newPost._id or posts.length is 0
 		posts.push(newPost)
 		return
+
 	posts.map (post, i) ->
 		if post.id == newPost.id
 			posts[i] = newPost

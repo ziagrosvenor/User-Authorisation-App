@@ -22,8 +22,6 @@ _addActivity = (type) ->
   activity = _.map user.activity, (activityItem) ->
     return activityItem
 
-  console.log 'passed map'
-
   newActivity = 
     type: type
     seen: false

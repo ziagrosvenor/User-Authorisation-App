@@ -1017,7 +1017,7 @@ _addPosts = function(rawPosts) {
 };
 
 _addPost = function(newPost) {
-  if (!newPost._id) {
+  if (!newPost._id || posts.length === 0) {
     posts.push(newPost);
     return;
   }
@@ -1146,7 +1146,6 @@ _addActivity = function(type) {
   activity = _.map(user.activity, function(activityItem) {
     return activityItem;
   });
-  console.log('passed map');
   newActivity = {
     type: type,
     seen: false,

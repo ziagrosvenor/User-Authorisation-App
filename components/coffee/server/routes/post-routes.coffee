@@ -41,7 +41,7 @@ module.exports = (Post, User) ->
   	  	return console.error(err)
   	  res.send(posts)
   update: (req, res) ->
-    Post.findOneAndUpdate _id: req.body._id, req.body, upsert: true, (err, post) ->
+    Post.findOneAndUpdate _id: req.body._id, req.body, upsert: false, (err, post) ->
       if err
         return console.error(err)
       res.send(post)

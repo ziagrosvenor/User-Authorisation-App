@@ -1,6 +1,5 @@
 AppConstants = require '../constants/app-constants'
 AppDispatcher = require '../dispatchers/app-dispatcher'
-merge = require 'react/lib/merge'
 EventEmitter = require('events').EventEmitter
 assign = require 'object-assign'
 _ = require 'lodash'
@@ -17,7 +16,22 @@ _addUser = (userData) ->
 _userActivitySeen = ->
   user.activity = _.map user.activity, (activity) ->
     activity.seen = true
-    return activity 
+    return activity
+
+_addActivity = (type) ->
+  activity = _.map user.activity, (activityItem) ->
+    return activityItem
+
+  console.log 'passed map'
+
+  newActivity = 
+    type: type
+    seen: false
+    timestamp: Date.now()
+
+  activity.push(newActivity)
+
+  user['activity'] = activity
 
 UserStore = assign {}, EventEmitter.prototype,
   
@@ -42,10 +56,11 @@ UserStore = assign {}, EventEmitter.prototype,
 
 UserStore.dispatcherIndex = AppDispatcher.register (payload) ->
   action = payload.action
-  
+  console.log payload
   switch action.actionType
     when actionTypes.RECIEVE_USER then _addUser(payload.action.user)
     when actionTypes.ACTIVITY_SEEN then _userActivitySeen()
+    when actionTypes.RECIEVE_CREATED_POST then _addActivity('post added')  
 
   UserStore.emitChange()
   return true

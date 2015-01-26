@@ -350,7 +350,6 @@ UserActivity = React.createClass({
     unseen = _.find(this.props.activity, {
       seen: false
     });
-    console.log(unseen);
     if (typeof unseen === 'object') {
       status = 1;
     }
@@ -744,7 +743,7 @@ getAllUsers = function() {
 };
 
 UserProfile = React.createClass({
-  mixins: [new StoreWatchMixin(getUser, getAllUsers)],
+  mixins: [new StoreWatchMixin(getCurrentUser, getAllUsers)],
   render: function() {
     var id, user, users;
     if (this.state.users && this.props.id) {
@@ -788,13 +787,13 @@ module.exports = {
 
 
 },{}],17:[function(require,module,exports){
-var AppDispatcher, Dispatcher, merge;
+var AppDispatcher, Dispatcher, assign;
 
 Dispatcher = require('./dispatcher');
 
-merge = require('react/lib/merge');
+assign = require('object-assign');
 
-AppDispatcher = merge(Dispatcher.prototype, {
+AppDispatcher = assign({}, Dispatcher.prototype, {
   handleViewAction: function(action) {
     return this.dispatch({
       source: 'VIEW_ACTION',
@@ -813,7 +812,7 @@ module.exports = AppDispatcher;
 
 
 
-},{"./dispatcher":18,"react/lib/merge":207}],18:[function(require,module,exports){
+},{"./dispatcher":18,"object-assign":33}],18:[function(require,module,exports){
 var Promise = require('es6-promise').Promise;
 var merge = require('react/lib/merge');
 
@@ -868,7 +867,11 @@ Dispatcher.prototype = merge(Dispatcher.prototype, {
 
 });
 
-module.exports = Dispatcher;
+module.exports = Dispatcher;;
+
+
+
+
 },{"es6-promise":29,"react/lib/merge":207}],19:[function(require,module,exports){
 var Q, request;
 
@@ -1051,7 +1054,7 @@ module.exports = StoreWatchMixin;
 
 
 },{"../stores/app-store":24,"react":219}],24:[function(require,module,exports){
-var AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, UserStore, merge, posts, _addPost, _addPosts, _deletePost, _posts, _updatePost, _users;
+var AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, UserStore, assign, posts, _addPost, _addPosts, _deletePost, _posts, _updatePost, _users;
 
 AppConstants = require('../constants/app-constants');
 
@@ -1059,7 +1062,7 @@ AppDispatcher = require('../dispatchers/app-dispatcher');
 
 UserStore = require('./user-store');
 
-merge = require('react/lib/merge');
+assign = require('object-assign');
 
 EventEmitter = require('events').EventEmitter;
 
@@ -1105,7 +1108,7 @@ _deletePost = function(id) {
   });
 };
 
-AppStore = merge(EventEmitter.prototype, {
+AppStore = assign({}, EventEmitter.prototype, {
   emitChange: function() {
     return this.emit(CHANGE_EVENT);
   },
@@ -1172,14 +1175,12 @@ module.exports = AppStore;
 
 
 
-},{"../constants/app-constants":16,"../dispatchers/app-dispatcher":17,"../factory/app-factory":19,"../factory/users-factory":21,"./user-store":25,"events":30,"react/lib/merge":207}],25:[function(require,module,exports){
-var AppConstants, AppDispatcher, CHANGE_EVENT, EventEmitter, UserStore, actionTypes, assign, merge, user, _, _addUser, _userActivitySeen;
+},{"../constants/app-constants":16,"../dispatchers/app-dispatcher":17,"../factory/app-factory":19,"../factory/users-factory":21,"./user-store":25,"events":30,"object-assign":33}],25:[function(require,module,exports){
+var AppConstants, AppDispatcher, CHANGE_EVENT, EventEmitter, UserStore, actionTypes, assign, user, _, _addActivity, _addUser, _userActivitySeen;
 
 AppConstants = require('../constants/app-constants');
 
 AppDispatcher = require('../dispatchers/app-dispatcher');
-
-merge = require('react/lib/merge');
 
 EventEmitter = require('events').EventEmitter;
 
@@ -1202,6 +1203,21 @@ _userActivitySeen = function() {
     activity.seen = true;
     return activity;
   });
+};
+
+_addActivity = function(type) {
+  var activity, newActivity;
+  activity = _.map(user.activity, function(activityItem) {
+    return activityItem;
+  });
+  console.log('passed map');
+  newActivity = {
+    type: type,
+    seen: false,
+    timestamp: Date.now()
+  };
+  activity.push(newActivity);
+  return user['activity'] = activity;
 };
 
 UserStore = assign({}, EventEmitter.prototype, {
@@ -1231,12 +1247,16 @@ UserStore = assign({}, EventEmitter.prototype, {
 UserStore.dispatcherIndex = AppDispatcher.register(function(payload) {
   var action;
   action = payload.action;
+  console.log(payload);
   switch (action.actionType) {
     case actionTypes.RECIEVE_USER:
       _addUser(payload.action.user);
       break;
     case actionTypes.ACTIVITY_SEEN:
       _userActivitySeen();
+      break;
+    case actionTypes.RECIEVE_CREATED_POST:
+      _addActivity('post added');
   }
   UserStore.emitChange();
   return true;
@@ -1246,7 +1266,7 @@ module.exports = UserStore;
 
 
 
-},{"../constants/app-constants":16,"../dispatchers/app-dispatcher":17,"events":30,"lodash":32,"object-assign":33,"react/lib/merge":207}],26:[function(require,module,exports){
+},{"../constants/app-constants":16,"../dispatchers/app-dispatcher":17,"events":30,"lodash":32,"object-assign":33}],26:[function(require,module,exports){
 var AppConstants, AppDispatcher, CHANGE_EVENT, EventEmitter, UsersStore, actionTypes, assign, merge, users, _addUsers;
 
 AppConstants = require('../constants/app-constants');

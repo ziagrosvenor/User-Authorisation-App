@@ -23,7 +23,7 @@ UserActivity = React.createClass
 
   render: ->
     unseen = _.find(@props.activity, seen: false)
-    console.log unseen
+    
     if typeof unseen == 'object'
       status = 1
     dropdownClasses = React.addons.classSet
@@ -48,6 +48,7 @@ UserActivity = React.createClass
 UserSearch = React.createClass
   getInitialState: ->
     dropdown: false
+
   handleClick: ->
     if @isMounted()
       @setState

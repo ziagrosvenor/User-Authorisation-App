@@ -1,15 +1,15 @@
 module.exports = function(Db) {
-  var MongoStore, Posts, User, app, auth, bodyParser, cookieParser, express, helmet, http, io, passport, postRoutes, session, sessionStore, socketEvents, userRoutes;
+  var MongoStore, Posts, Users, app, auth, bodyParser, cookieParser, express, helmet, http, io, passport, postRoutes, session, sessionStore, socketEvents, userRoutes;
   express = require('express');
   session = require('express-session');
   cookieParser = require('cookie-parser');
   bodyParser = require('body-parser');
   MongoStore = require('connect-mongo')(session);
   helmet = require('helmet');
-  User = Db.models.User;
+  Users = Db.models.User;
   Posts = Db.models.Posts;
   auth = require('./auth.js');
-  passport = auth(User);
+  passport = auth(Users);
   app = express();
   app.set('view engine', 'jade');
   app.set('views', __dirname + '/views');
@@ -43,15 +43,15 @@ module.exports = function(Db) {
   app.use(sessionStore);
   http = require('http').Server(app);
   io = require('socket.io')(http);
-  userRoutes = require('./routes/user-routes')(User);
-  postRoutes = require('./routes/post-routes')(Posts, User);
+  userRoutes = require('./routes/user-routes')(Users);
+  postRoutes = require('./routes/post-routes')(Posts, Users);
   io.use(function(socket, next) {
     if (socket.request.headers.cookie) {
       return next();
     }
     return next(new Error('authentication error'));
   });
-  socketEvents = require('./web-sockets/socket-events')(io, Posts, User);
+  socketEvents = require('./web-sockets/socket-events')(io, Posts, Users);
   app.get('/', function(req, res) {
     return res.render('index');
   });
@@ -64,7 +64,7 @@ module.exports = function(Db) {
     if (!req.session) {
       return;
     }
-    return User.findOne({
+    return Users.findOne({
       email: req.session.username
     }, function(err, user) {
       return res.send(user);
@@ -74,7 +74,7 @@ module.exports = function(Db) {
     if (!req.session) {
       return;
     }
-    return User.find(function(err, users) {
+    return Users.find(function(err, users) {
       if (err) {
         console.error(err);
         res.status(404);
@@ -89,7 +89,7 @@ module.exports = function(Db) {
     if (!req.session) {
       return;
     }
-    return User.update({
+    return Users.update({
       email: req.session.username,
       "activity.seen": false
     }, {

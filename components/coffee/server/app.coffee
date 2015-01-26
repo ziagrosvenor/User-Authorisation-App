@@ -6,22 +6,22 @@ module.exports = (Db) ->
   session = require 'express-session'
   cookieParser = require 'cookie-parser'
 
-  # Parsing HTTP request body
+  # For parsing HTTP request body
   bodyParser = require 'body-parser'
 
   # Store session in Mongo Db
   MongoStore = require('connect-mongo')(session)
 
-  # Various security middleware for Express
+  # Security middleware for Express
   helmet = require 'helmet'
 
-  User = Db.models.User
+  Users = Db.models.User
   Posts = Db.models.Posts
 
   # Module function returns passport instance.
   auth = require './auth.js'
 
-  passport = auth(User)
+  passport = auth(Users)
   app = express()
 
   app.set 'view engine', 'jade'
@@ -57,15 +57,15 @@ module.exports = (Db) ->
   io = require('socket.io')(http)
 
   # Modules returns user and post route middlewares as methods
-  userRoutes = require('./routes/user-routes')(User)
-  postRoutes = require('./routes/post-routes')(Posts, User)
+  userRoutes = require('./routes/user-routes')(Users)
+  postRoutes = require('./routes/post-routes')(Posts, Users)
 
   io.use (socket, next) ->
     if socket.request.headers.cookie
       return next()
     return next(new Error 'authentication error')
 
-  socketEvents = require('./web-sockets/socket-events')(io, Posts, User,)
+  socketEvents = require('./web-sockets/socket-events')(io, Posts, Users,)
 
   app.get '/', (req, res) ->
     res.render 'index'
@@ -81,13 +81,15 @@ module.exports = (Db) ->
   app.get '/api/user', (req, res) ->
     if !req.session
       return
-    User.findOne email: req.session.username, (err, user) ->
+
+    Users.findOne email: req.session.username, (err, user) ->
       res.send(user)
 
   app.get '/api/users', (req, res) ->
     if !req.session
       return
-    User.find (err, users) ->
+
+    Users.find (err, users) ->
       if err
         console.error(err)
         res.status(404)
@@ -98,7 +100,7 @@ module.exports = (Db) ->
     if !req.session
       return
 
-    User.update
+    Users.update
       email: req.session.username,
       "activity.seen": false,
         $set:

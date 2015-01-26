@@ -1,7 +1,7 @@
 AppConstants = require '../constants/app-constants'
 AppDispatcher = require '../dispatchers/app-dispatcher'
 UserStore = require './user-store'
-merge = require 'react/lib/merge'
+assign = require 'object-assign'
 EventEmitter = require('events').EventEmitter
 _posts = require '../factory/app-factory'
 _users = require '../factory/users-factory'
@@ -34,7 +34,7 @@ _deletePost = (id) ->
 			posts.splice(i, 1)
 			return
 
-AppStore = merge EventEmitter.prototype,
+AppStore = assign {}, EventEmitter.prototype,
 	emitChange: ->
 		this.emit(CHANGE_EVENT)
 	addChangeListener: (callback) ->
@@ -44,6 +44,7 @@ AppStore = merge EventEmitter.prototype,
 
 	getNewPostData: (post) ->
 		timestamp = Date.now()
+		
 		id: 'p_' + timestamp
 		authorId: UserStore.getId()
 		authorEmail: UserStore.getEmail()
@@ -52,7 +53,7 @@ AppStore = merge EventEmitter.prototype,
 		title: post.title
 		content: post.content
 
-	getPosts: () ->
+	getPosts: ->
 		return posts
 
 	getPostById: (id) ->

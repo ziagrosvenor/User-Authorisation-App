@@ -1,7 +1,7 @@
 Dispatcher = require './dispatcher'
-merge = require 'react/lib/merge'
+assign = require 'object-assign'
 
-AppDispatcher = merge Dispatcher.prototype,
+AppDispatcher = assign {}, Dispatcher.prototype,
   handleViewAction: (action) ->
     this.dispatch
       source: 'VIEW_ACTION'

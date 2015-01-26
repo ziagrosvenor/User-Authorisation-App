@@ -4,7 +4,19 @@
   "description": "User login system",
   "main": "server.js",
   "scripts": {
-    "test": "mocha test/*.js"
+    "test": "jest"
+  },
+  "jest": {
+    "rootDir": "./",
+    "scriptPreprocessor": "__tests__/preprocessor.js",
+    "testFileExtensions": [
+      "coffee",
+      "js"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "coffee"
+    ]
   },
   "author": "Zia Grosvenor",
   "license": "ISC",
@@ -12,6 +24,7 @@
     "browser-sync": "^1.8.0",
     "chai": "^1.10.0",
     "coffee-reactify": "^2.1.0",
+    "coffee-script": "^1.8.0",
     "coffeeify": "^1.0.0",
     "gulp": "^3.8.10",
     "gulp-browserify": "^0.5.1",
@@ -24,6 +37,7 @@
     "gulp-uglify": "^1.0.2",
     "gulp-util": "^3.0.1",
     "gulp-watch": "^3.0.0",
+    "jest-cli": "^0.2.1",
     "mocha": "^2.0.1",
     "mockgoose": "^1.10.7",
     "reactify": "^0.17.1",

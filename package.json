@@ -8,7 +8,7 @@
   },
   "jest": {
     "rootDir": "./",
-    "scriptPreprocessor": "__tests__/preprocessor.js",
+    "scriptPreprocessor": "utils/preprocessor.js",
     "testFileExtensions": [
       "coffee",
       "js"

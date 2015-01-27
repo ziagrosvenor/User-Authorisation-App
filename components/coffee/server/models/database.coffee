@@ -8,6 +8,6 @@ module.exports = () ->
 
   # function returns Mongoose models and connection
   models:
-  	User: Models.User
-  	Posts: Models.Posts 
+    User: Models.User
+    Posts: Models.Posts
   con: con

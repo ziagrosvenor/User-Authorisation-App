@@ -109,7 +109,7 @@ module.exports = (Db) ->
       upsert: false,
       multi: true
       (err, num) ->
-        if err 
+        if err
           return console.error(err)
         console.log(num)
         res.send(success: true)

@@ -25,7 +25,7 @@ module.exports = (io, Posts, User) ->
           timestamp: time.getTime()
 
         User.update _id: post.authorId,
-          $push: 
+          $push:
             activity: item
                 
           (err, data) ->

@@ -1076,22 +1076,22 @@ AppStore = assign({}, EventEmitter.prototype, {
     action = payload.action;
     switch (action.actionType) {
       case AppConstants.RECIEVE_POSTS:
-        _addPosts(payload.action.posts);
+        _addPosts(action.posts);
         break;
       case AppConstants.VIEW_CREATE_POST:
-        _addPost(payload.action.post);
+        _addPost(action.post);
         break;
       case AppConstants.RECIEVE_CREATED_POST:
-        _addPost(payload.action.post);
+        _addPost(action.post);
         break;
       case AppConstants.VIEW_UPDATE_POST:
-        _updatePost(payload.action.post);
+        _updatePost(action.post);
         break;
       case AppConstants.RECIEVE_UPDATED_POST:
-        _updatePost(payload.action.post);
+        _updatePost(action.post);
         break;
       case AppConstants.VIEW_DELETE_POST:
-        _deletePost(payload.action.id);
+        _deletePost(action.id);
     }
     AppStore.emitChange();
     return true;

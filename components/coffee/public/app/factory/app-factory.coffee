@@ -8,7 +8,7 @@ module.exports =
       if res.status == 200
         deferred.resolve(res.body)
       else
-        deferred.reject('Status code {res.status}')
+        deferred.reject('Status code #{res.status}')
     deferred.promise
   post: (data) ->
     deferred = Q.defer()
@@ -19,7 +19,7 @@ module.exports =
         if res.status == 200
           deferred.resolve(res.body)
         else
-          deferred.reject('Status code {res.status}')
+          deferred.reject('Status code #{res.status}')
     return deferred.promise
   update: (data) ->
     deferred = Q.defer()
@@ -30,7 +30,7 @@ module.exports =
         if res.status == 200
           deferred.resolve(res.body)
         else
-          deferred.reject('Status code {res.status}')
+          deferred.reject('Status code #{res.status}')
     return deferred.promise
   delete: (postId) ->
     deferred = Q.defer()

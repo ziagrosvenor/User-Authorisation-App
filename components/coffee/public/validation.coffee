@@ -1,4 +1,4 @@
-$(document).ready () ->
+$(document).ready ->
   message = ''
   form = $('#signup-form')
 

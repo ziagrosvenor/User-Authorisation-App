@@ -9,7 +9,7 @@ StoreWatchMixin = (cb, cbTwo) ->
     AppStore.addChangeListener(this._onChange)
 
   componentWillUnmount: ->
-    AppStore.removeChangeListener(this._onChange)  
+    AppStore.removeChangeListener(this._onChange)
          
   _onChange: ->
     @setState(cb())

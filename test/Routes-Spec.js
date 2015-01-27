@@ -73,7 +73,7 @@ describe('Session', function() {
       return done();
     });
   });
-  return it('should respond with a 200 message, allowing access to admin view', function(done) {
+  return it('should respond with a 200 message', function(done) {
     return user.get('/admin').expect(200).end(function(err, res) {
       if (err) {
         throw err;

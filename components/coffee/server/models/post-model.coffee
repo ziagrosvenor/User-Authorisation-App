@@ -15,8 +15,8 @@ module.exports = (Schema) ->
       type: Date
       default: Date.now
     title:
-      type: String  
+      type: String
     content:
-      type: String	 
+      type: String
 
   PostSchema

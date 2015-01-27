@@ -150,11 +150,11 @@ gulp.task('watch', function() {
   gulp.watch('components/coffee/public/app/**/**.coffee', ['browserify']);
 	gulp.watch(coffeeDataSources, ['coffee']);
   gulp.watch(coffeeTestSources, ['coffee']);
-  // gulp.watch('components/coffee/server/**/*.coffee', ['lint']);
+  gulp.watch('components/coffee/**/**/**.coffee', ['lint']);
 });
 
 gulp.task('lint', function() {
-  gulp.src('./components/coffee/public/*.coffee')
+  gulp.src('./components/coffee/**/**/*.coffee')
     .pipe(coffeelint())
     .pipe(coffeelint.reporter());
 });

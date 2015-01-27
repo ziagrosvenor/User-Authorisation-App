@@ -25,7 +25,7 @@ module.exports = (Post, User) ->
         timestamp: time.getTime()
 
       User.update email: req.session.username,
-        $push: 
+        $push:
           activity: item
               
         (err, data) ->
@@ -37,14 +37,18 @@ module.exports = (Post, User) ->
 
   read: (req, res) ->
     Post.find authorEmail: req.session.username, (err, posts) ->
-  	  if err
-  	  	return console.error(err)
-  	  res.send(posts)
-  update: (req, res) ->
-    Post.findOneAndUpdate _id: req.body._id, req.body, upsert: false, (err, post) ->
       if err
         return console.error(err)
-      res.send(post)
+      res.send(posts)
+  update: (req, res) ->
+    Post.findOneAndUpdate
+      _id: req.body._id,
+      req.body,
+      upsert: false,
+      (err, post) ->
+        if err
+          return console.error(err)
+        res.send(post)
   delete: (req, res) ->
     Post.findByIdAndRemove req.body.id, (err, result) ->
       if err

@@ -22,7 +22,7 @@ _addActivity = (type) ->
   activity = _.map user.activity, (activityItem) ->
     return activityItem
 
-  newActivity = 
+  newActivity =
     type: type
     seen: false
     timestamp: Date.now()
@@ -58,7 +58,7 @@ UserStore.dispatcherIndex = AppDispatcher.register (payload) ->
   switch action.actionType
     when actionTypes.RECIEVE_USER then _addUser(payload.action.user)
     when actionTypes.ACTIVITY_SEEN then _userActivitySeen()
-    when actionTypes.RECIEVE_CREATED_POST then _addActivity('post added')  
+    when actionTypes.RECIEVE_CREATED_POST then _addActivity('post added')
 
   UserStore.emitChange()
   return true

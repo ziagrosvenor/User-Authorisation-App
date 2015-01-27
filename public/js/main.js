@@ -711,7 +711,7 @@ Post = React.createClass({
   render: function() {
     return React.createElement("div", {
       "className": "post"
-    }, React.createElement("h2", null, this.props.data.title), React.createElement("p", null, this.props.data.content), React.createElement("div", null, this.props.children));
+    }, React.createElement("h2", null, this.props.data.title), React.createElement("h5", null, this.props.data.author), React.createElement("p", null, this.props.data.content), React.createElement("h6", null, this.props.data.updated), React.createElement("div", null, this.props.children));
   }
 });
 
@@ -720,49 +720,40 @@ module.exports = Post;
 
 
 },{"react":220,"react-router-component":38}],15:[function(require,module,exports){
-var AppStore, React, StoreWatchMixin, UserProfile, getAllUsers, getCurrentUser, _;
+var AppStore, React, StoreWatchMixin, UserProfile, UsersStore, getAllUsers, _;
 
 React = require('react');
 
 AppStore = require('../../stores/app-store');
 
+UsersStore = require('../../stores/users-store');
+
 StoreWatchMixin = require('../../mixins/store-watch-mixin');
 
 _ = require('lodash');
 
-getCurrentUser = function() {
-  return {
-    currentUser: UserStore.getUser()
-  };
-};
-
 getAllUsers = function() {
   return {
-    otherUsers: UsersStore.getAllUsers()
+    users: UsersStore.getAllUsers()
   };
 };
 
 UserProfile = React.createClass({
-  mixins: [new StoreWatchMixin(getCurrentUser, getAllUsers)],
+  mixins: [new StoreWatchMixin(getAllUsers)],
   render: function() {
-    var id, user, users;
-    if (this.state.users && this.props.id) {
-      users = this.state.users;
-      id = this.props.id;
-      user = this.state.users.map(function(user, i) {
-        var activity;
-        if (id === user._id) {
-          activity = _.map(user.activity, function(item, i) {
-            return React.createElement("li", {
-              "key": i
-            }, item.type, " on ", new Date(item.timestamp).getHours());
-          });
-          return React.createElement("div", null, React.createElement("h1", null, user.firstName, " ", user.surname), React.createElement("p", null, "Joined in ", new Date(user.timestamp).getFullYear()), React.createElement("ul", null, activity));
-        }
-      });
-    } else {
-      user = 'No user found';
-    }
+    var id, user;
+    id = this.props.id;
+    user = this.state.users.map(function(user, i) {
+      var activity;
+      if (id === user._id) {
+        activity = _.map(user.activity, function(item, i) {
+          return React.createElement("li", {
+            "key": i
+          }, item.type, " on ", new Date(item.timestamp).getHours());
+        });
+        return React.createElement("div", null, React.createElement("h1", null, user.firstName, " ", user.surname), React.createElement("p", null, "Joined in ", new Date(user.timestamp).getFullYear()), React.createElement("ul", null, activity));
+      }
+    });
     return React.createElement("div", null, user);
   }
 });
@@ -771,7 +762,7 @@ module.exports = UserProfile;
 
 
 
-},{"../../mixins/store-watch-mixin":22,"../../stores/app-store":23,"lodash":33,"react":220}],16:[function(require,module,exports){
+},{"../../mixins/store-watch-mixin":22,"../../stores/app-store":23,"../../stores/users-store":25,"lodash":33,"react":220}],16:[function(require,module,exports){
 module.exports = {
   VIEW_CREATE_POST: 'VIEW_CREATE_POST',
   RECIEVE_CREATED_POST: 'RECIEVE_CREATED_POST',
@@ -827,7 +818,7 @@ module.exports = {
       if (res.status === 200) {
         return deferred.resolve(res.body);
       } else {
-        return deferred.reject('Status code {res.status}');
+        return deferred.reject('Status code #{res.status}');
       }
     });
     return deferred.promise;
@@ -839,7 +830,7 @@ module.exports = {
       if (res.status === 200) {
         return deferred.resolve(res.body);
       } else {
-        return deferred.reject('Status code {res.status}');
+        return deferred.reject('Status code #{res.status}');
       }
     });
     return deferred.promise;
@@ -851,7 +842,7 @@ module.exports = {
       if (res.status === 200) {
         return deferred.resolve(res.body);
       } else {
-        return deferred.reject('Status code {res.status}');
+        return deferred.reject('Status code #{res.status}');
       }
     });
     return deferred.promise;

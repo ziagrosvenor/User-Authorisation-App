@@ -3,7 +3,7 @@ Entities = require('html-entities').XmlEntities
 entities = new Entities
 time = new Date
 
-module.exports = (io, Posts, User) ->
+module.exports = (io, Posts, Users) ->
   io.on 'connection', (socket) ->
     socket.on 'new_post', (post) ->
       post = new Posts
@@ -24,7 +24,7 @@ module.exports = (io, Posts, User) ->
           seen: false
           timestamp: time.getTime()
 
-        User.update _id: post.authorId,
+        Users.update _id: post.authorId,
           $push:
             activity: item
                 
@@ -45,3 +45,12 @@ module.exports = (io, Posts, User) ->
         if err
           return console.error(err)
         socket.emit 'post_deleted'
+
+    socket.on 'get_users', (searchPhrase) ->
+      regex = new RegExp(searchPhrase, 'i')
+
+      Users.find firstName: $regex: regex, (err, users) ->
+        if err
+          return console.error(err)
+
+        socket.emit 'users_found', users

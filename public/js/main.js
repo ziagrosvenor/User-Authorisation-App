@@ -66,7 +66,7 @@ ServerActions = {
       posts: posts
     });
   },
-  recieveAllUsers: function(users) {
+  recieveUsers: function(users) {
     return AppDispatcher.handleServerAction({
       actionType: AppConstants.RECIEVE_ALL_USERS,
       users: users
@@ -91,13 +91,11 @@ module.exports = ServerActions;
 
 
 },{"../constants/app-constants":16,"../dispatchers/app-dispatcher":17}],3:[function(require,module,exports){
-var Link, Nav, React, Search, StoreWatchMixin, Template, UserStore, UsersStore, getAllUsers, getCurrentUser;
+var Link, Nav, React, Search, StoreWatchMixin, Template, UserStore, getCurrentUser, getSearchResult;
 
 React = require('react');
 
 UserStore = require('../stores/user-store');
-
-UsersStore = require('../stores/users-store');
 
 StoreWatchMixin = require('../mixins/store-watch-mixin');
 
@@ -113,18 +111,18 @@ getCurrentUser = function() {
   };
 };
 
-getAllUsers = function() {
+getSearchResult = function() {
   return {
-    otherUsers: UsersStore.getAllUsers()
+    searchUsersResult: UserStore.getSearchResult()
   };
 };
 
 Template = React.createClass({
-  mixins: [new StoreWatchMixin(getCurrentUser, getAllUsers)],
+  mixins: [new StoreWatchMixin(getCurrentUser, getSearchResult)],
   render: function() {
     return React.createElement("div", null, React.createElement(Nav, {
       "user": this.state.currentUser,
-      "users": this.state.otherUsers
+      "users": this.state.searchUsersResult
     }), React.createElement("div", null, this.props.children));
   }
 });
@@ -133,7 +131,7 @@ module.exports = Template;
 
 
 
-},{"../mixins/store-watch-mixin":22,"../stores/user-store":24,"../stores/users-store":25,"./navigation/search-users":8,"./navigation/user-navigation":9,"react":220,"react-router-component":38}],4:[function(require,module,exports){
+},{"../mixins/store-watch-mixin":22,"../stores/user-store":24,"./navigation/search-users":8,"./navigation/user-navigation":9,"react":220,"react-router-component":38}],4:[function(require,module,exports){
 var APP, AppActions, AppStore, Location, Locations, PostEdit, Posts, React, Router, StoreWatchMixin, Template, UserProfile;
 
 React = require('react');
@@ -237,13 +235,15 @@ module.exports = IconSearch;
 
 
 },{"react/addons":58}],8:[function(require,module,exports){
-var IconClose, Link, React, Search;
+var IconClose, Link, React, Search, SocketUtils;
 
 React = require('react');
 
 Link = require('react-router-component').Link;
 
 IconClose = require('../icons/close-icon');
+
+SocketUtils = require('../../web-api-utils/websocket-utils');
 
 Search = React.createClass({
   getInitialState: function() {
@@ -252,21 +252,12 @@ Search = React.createClass({
     };
   },
   handleChange: function(e) {
-    var searchTerm, users;
+    var searchTerm;
     searchTerm = e.target.value;
-    users = [];
-    if (this.props.users) {
-      this.props.users.map(function(user, i) {
-        var username;
-        username = user.firstName + ' ' + user.surname;
-        if (username.indexOf(searchTerm) > -1 && searchTerm !== '') {
-          return users.push(user);
-        }
-      });
-    }
-    if (this.isMounted()) {
+    SocketUtils.getUsers(searchTerm);
+    if (this.props.users && this.isMounted()) {
       return this.setState({
-        users: users
+        users: this.props.users
       });
     }
   },
@@ -312,7 +303,7 @@ module.exports = Search;
 
 
 
-},{"../icons/close-icon":6,"react":220,"react-router-component":38}],9:[function(require,module,exports){
+},{"../../web-api-utils/websocket-utils":27,"../icons/close-icon":6,"react":220,"react-router-component":38}],9:[function(require,module,exports){
 var AppActions, AppStore, IconAlert, IconSearch, Link, React, Search, UserActivity, UserNavigation, UserSearch, _;
 
 React = require('react/addons');
@@ -1103,7 +1094,7 @@ module.exports = AppStore;
 
 
 },{"../constants/app-constants":16,"../dispatchers/app-dispatcher":17,"./user-store":24,"events":31,"object-assign":34}],24:[function(require,module,exports){
-var AppConstants, AppDispatcher, CHANGE_EVENT, EventEmitter, UserStore, actionTypes, assign, user, _, _addActivity, _addUser, _userActivitySeen;
+var AppConstants, AppDispatcher, CHANGE_EVENT, EventEmitter, UserStore, actionTypes, assign, searchUsersResult, user, _, _addActivity, _addUser, _searchResult, _userActivitySeen;
 
 AppConstants = require('../constants/app-constants');
 
@@ -1120,6 +1111,15 @@ CHANGE_EVENT = 'change';
 actionTypes = AppConstants;
 
 user = {};
+
+searchUsersResult = [];
+
+_searchResult = function(usersData) {
+  searchUsersResult = [];
+  return _.forEach(usersData, function(user) {
+    return searchUsersResult.push(user);
+  });
+};
 
 _addUser = function(userData) {
   return user = userData;
@@ -1159,6 +1159,9 @@ UserStore = assign({}, EventEmitter.prototype, {
   getUser: function() {
     return user;
   },
+  getSearchResult: function() {
+    return searchUsersResult;
+  },
   getId: function() {
     return user._id;
   },
@@ -1173,7 +1176,6 @@ UserStore = assign({}, EventEmitter.prototype, {
 UserStore.dispatcherIndex = AppDispatcher.register(function(payload) {
   var action;
   action = payload.action;
-  console.log(payload);
   switch (action.actionType) {
     case actionTypes.RECIEVE_USER:
       _addUser(payload.action.user);
@@ -1183,6 +1185,9 @@ UserStore.dispatcherIndex = AppDispatcher.register(function(payload) {
       break;
     case actionTypes.RECIEVE_CREATED_POST:
       _addActivity('post added');
+      break;
+    case actionTypes.RECIEVE_ALL_USERS:
+      _searchResult(payload.action.users);
   }
   UserStore.emitChange();
   return true;
@@ -1264,11 +1269,6 @@ AJAXUtils = {
       return ServerActions.recieveUserDetails(result);
     });
   },
-  getAllUsers: function() {
-    return _users.get().then(function(result) {
-      return ServerActions.recieveAllUsers(result);
-    });
-  },
   getCurrentUserPosts: function() {
     return _posts.get().then(function(result) {
       return ServerActions.recieveAllPosts(result);
@@ -1276,7 +1276,6 @@ AJAXUtils = {
   },
   getInitialData: function() {
     this.getCurrentUser();
-    this.getAllUsers();
     return this.getCurrentUserPosts();
   }
 };
@@ -1294,12 +1293,18 @@ socket = require('socket.io-client')();
 
 SocketUtils = {
   listenForServerEvents: function() {
-    socket.on('post_saved', function(data) {
-      return ServerActions.recieveCreatedPost(data);
+    socket.on('post_saved', function(post) {
+      return ServerActions.recieveCreatedPost(post);
     });
-    return socket.on('post_updated', function(data) {
-      return ServerActions.recieveUpdatedPost(data);
+    socket.on('post_updated', function(post) {
+      return ServerActions.recieveUpdatedPost(post);
     });
+    return socket.on('users_found', function(users) {
+      return ServerActions.recieveUsers(users);
+    });
+  },
+  getUsers: function(searchPhrase) {
+    return socket.emit('get_users', searchPhrase);
   }
 };
 

@@ -65,7 +65,7 @@ module.exports = (Db) ->
       return next()
     return next(new Error 'authentication error')
 
-  socketEvents = require('./web-sockets/socket-events')(io, Posts, Users,)
+  socketEvents = require('./web-sockets/socket-events')(io, Posts, Users)
 
   app.get '/', (req, res) ->
     res.render 'index'

@@ -30,5 +30,4 @@ AppActions =
         
     _user.updateActivity()
 
-
 module.exports = AppActions

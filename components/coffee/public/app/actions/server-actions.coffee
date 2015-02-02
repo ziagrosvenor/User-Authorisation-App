@@ -12,7 +12,7 @@ ServerActions =
       actionType: AppConstants.RECIEVE_POSTS
       posts: posts
 
-  recieveAllUsers: (users) ->
+  recieveUsers: (users) ->
     AppDispatcher.handleServerAction
       actionType: AppConstants.RECIEVE_ALL_USERS
       users: users

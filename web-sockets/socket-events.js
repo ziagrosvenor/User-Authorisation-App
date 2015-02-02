@@ -6,7 +6,7 @@ entities = new Entities;
 
 time = new Date;
 
-module.exports = function(io, Posts, User) {
+module.exports = function(io, Posts, Users) {
   return io.on('connection', function(socket) {
     socket.on('new_post', function(post) {
       post = new Posts({
@@ -28,7 +28,7 @@ module.exports = function(io, Posts, User) {
           seen: false,
           timestamp: time.getTime()
         };
-        User.update({
+        Users.update({
           _id: post.authorId
         }, {
           $push: {
@@ -54,12 +54,26 @@ module.exports = function(io, Posts, User) {
         return socket.emit('post_updated', post);
       });
     });
-    return socket.on('delete_post', function(id) {
+    socket.on('delete_post', function(id) {
       return Posts.findByIdAndRemove(id, function(err, result) {
         if (err) {
           return console.error(err);
         }
         return socket.emit('post_deleted');
+      });
+    });
+    return socket.on('get_users', function(searchPhrase) {
+      var regex;
+      regex = new RegExp(searchPhrase, 'i');
+      return Users.find({
+        firstName: {
+          $regex: regex
+        }
+      }, function(err, users) {
+        if (err) {
+          return console.error(err);
+        }
+        return socket.emit('users_found', users);
       });
     });
   });

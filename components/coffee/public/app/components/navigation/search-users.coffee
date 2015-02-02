@@ -1,22 +1,18 @@
 React = require 'react'
 Link = require('react-router-component').Link
 IconClose = require '../icons/close-icon'
+SocketUtils = require '../../web-api-utils/websocket-utils'
 
 Search = React.createClass
   getInitialState: ->
     users: []
   handleChange: (e) ->
     searchTerm = e.target.value
-    users = []
-    if @props.users
-      @props.users.map (user, i) ->
-        username = user.firstName + ' ' + user.surname
-        if username.indexOf(searchTerm) > -1 and searchTerm isnt ''
-          users.push(user)
+    SocketUtils.getUsers(searchTerm)
 
-    if @isMounted()
+    if @props.users and @isMounted()
       @setState
-        users: users
+        users: @props.users
   handleClick: ->
     @refs.searchField.getDOMNode().value = ''
     if @isMounted()

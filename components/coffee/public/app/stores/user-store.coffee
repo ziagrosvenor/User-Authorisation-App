@@ -10,6 +10,13 @@ actionTypes = AppConstants
 
 user = {}
 
+searchUsersResult = []
+
+_searchResult = (usersData) ->
+  searchUsersResult = []
+  _.forEach usersData, (user) ->
+    searchUsersResult.push(user)
+
 _addUser = (userData) ->
   user = userData
 
@@ -43,6 +50,9 @@ UserStore = assign {}, EventEmitter.prototype,
   getUser: ->
     return user
 
+  getSearchResult: ->
+    return searchUsersResult
+
   getId: ->
     return user._id
 
@@ -54,11 +64,12 @@ UserStore = assign {}, EventEmitter.prototype,
 
 UserStore.dispatcherIndex = AppDispatcher.register (payload) ->
   action = payload.action
-  console.log payload
+
   switch action.actionType
     when actionTypes.RECIEVE_USER then _addUser(payload.action.user)
     when actionTypes.ACTIVITY_SEEN then _userActivitySeen()
     when actionTypes.RECIEVE_CREATED_POST then _addActivity('post added')
+    when actionTypes.RECIEVE_ALL_USERS then _searchResult(payload.action.users)
 
   UserStore.emitChange()
   return true

@@ -8,17 +8,12 @@ AJAXUtils =
     _user.get().then (result) ->
       ServerActions.recieveUserDetails(result)
 
-  getAllUsers: ->
-    _users.get().then (result) ->
-      ServerActions.recieveAllUsers(result)
-
   getCurrentUserPosts: ->
     _posts.get().then (result) ->
       ServerActions.recieveAllPosts(result)
 
   getInitialData: ->
     @getCurrentUser()
-    @getAllUsers()
     @getCurrentUserPosts()
 
 module.exports = AJAXUtils

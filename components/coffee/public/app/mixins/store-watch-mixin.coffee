@@ -1,7 +1,7 @@
 React = require 'react'
 AppStore = require '../stores/app-store'
 
-StoreWatchMixin = (cb, cbTwo) ->
+StoreWatchMixin = (cb) ->
   getInitialState: ->
     cb()
 
@@ -13,11 +13,5 @@ StoreWatchMixin = (cb, cbTwo) ->
          
   _onChange: ->
     @setState(cb())
-    if cbTwo
-      @setState(cbTwo())
-
-  componentDidMount: ->
-    if cbTwo
-      @setState(cbTwo())
 
 module.exports = StoreWatchMixin

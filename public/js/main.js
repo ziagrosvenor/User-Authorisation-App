@@ -118,18 +118,7 @@ getComponentState = function() {
 };
 
 Template = React.createClass({
-  getInitialState: function() {
-    return getComponentState();
-  },
-  componentWillMount: function() {
-    return UserStore.addChangeListener(this._onChange);
-  },
-  componentWillUnmount: function() {
-    return UserStore.removeChangeListener(this._onChange);
-  },
-  _onChange: function() {
-    return this.setState(getComponentState());
-  },
+  mixins: [new StoreWatchMixin(getComponentState)],
   render: function() {
     return React.createElement("div", null, React.createElement(Nav, {
       "user": this.state.currentUser,
@@ -950,7 +939,7 @@ React = require('react');
 
 AppStore = require('../stores/app-store');
 
-StoreWatchMixin = function(cb, cbTwo) {
+StoreWatchMixin = function(cb) {
   return {
     getInitialState: function() {
       return cb();
@@ -962,15 +951,7 @@ StoreWatchMixin = function(cb, cbTwo) {
       return AppStore.removeChangeListener(this._onChange);
     },
     _onChange: function() {
-      this.setState(cb());
-      if (cbTwo) {
-        return this.setState(cbTwo());
-      }
-    },
-    componentDidMount: function() {
-      if (cbTwo) {
-        return this.setState(cbTwo());
-      }
+      return this.setState(cb());
     }
   };
 };

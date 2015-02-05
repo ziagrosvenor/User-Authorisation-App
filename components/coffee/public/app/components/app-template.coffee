@@ -11,18 +11,7 @@ getComponentState = ->
   searchUsersResult: UserStore.getSearchResult()
 
 Template = React.createClass
-  getInitialState: ->
-    getComponentState()
-
-  componentWillMount: ->
-    UserStore.addChangeListener(this._onChange)
-
-  componentWillUnmount: ->
-    UserStore.removeChangeListener(this._onChange)
-         
-  _onChange: ->
-    @setState(getComponentState())
-
+  mixins: [new StoreWatchMixin(getComponentState)]
   render: ->
     <div>
       <Nav user={@state.currentUser} users={@state.searchUsersResult}/>

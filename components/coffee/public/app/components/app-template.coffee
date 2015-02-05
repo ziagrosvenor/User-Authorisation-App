@@ -6,14 +6,23 @@ Search = require './navigation/search-users'
 Link = require('react-router-component').Link
 
 # return state to component in mixin
-getCurrentUser = ->
+getComponentState = ->
   currentUser: UserStore.getUser()
-
-getSearchResult = ->
   searchUsersResult: UserStore.getSearchResult()
 
 Template = React.createClass
-  mixins: [new StoreWatchMixin(getCurrentUser, getSearchResult)]
+  getInitialState: ->
+    getComponentState()
+
+  componentWillMount: ->
+    UserStore.addChangeListener(this._onChange)
+
+  componentWillUnmount: ->
+    UserStore.removeChangeListener(this._onChange)
+         
+  _onChange: ->
+    @setState(getComponentState())
+
   render: ->
     <div>
       <Nav user={@state.currentUser} users={@state.searchUsersResult}/>

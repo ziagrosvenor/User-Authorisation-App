@@ -12,10 +12,13 @@ user = {}
 
 searchUsersResult = []
 
-_searchResult = (usersData) ->
+_updateSearchResult = (usersData) ->
   searchUsersResult = []
   _.forEach usersData, (user) ->
     searchUsersResult.push(user)
+
+_clearUsers = ->
+  searchUsersResult = []
 
 _addUser = (userData) ->
   user = userData
@@ -69,7 +72,8 @@ UserStore.dispatcherIndex = AppDispatcher.register (payload) ->
     when actionTypes.RECIEVE_USER then _addUser(payload.action.user)
     when actionTypes.ACTIVITY_SEEN then _userActivitySeen()
     when actionTypes.RECIEVE_CREATED_POST then _addActivity('post added')
-    when actionTypes.RECIEVE_ALL_USERS then _searchResult(payload.action.users)
+    when actionTypes.RECIEVE_ALL_USERS then _updateSearchResult(payload.action.users)
+    when actionTypes.CLEAR_USERS then _clearUsers()
 
   UserStore.emitChange()
   return true

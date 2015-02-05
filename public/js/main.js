@@ -39,6 +39,11 @@ AppActions = {
       actionType: AppConstants.ACTIVITY_SEEN
     });
     return _user.updateActivity();
+  },
+  clearUsers: function() {
+    return AppDispatcher.handleViewAction({
+      actionType: AppConstants.CLEAR_USERS
+    });
   }
 };
 
@@ -91,7 +96,7 @@ module.exports = ServerActions;
 
 
 },{"../constants/app-constants":16,"../dispatchers/app-dispatcher":17}],3:[function(require,module,exports){
-var Link, Nav, React, Search, StoreWatchMixin, Template, UserStore, getCurrentUser, getSearchResult;
+var Link, Nav, React, Search, StoreWatchMixin, Template, UserStore, getComponentState;
 
 React = require('react');
 
@@ -105,20 +110,26 @@ Search = require('./navigation/search-users');
 
 Link = require('react-router-component').Link;
 
-getCurrentUser = function() {
+getComponentState = function() {
   return {
-    currentUser: UserStore.getUser()
-  };
-};
-
-getSearchResult = function() {
-  return {
+    currentUser: UserStore.getUser(),
     searchUsersResult: UserStore.getSearchResult()
   };
 };
 
 Template = React.createClass({
-  mixins: [new StoreWatchMixin(getCurrentUser, getSearchResult)],
+  getInitialState: function() {
+    return getComponentState();
+  },
+  componentWillMount: function() {
+    return UserStore.addChangeListener(this._onChange);
+  },
+  componentWillUnmount: function() {
+    return UserStore.removeChangeListener(this._onChange);
+  },
+  _onChange: function() {
+    return this.setState(getComponentState());
+  },
   render: function() {
     return React.createElement("div", null, React.createElement(Nav, {
       "user": this.state.currentUser,
@@ -235,7 +246,7 @@ module.exports = IconSearch;
 
 
 },{"react/addons":58}],8:[function(require,module,exports){
-var IconClose, Link, React, Search, SocketUtils;
+var AppActions, IconClose, Link, React, Search, SocketUtils;
 
 React = require('react');
 
@@ -245,34 +256,26 @@ IconClose = require('../icons/close-icon');
 
 SocketUtils = require('../../web-api-utils/websocket-utils');
 
+AppActions = require('../../actions/app-actions');
+
 Search = React.createClass({
-  getInitialState: function() {
-    return {
-      users: []
-    };
-  },
   handleChange: function(e) {
     var searchTerm;
     searchTerm = e.target.value;
-    SocketUtils.getUsers(searchTerm);
-    if (this.props.users && this.isMounted()) {
-      return this.setState({
-        users: this.props.users
-      });
+    if (searchTerm !== '') {
+      return SocketUtils.getUsers(searchTerm);
+    } else {
+      return AppActions.clearUsers();
     }
   },
   handleClick: function() {
     this.refs.searchField.getDOMNode().value = '';
-    if (this.isMounted()) {
-      this.setState({
-        users: []
-      });
-    }
+    AppActions.clearUsers();
     return this.props.onIconClick();
   },
   render: function() {
     var userList;
-    userList = this.state.users.map(function(user, i) {
+    userList = this.props.users.map(function(user, i) {
       return React.createElement(Link, {
         "href": '/user/' + user._id,
         "key": i,
@@ -303,7 +306,7 @@ module.exports = Search;
 
 
 
-},{"../../web-api-utils/websocket-utils":27,"../icons/close-icon":6,"react":220,"react-router-component":38}],9:[function(require,module,exports){
+},{"../../actions/app-actions":1,"../../web-api-utils/websocket-utils":27,"../icons/close-icon":6,"react":220,"react-router-component":38}],9:[function(require,module,exports){
 var AppActions, AppStore, IconAlert, IconSearch, Link, React, Search, UserActivity, UserNavigation, UserSearch, _;
 
 React = require('react/addons');
@@ -763,7 +766,8 @@ module.exports = {
   ACTIVITY_SEEN: 'ACTIVITY_SEEN',
   RECIEVE_POSTS: 'RECIEVE_POSTS',
   RECIEVE_USER: 'RECIEVE_USER',
-  RECIEVE_ALL_USERS: 'RECIEVE_ALL_USERS'
+  RECIEVE_ALL_USERS: 'RECIEVE_ALL_USERS',
+  CLEAR_USERS: 'CLEAR_USERS'
 };
 
 
@@ -1094,7 +1098,7 @@ module.exports = AppStore;
 
 
 },{"../constants/app-constants":16,"../dispatchers/app-dispatcher":17,"./user-store":24,"events":31,"object-assign":34}],24:[function(require,module,exports){
-var AppConstants, AppDispatcher, CHANGE_EVENT, EventEmitter, UserStore, actionTypes, assign, searchUsersResult, user, _, _addActivity, _addUser, _searchResult, _userActivitySeen;
+var AppConstants, AppDispatcher, CHANGE_EVENT, EventEmitter, UserStore, actionTypes, assign, searchUsersResult, user, _, _addActivity, _addUser, _clearUsers, _updateSearchResult, _userActivitySeen;
 
 AppConstants = require('../constants/app-constants');
 
@@ -1114,11 +1118,15 @@ user = {};
 
 searchUsersResult = [];
 
-_searchResult = function(usersData) {
+_updateSearchResult = function(usersData) {
   searchUsersResult = [];
   return _.forEach(usersData, function(user) {
     return searchUsersResult.push(user);
   });
+};
+
+_clearUsers = function() {
+  return searchUsersResult = [];
 };
 
 _addUser = function(userData) {
@@ -1187,7 +1195,10 @@ UserStore.dispatcherIndex = AppDispatcher.register(function(payload) {
       _addActivity('post added');
       break;
     case actionTypes.RECIEVE_ALL_USERS:
-      _searchResult(payload.action.users);
+      _updateSearchResult(payload.action.users);
+      break;
+    case actionTypes.CLEAR_USERS:
+      _clearUsers();
   }
   UserStore.emitChange();
   return true;

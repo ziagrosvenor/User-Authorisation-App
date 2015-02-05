@@ -30,4 +30,8 @@ AppActions =
         
     _user.updateActivity()
 
+  clearUsers: () ->
+    AppDispatcher.handleViewAction
+      actionType: AppConstants.CLEAR_USERS
+
 module.exports = AppActions

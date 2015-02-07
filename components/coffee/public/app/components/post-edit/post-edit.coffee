@@ -1,7 +1,7 @@
 # @cjsx React.DOM
 React = require 'react'
 AppActions = require '../../actions/app-actions'
-AppStore = require('../../stores/app-store')
+PostStore = require('../../stores/app-store')
 StoreWatchMixin = require '../../mixins/store-watch-mixin'
 Post = require '../post-shared/post-item'
 
@@ -58,17 +58,17 @@ PostEditForm = React.createClass
     </form>
 
 getPost = (id) ->
-  AppStore.getPostById(id)
+  PostStore.getPostById(id)
       
 PostEdit = React.createClass
   getInitialState: () ->
-    data: getPost(@props.id)
+    post: getPost(@props.id)
 
   componentWillMount: () ->
-    AppStore.addChangeListener(this._onChange)
+    PostStore.addChangeListener(this._onChange)
 
   componentWillUnmount: () ->
-    AppStore.removeChangeListener(this._onChange) 
+    PostStore.removeChangeListener(this._onChange) 
 
   _onChange: () ->
     @setState(getPost(@props.id))
@@ -76,7 +76,7 @@ PostEdit = React.createClass
   onEdit: (post) ->
     if @isMounted()
       this.setState
-        data: post
+        post: post
         
   onSubmit: (post) ->
     AppActions.updatePost(post)
@@ -84,9 +84,9 @@ PostEdit = React.createClass
   render: ->
     <div className='postModule'>
       <h1>Edit!</h1>
-      <Post data={this.state.data} />
+      <Post data={@state.post} />
       <PostEditForm
-        data={this.state.data}
+        data={@state.post}
         onFormChange={this.onEdit}
         onFormSubmit={this.onSubmit}
       />

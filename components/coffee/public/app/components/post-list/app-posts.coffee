@@ -1,7 +1,7 @@
 # @cjsx React.DOM
 React = require 'react'
 AppActions = require '../../actions/app-actions'
-AppStore = require('../../stores/app-store')
+PostStore = require('../../stores/app-store')
 StoreWatchMixin = require '../../mixins/store-watch-mixin'
 Link = require('react-router-component').Link
 Post = require '../post-shared/post-item'
@@ -41,7 +41,7 @@ PostForm = React.createClass
   render: ->
     <form className='postForm form' onSubmit={this.handleSubmit}>
       <div className='form-group'>
-        <input className='form-control' type='text' placeholder="What's New?" ref='title'/>
+        <input className='form-control' type='text' placeholder="What's New?" ref='title' />
       </div>
       <div className='form-group'>
         <textarea className='form-control' placeholder="Share something" ref='content' />
@@ -50,7 +50,7 @@ PostForm = React.createClass
     </form>
 
 getPosts = ->
-  posts: AppStore.getPosts()     
+  posts: PostStore.getPosts()     
   
 PostModule = React.createClass
   mixins: [new StoreWatchMixin(getPosts)]

@@ -1,12 +1,12 @@
 AppConstants = require '../constants/app-constants'
 AppDispatcher = require '../dispatchers/app-dispatcher'
-AppStore = require '../stores/app-store'
+PostStore = require '../stores/app-store'
 socket = require('socket.io-client')()
 _user = require('../factory/user-factory')()
 
 AppActions =
   addPost: (post) ->
-    post = AppStore.getNewPostData(post)
+    post = PostStore.getNewPostData(post)
     AppDispatcher.handleViewAction
       actionType: AppConstants.VIEW_CREATE_POST
       post: post

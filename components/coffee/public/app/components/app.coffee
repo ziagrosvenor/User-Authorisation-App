@@ -1,7 +1,7 @@
 # @cjsx React.DOM
 React = require 'react'
 AppActions = require '../actions/app-actions'
-AppStore = require '../stores/app-store'
+PostStore = require '../stores/app-store'
 Posts = require '../components/post-list/app-posts'
 PostEdit = require '../components/post-edit/post-edit'
 UserProfile = require '../components/users/user-profile'

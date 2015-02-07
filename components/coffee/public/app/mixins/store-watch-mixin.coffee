@@ -1,15 +1,15 @@
 React = require 'react'
-AppStore = require '../stores/app-store'
+PostStore = require '../stores/app-store'
 
 StoreWatchMixin = (cb) ->
   getInitialState: ->
     cb()
 
   componentWillMount: ->
-    AppStore.addChangeListener(this._onChange)
+    PostStore.addChangeListener(this._onChange)
 
   componentWillUnmount: ->
-    AppStore.removeChangeListener(this._onChange)
+    PostStore.removeChangeListener(this._onChange)
          
   _onChange: ->
     @setState(cb())

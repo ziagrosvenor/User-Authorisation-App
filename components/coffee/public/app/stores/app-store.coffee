@@ -33,7 +33,7 @@ _deletePost = (id) ->
       posts.splice(i, 1)
       return
 
-AppStore = assign {}, EventEmitter.prototype,
+PostStore = assign {}, EventEmitter.prototype,
   emitChange: ->
     this.emit(CHANGE_EVENT)
   addChangeListener: (callback) ->

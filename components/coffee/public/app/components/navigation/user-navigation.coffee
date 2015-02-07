@@ -3,7 +3,7 @@ React = require 'react/addons'
 _ = require 'lodash'
 
 AppActions = require '../../actions/app-actions'
-AppStore = require('../../stores/app-store')
+PostStore = require('../../stores/app-store')
 
 Link = require('react-router-component').Link
 Search = require './search-users'

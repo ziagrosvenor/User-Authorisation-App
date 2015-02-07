@@ -62,7 +62,7 @@ module.exports = function(io, Posts, Users) {
         return socket.emit('post_deleted');
       });
     });
-    return socket.on('get_users', function(searchPhrase) {
+    socket.on('get_users', function(searchPhrase) {
       var regex;
       regex = new RegExp(searchPhrase, 'i');
       return Users.find({
@@ -74,6 +74,22 @@ module.exports = function(io, Posts, Users) {
           return console.error(err);
         }
         return socket.emit('users_found', users);
+      });
+    });
+    return socket.on('get_other_users_data', function(id) {
+      Users.findById(id, function(err, user) {
+        if (err) {
+          return console.error(err);
+        }
+        return socket.emit('other_user_found', user);
+      });
+      return Posts.find({
+        authorId: id
+      }, function(err, posts) {
+        if (err) {
+          return console.error(err);
+        }
+        return socket.emit('other_user_posts_found', posts);
       });
     });
   });

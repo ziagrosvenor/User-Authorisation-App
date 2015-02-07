@@ -9,6 +9,10 @@ SocketUtils =
       ServerActions.recieveUpdatedPost(post)
     socket.on 'users_found', (users) ->
       ServerActions.recieveUsers(users)
+    socket.on 'other_user_posts_found', (posts) ->
+      ServerActions.recieveOtherUsersPosts(posts)
+    socket.on 'other_user_found', (user) ->
+      ServerActions.recieveOtherUser(user)
   getUsers: (searchPhrase) ->
     socket.emit 'get_users', searchPhrase
 

@@ -34,4 +34,7 @@ AppActions =
     AppDispatcher.handleViewAction
       actionType: AppConstants.CLEAR_USERS
 
+  getOtherUsersData: (id) ->
+    socket.emit 'get_other_users_data', id
+
 module.exports = AppActions

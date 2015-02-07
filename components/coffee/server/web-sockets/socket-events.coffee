@@ -54,3 +54,14 @@ module.exports = (io, Posts, Users) ->
           return console.error(err)
 
         socket.emit 'users_found', users
+
+    socket.on 'get_other_users_data', (id) ->
+      Users.findById id, (err, user) ->
+        if err
+          return console.error(err)
+        socket.emit 'other_user_found', user
+
+      Posts.find authorId: id, (err, posts) ->
+        if err
+          return console.error(err)
+        socket.emit 'other_user_posts_found', posts

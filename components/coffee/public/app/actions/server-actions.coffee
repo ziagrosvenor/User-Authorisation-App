@@ -27,4 +27,14 @@ ServerActions =
       actionType: AppConstants.RECIEVE_UPDATED_POST
       post: post
 
+  recieveOtherUsersPosts: (posts) ->
+    AppDispatcher.handleServerAction
+      actionType: AppConstants.RECIEVE_OTHER_USERS_POSTS
+      posts: posts
+
+  recieveOtherUser: (user) ->
+    AppDispatcher.handleServerAction
+      actionType: AppConstants.RECIEVE_OTHER_USER
+      user: user
+
 module.exports = ServerActions

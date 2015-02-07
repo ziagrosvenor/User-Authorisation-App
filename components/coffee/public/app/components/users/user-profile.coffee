@@ -1,29 +1,39 @@
 React = require 'react'
-AppStore = require '../../stores/app-store'
-UsersStore = require '../../stores/users-store'
+PostStore = require '../../stores/app-store'
+UserStore = require '../../stores/user-store'
+AppActions = require '../../actions/app-actions'
 StoreWatchMixin = require '../../mixins/store-watch-mixin'
+Post = require '../../components/post-shared/post-item'
 _ = require 'lodash'
 
-getAllUsers = ->
-  users: UsersStore.getAllUsers()
+getUserState = ->
+  user: UserStore.getOtherUser()
+  posts: PostStore.getOtherUsersPosts()
 
 UserProfile = React.createClass
-  mixins: [new StoreWatchMixin(getAllUsers)]
-  render: ->
-    id = @props.id
-    user = @state.users.map (user, i) ->
-      if id == user._id
-        activity = _.map user.activity, (item, i) ->
-          <li key={i}>{item.type} on {new Date(item.timestamp).getHours()}</li>
+  mixins: [new StoreWatchMixin(getUserState)]
 
+  componentDidMount: ->
+    AppActions.getOtherUsersData(@props.id)
+
+  render: ->
+    if @state.user
+      user = 
         <div>
-          <h1>{user.firstName} {user.surname}</h1>
-          <p>Joined in {new Date(user.timestamp).getFullYear()}</p>
-          <ul>{activity}</ul>
+          <h2>{@state.user.firstName} {@state.user.surname}</h2>
         </div>
+    else
+      user = <div>loading...</div>
+
+    if @state.posts
+      posts = _.map @state.posts, (post, i) ->
+        <Post data={post} key={i}/>
+    else
+      posts = <div>...</div>
 
     <div>
       {user}
+      {posts}
     </div>
 
 module.exports = UserProfile

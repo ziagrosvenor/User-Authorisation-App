@@ -7,10 +7,14 @@ EventEmitter = require('events').EventEmitter
 CHANGE_EVENT = 'change'
 
 posts = []
+otherUsersPosts = []
 
 _addPosts = (rawPosts) ->
   rawPosts.map (post, i) ->
     posts.push(post)
+
+_addOtherUsersPosts = (rawPosts) ->
+  otherUsersPosts = rawPosts
 
 _addPost = (newPost) ->
   if !newPost._id or posts.length is 0
@@ -64,9 +68,12 @@ PostStore = assign {}, EventEmitter.prototype,
 
     return postToGet
 
+  getOtherUsersPosts: ->
+    return otherUsersPosts
+
   dispatcherIndex: AppDispatcher.register (payload) ->
     action = payload.action
-    
+
     switch action.actionType
       when AppConstants.RECIEVE_POSTS then _addPosts(action.posts)
       when AppConstants.VIEW_CREATE_POST then _addPost(action.post)
@@ -74,8 +81,9 @@ PostStore = assign {}, EventEmitter.prototype,
       when AppConstants.VIEW_UPDATE_POST then _updatePost(action.post)
       when AppConstants.RECIEVE_UPDATED_POST then _updatePost(action.post)
       when AppConstants.VIEW_DELETE_POST then _deletePost(action.id)
+      when AppConstants.RECIEVE_OTHER_USERS_POSTS then _addOtherUsersPosts(action.posts)
 
-    AppStore.emitChange()
+    PostStore.emitChange()
     return true
 
-module.exports = AppStore
+module.exports = PostStore

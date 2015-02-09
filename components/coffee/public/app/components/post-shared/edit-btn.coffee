@@ -1,10 +1,10 @@
 # @cjsx React.DOM
 React = require 'react'
-Link = require('react-router-component').Link
+Link = require('react-router').Link
 
 EditPost = React.createClass
   render: ->
-    <Link href={'/edit-post/' + this.props.id} className='btn'>
+    <Link to='edit' params={{id: @props.id}} className='btn'>
       Edit
     </Link>
 

@@ -1,5 +1,6 @@
 # @cjsx React.DOM
 React = require 'react'
+Router = require 'react-router'
 AppActions = require '../../actions/app-actions'
 PostStore = require('../../stores/app-store')
 StoreWatchMixin = require '../../mixins/store-watch-mixin'
@@ -61,8 +62,10 @@ getPost = (id) ->
   PostStore.getPostById(id)
       
 PostEdit = React.createClass
+  mixins: [Router.State]
   getInitialState: () ->
-    post: getPost(@props.id)
+    {id} = @.getParams()
+    post: getPost(id)
 
   componentWillMount: () ->
     PostStore.addChangeListener(this._onChange)
@@ -71,7 +74,8 @@ PostEdit = React.createClass
     PostStore.removeChangeListener(this._onChange) 
 
   _onChange: () ->
-    @setState(getPost(@props.id))
+    {id} = @.getParams()
+    @setState(getPost(id))
 
   onEdit: (post) ->
     if @isMounted()

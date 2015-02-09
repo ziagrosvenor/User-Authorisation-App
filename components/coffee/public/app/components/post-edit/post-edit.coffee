@@ -64,7 +64,7 @@ getPost = (id) ->
 PostEdit = React.createClass
   mixins: [Router.State]
   getInitialState: () ->
-    {id} = @.getParams()
+    {id} = @getParams()
     post: getPost(id)
 
   componentWillMount: () ->
@@ -74,7 +74,7 @@ PostEdit = React.createClass
     PostStore.removeChangeListener(this._onChange) 
 
   _onChange: () ->
-    {id} = @.getParams()
+    {id} = @getParams()
     @setState(getPost(id))
 
   onEdit: (post) ->

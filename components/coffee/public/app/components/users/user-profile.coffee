@@ -1,4 +1,5 @@
 React = require 'react'
+Router = require 'react-router'
 PostStore = require '../../stores/app-store'
 UserStore = require '../../stores/user-store'
 AppActions = require '../../actions/app-actions'
@@ -11,10 +12,11 @@ getUserState = ->
   posts: PostStore.getOtherUsersPosts()
 
 UserProfile = React.createClass
-  mixins: [new StoreWatchMixin(getUserState)]
+  mixins: [new StoreWatchMixin(getUserState), Router.State]
 
   componentDidMount: ->
-    AppActions.getOtherUsersData(@props.id)
+    {id} = @getParams()
+    AppActions.getOtherUsersData(id)
 
   render: ->
     if @state.user
@@ -31,9 +33,11 @@ UserProfile = React.createClass
     else
       posts = <div>...</div>
 
-    <div>
+    <div className="postModule">
       {user}
-      {posts}
+      <div className='postList'>
+        {posts}
+      </div>  
     </div>
 
 module.exports = UserProfile

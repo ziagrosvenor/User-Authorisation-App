@@ -1,11 +1,18 @@
 # @cjsx React.DOM
 React = require 'react'
-Link = require('react-router').Link
+Router = require 'react-router'
+injectTapEventPlugin = require 'react-tap-event-plugin'
+injectTapEventPlugin()
+
+# React.initializeTouchEvents(true)
 
 EditPost = React.createClass
+  mixins: [Router.Navigation, Router.State]
+  handleTap: (e, item) ->
+    @transitionTo('/edit-post/' + @props.id)
   render: ->
-    <Link to='edit' params={{id: @props.id}} className='btn'>
+    <button onTouchTap={@handleTap} className='btn'>
       Edit
-    </Link>
+    </button>
 
 module.exports = EditPost

@@ -9,7 +9,6 @@ PostEdit = require './components/post-edit/post-edit'
 UserProfile = require './components/users/user-profile'
 injectTapEventPlugin = require 'react-tap-event-plugin'
 Template = require './components/app-template'
-TouchableArea = require 'react-touch/lib/primitives/TouchableArea'
 SimpleScroller = 
   require 'react-touch/lib/interactions/simplescroller/SimpleScroller'
 

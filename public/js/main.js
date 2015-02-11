@@ -993,7 +993,7 @@ module.exports = {
 
 
 },{"q":38,"superagent":307}],22:[function(require,module,exports){
-var AJAXUtils, APP, AppActions, AppStyle, DefaultRoute, FPSCounter, Link, PostEdit, Posts, React, ReactTouch, Route, RouteHandler, Router, SimpleScroller, SocketUtils, Template, TouchableArea, UserProfile, injectTapEventPlugin, routes;
+var AJAXUtils, APP, AppActions, AppStyle, DefaultRoute, FPSCounter, Link, PostEdit, Posts, React, ReactTouch, Route, RouteHandler, Router, SimpleScroller, SocketUtils, Template, UserProfile, injectTapEventPlugin, routes;
 
 React = require('react/addons');
 
@@ -1014,8 +1014,6 @@ UserProfile = require('./components/users/user-profile');
 injectTapEventPlugin = require('react-tap-event-plugin');
 
 Template = require('./components/app-template');
-
-TouchableArea = require('react-touch/lib/primitives/TouchableArea');
 
 SimpleScroller = require('react-touch/lib/interactions/simplescroller/SimpleScroller');
 
@@ -1096,7 +1094,7 @@ Router.run(routes, (function(_this) {
 
 
 
-},{"./actions/app-actions":1,"./components/app-template":3,"./components/post-edit/post-edit":11,"./components/post-list/app-posts":12,"./components/users/user-profile":16,"./web-api-utils/ajax-utils":26,"./web-api-utils/websocket-utils":27,"react-router":48,"react-tap-event-plugin":85,"react-touch":86,"react-touch/lib/environment/FPSCounter":87,"react-touch/lib/interactions/simplescroller/SimpleScroller":90,"react-touch/lib/primitives/TouchableArea":92,"react/addons":97}],23:[function(require,module,exports){
+},{"./actions/app-actions":1,"./components/app-template":3,"./components/post-edit/post-edit":11,"./components/post-list/app-posts":12,"./components/users/user-profile":16,"./web-api-utils/ajax-utils":26,"./web-api-utils/websocket-utils":27,"react-router":48,"react-tap-event-plugin":85,"react-touch":86,"react-touch/lib/environment/FPSCounter":87,"react-touch/lib/interactions/simplescroller/SimpleScroller":90,"react/addons":97}],23:[function(require,module,exports){
 var PostStore, React, StoreWatchMixin;
 
 React = require('react');

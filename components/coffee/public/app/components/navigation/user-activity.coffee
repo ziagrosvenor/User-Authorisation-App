@@ -1,6 +1,8 @@
 # @cjsx React.DOM
 React = require 'react/addons'
 _ = require 'lodash'
+injectTapEventPlugin = require 'react-tap-event-plugin'
+injectTapEventPlugin()
 
 AppActions = require '../../actions/app-actions'
 
@@ -30,14 +32,17 @@ UserActivity = React.createClass
     iconClasses = React.addons.classSet
       'iconNav': true
       'isAlert': status == 1
-      
+    
+    iconStyle =
+      display: 'inline'
+
     if @props.activity
       activity = _.map @props.activity, (item, i) ->
         if i < 5
           <li key={i}> {item.type} </li>
 
-    <div>
-      <IconAlert className={iconClasses} onClick={this.handleClick}/>
+    <div style={iconStyle}>
+      <IconAlert style={iconStyle} className={iconClasses} onTouchTap={this.handleClick}/>
       <ul className={dropdownClasses}>
         {activity}
       </ul>

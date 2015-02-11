@@ -1,5 +1,5 @@
 # @cjsx React.DOM
-React = require 'react'
+React = require 'react/addons'
 AppActions = require '../../actions/app-actions'
 PostStore = require('../../stores/app-store')
 UserStore = require('../../stores/user-store')
@@ -10,6 +10,8 @@ Notifications = require '../navigation/user-activity'
 SearchUsers = require '../navigation/search-users'
 DeletePost = require '../post-shared/delete-post-btn'
 EditPost = require '../post-shared/edit-btn'
+injectTapEventPlugin = require 'react-tap-event-plugin'
+injectTapEventPlugin()
 
 PostList = React.createClass
   render: ->
@@ -40,15 +42,18 @@ PostForm = React.createClass
     this.refs.content.getDOMNode().value = ''
     return
 
+  handleFocus: (e) ->
+    e.target.getDOMNode().focus()
+
   render: ->
     <form className='postForm form' onSubmit={this.handleSubmit}>
       <div className='form-group'>
-        <input className='form-control' type='text' placeholder="What's New?" ref='title' />
+        <input className='form-control' type='text' onTouchStart={@handleFocus} placeholder="What's New?" ref='title' />
       </div>
       <div className='form-group'>
-        <textarea className='form-control' placeholder="Share something" ref='content' />
+        <textarea className='form-control' onTouchStart={@handleFocus} placeholder="Share something" ref='content' />
       </div>
-      <input className='btn' type='submit' value='Post'/>
+      <button className='btn' type='submit' onTouchTap={@handleSubmit} value='Post'>Submit</button>
     </form>
 
 getComponentState = ->
@@ -61,16 +66,16 @@ PostModule = React.createClass
   handlePostSubmit: (post) ->
     AppActions.addPost(post)
   render: () ->
-    <div>
-      <Nav>
-        <Notifications activity={@state.currentUser.activity}/>
-        <SearchUsers users={@state.searchUsersResult}/>
-      </Nav>
-      <div className="postModule">
-        <h1>Posts!</h1>
-        <PostForm onPostSubmit={this.handlePostSubmit} />
-        <PostList data={this.state.posts} />
+      <div key={@state.currentUser.firstName} className='home'>
+        <Nav>
+          <Notifications activity={@state.currentUser.activity}/>
+          <SearchUsers users={@state.searchUsersResult}/>
+        </Nav>
+        <div className="postModule">
+          <h1>Posts!</h1>
+          <PostForm onPostSubmit={this.handlePostSubmit} />
+          <PostList data={this.state.posts} />
+        </div>
       </div>
-    </div>
 
 module.exports = PostModule

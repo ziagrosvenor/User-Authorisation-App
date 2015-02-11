@@ -1,6 +1,5 @@
 # @cjsx React.DOM
 React = require 'react'
-Link = require('react-router-component').Link
 
 Post = React.createClass
   render: ->

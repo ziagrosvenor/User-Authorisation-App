@@ -103,7 +103,6 @@ module.exports = function(Db) {
       if (err) {
         return console.error(err);
       }
-      console.log(num);
       return res.send({
         success: true
       });

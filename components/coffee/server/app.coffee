@@ -111,7 +111,6 @@ module.exports = (Db) ->
       (err, num) ->
         if err
           return console.error(err)
-        console.log(num)
         res.send(success: true)
 
   app.route '/api/posts'

@@ -30,7 +30,7 @@ AppActions =
         
     _user.updateActivity()
 
-  clearUsers: () ->
+  clearUsers: ->
     AppDispatcher.handleViewAction
       actionType: AppConstants.CLEAR_USERS
 

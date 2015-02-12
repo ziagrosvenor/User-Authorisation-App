@@ -13,7 +13,15 @@ SocketUtils =
       ServerActions.recieveOtherUsersPosts(posts)
     socket.on 'other_user_found', (user) ->
       ServerActions.recieveOtherUser(user)
+    socket.on 'post_like_added', (like) ->
+      ServerActions.recievePostLikesUpdate(like)
+    socket.on 'activity_added', (activity) ->
+      ServerActions.recieveActivityUpdate(activity)
   getUsers: (searchPhrase) ->
     socket.emit 'get_users', searchPhrase
+  postLiked: (data) ->
+    socket.emit 'post_liked', data
+  getOtherUser: (id) ->
+    socket.emit 'get_other_user', id
 
 module.exports = SocketUtils

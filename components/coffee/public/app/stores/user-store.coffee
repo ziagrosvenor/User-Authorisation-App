@@ -75,6 +75,9 @@ UserStore = assign {}, EventEmitter.prototype,
   getOtherUser: ->
     return otherUser
 
+  getOtherUsersId: ->
+    return otherUser._id
+
 UserStore.dispatcherIndex = AppDispatcher.register (payload) ->
   action = payload.action
 

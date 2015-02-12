@@ -19,26 +19,14 @@ module.exports = function(io, Posts, Users) {
         content: entities.encode(post.content)
       });
       return post.save(function(err) {
-        var item;
         if (err) {
           return console.error(err);
+          (function(err, data) {
+            if (err) {
+              return console.error(err);
+            }
+          });
         }
-        item = {
-          type: 'Post created',
-          seen: false,
-          timestamp: time.getTime()
-        };
-        Users.update({
-          _id: post.authorId
-        }, {
-          $push: {
-            activity: item
-          }
-        }, function(err, data) {
-          if (err) {
-            return console.error(err);
-          }
-        });
         return socket.emit('post_saved', post);
       });
     });
@@ -76,7 +64,8 @@ module.exports = function(io, Posts, Users) {
         return socket.emit('users_found', users);
       });
     });
-    return socket.on('get_other_users_data', function(id) {
+    socket.on('get_other_user', function(id) {
+      console.log(id);
       Users.findById(id, function(err, user) {
         if (err) {
           return console.error(err);
@@ -90,6 +79,50 @@ module.exports = function(io, Posts, Users) {
           return console.error(err);
         }
         return socket.emit('other_user_posts_found', posts);
+      });
+    });
+    return socket.on('post_liked', function(like) {
+      var likeToPush, timestamp;
+      timestamp = Date.now();
+      likeToPush = {
+        userId: like.userInSessionId,
+        authorId: like.authorId,
+        postId: like.postId,
+        timestamp: timestamp,
+        date: new Date(timestamp)
+      };
+      return Posts.update({
+        authorId: like.authorId
+      }, {
+        $push: {
+          likes: likeToPush
+        }
+      }, function(err, data) {
+        var activityItem;
+        if (err) {
+          return console.error(err);
+        }
+        console.log(data);
+        activityItem = {
+          type: 'Post liked',
+          seen: false,
+          userId: like.authorId,
+          timestamp: timestamp
+        };
+        io.emit('post_like_added', likeToPush);
+        return Users.update({
+          _id: like.authorId
+        }, {
+          $push: {
+            activity: activityItem
+          }
+        }, function(err, data) {
+          if (err) {
+            return console.error(err);
+          }
+          console.log(data);
+          return io.emit('activity_added', activityItem);
+        });
       });
     });
   });

@@ -37,4 +37,14 @@ ServerActions =
       actionType: AppConstants.RECIEVE_OTHER_USER
       user: user
 
+  recievePostLikesUpdate: (like) ->
+    AppDispatcher.handleServerAction
+      actionType: AppConstants.RECIEVE_POST_LIKES_UPDATE
+      like: like
+
+  recieveActivityUpdate: (activity) ->
+    AppDispatcher.handleServerAction
+      actionType: AppConstants.RECIEVE_ACTIVITY_UPDATE
+      activity: activity
+
 module.exports = ServerActions

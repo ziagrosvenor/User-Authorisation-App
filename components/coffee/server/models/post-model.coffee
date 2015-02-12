@@ -1,5 +1,11 @@
 module.exports = (Schema) ->
-  # Define scheme for user
+  Likes = new Schema
+    userId: String
+    postId: String
+    authorId: String
+    timestamp: Number
+    date: Date
+  # Define scheme for posts
   PostSchema = new Schema
     id:
       type: String
@@ -18,5 +24,6 @@ module.exports = (Schema) ->
       type: String
     content:
       type: String
+    likes: [Likes]
 
   PostSchema

@@ -18,15 +18,6 @@ module.exports = (io, Posts, Users) ->
       post.save (err) ->
         if err
           return console.error(err)
-        
-        item =
-          type: 'Post created'
-          seen: false
-          timestamp: time.getTime()
-
-        Users.update _id: post.authorId,
-          $push:
-            activity: item
                 
           (err, data) ->
             if err
@@ -55,7 +46,8 @@ module.exports = (io, Posts, Users) ->
 
         socket.emit 'users_found', users
 
-    socket.on 'get_other_users_data', (id) ->
+    socket.on 'get_other_user', (id) ->
+      console.log id
       Users.findById id, (err, user) ->
         if err
           return console.error(err)
@@ -65,3 +57,39 @@ module.exports = (io, Posts, Users) ->
         if err
           return console.error(err)
         socket.emit 'other_user_posts_found', posts
+
+    socket.on 'post_liked', (like) ->
+      timestamp = Date.now()
+
+      likeToPush =
+        userId: like.userInSessionId
+        authorId: like.authorId
+        postId: like.postId
+        timestamp: timestamp
+        date: new Date(timestamp)
+
+      Posts.update authorId: like.authorId,
+        $push:
+          likes: likeToPush
+        (err, data) ->
+          if err
+            return console.error(err)
+          console.log data
+
+          activityItem =
+            type: 'Post liked'
+            seen: false
+            userId: like.authorId
+            timestamp: timestamp
+
+          io.emit 'post_like_added', likeToPush
+
+          Users.update _id: like.authorId,
+            $push:
+              activity: activityItem
+            (err, data) ->
+              if err
+                return console.error(err)
+              console.log data
+
+              io.emit 'activity_added', activityItem

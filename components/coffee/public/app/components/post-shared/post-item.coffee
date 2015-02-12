@@ -8,6 +8,7 @@ Post = React.createClass
       <h5>{this.props.data.author}</h5>
       <p>{this.props.data.content}</p>
       <h6>{this.props.data.updated}</h6>
+      <h6>Likes {this.props.data.likes.length}</h6>
       <div>
         {@props.children}
       </div>

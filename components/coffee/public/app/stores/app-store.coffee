@@ -37,6 +37,18 @@ _deletePost = (id) ->
       posts.splice(i, 1)
       return
 
+_addLike = (like) ->
+  if UserStore.getOtherUsersId() is like.authorId
+    otherUsersPosts.map (post, i) ->
+      if like.postId == post.id
+        console.log like.postId, post.id
+        otherUsersPosts[i]['likes'].push(like)
+  if UserStore.getId() is like.authorId
+    posts.map (post, i) ->
+      if like.postId == post.id
+        console.log like.postId, post.id
+        posts[i]['likes'].push(like)
+
 PostStore = assign {}, EventEmitter.prototype,
   emitChange: ->
     this.emit(CHANGE_EVENT)
@@ -82,6 +94,7 @@ PostStore = assign {}, EventEmitter.prototype,
       when AppConstants.RECIEVE_UPDATED_POST then _updatePost(action.post)
       when AppConstants.VIEW_DELETE_POST then _deletePost(action.id)
       when AppConstants.RECIEVE_OTHER_USERS_POSTS then _addOtherUsersPosts(action.posts)
+      when AppConstants.RECIEVE_POST_LIKES_UPDATE then _addLike(action.like)
 
     PostStore.emitChange()
     return true

@@ -6,10 +6,11 @@ FPSCounter = require 'react-touch/lib/environment/FPSCounter'
 AppActions = require './actions/app-actions'
 Posts = require './components/post-list/app-posts'
 PostEdit = require './components/post-edit/post-edit'
+AppSearch = require './components/search/app-search'
 UserProfile = require './components/users/user-profile'
 injectTapEventPlugin = require 'react-tap-event-plugin'
 Template = require './components/app-template'
-SimpleScroller = 
+SimpleScroller =
   require 'react-touch/lib/interactions/simplescroller/SimpleScroller'
 
 
@@ -41,26 +42,26 @@ APP = React.createClass
   handleTouch: (e) ->
     e.preventDefault()
   render: ->
-    <div onTouchMove={this.handleTouch} style={AppStyle}> 
+    <Template>
       <SimpleScroller options={{scrollingX: false}}>
-        <Template>
-          <RouteHandler/>
-        </Template>
+        <RouteHandler/>
       </SimpleScroller>
-    </div>
+    </Template>
+
 
 FPSCounter.start()
 
 routes =
   <Route handler={APP}>
     <DefaultRoute handler={Posts}/>
-    <Route name='posts' path='/admin' handler={Posts}/>
+    <Route name='posts' path='/posts' handler={Posts}/>
     <Route name='edit' path='/edit-post/:id' handler={PostEdit}/>
     <Route name='user' path='/user/:userId' handler={UserProfile}/>
+    <Route name='search' path='/search' handler={AppSearch}/>
   </Route>
 
 Router.run routes, (Handler, state) =>
   React.render <Handler/>, document.getElementById('main')
   if state.params.userId
     AppActions.clearUsers()
-    AppActions.getOtherUsersData(state.params.userId)
+    AppActions.getOtherUser(state.params.userId)

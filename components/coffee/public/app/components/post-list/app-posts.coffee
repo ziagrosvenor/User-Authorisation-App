@@ -48,29 +48,33 @@ PostForm = React.createClass
   render: ->
     <form className='postForm form' onSubmit={this.handleSubmit}>
       <div className='form-group'>
-        <input className='form-control' type='text' onTouchStart={@handleFocus} placeholder="What's New?" ref='title' />
+        <input className='form-control' 
+          type='text'
+          onTouchStart={@handleFocus}
+          placeholder="What's New?"
+          ref='title'/>
       </div>
       <div className='form-group'>
-        <textarea className='form-control' onTouchStart={@handleFocus} placeholder="Share something" ref='content' />
+        <textarea className='form-control'
+          onTouchStart={@handleFocus}
+          placeholder="Share something"
+          ref='content'/>
       </div>
-      <button className='btn' type='submit' onTouchTap={@handleSubmit} value='Post'>Submit</button>
+      <button className='btn'
+        type='submit'
+        onTouchTap={@handleSubmit}
+        value='Post'>Submit</button>
     </form>
 
 getComponentState = ->
   posts: PostStore.getPosts()
-  currentUser: UserStore.getUser()
-  searchUsersResult: UserStore.getSearchResult()   
   
 PostModule = React.createClass
   mixins: [new StoreWatchMixin(getComponentState)]
   handlePostSubmit: (post) ->
     AppActions.addPost(post)
   render: () ->
-      <div key={@state.currentUser.firstName} className='home'>
-        <Nav>
-          <Notifications activity={@state.currentUser.activity}/>
-          <SearchUsers users={@state.searchUsersResult}/>
-        </Nav>
+      <div className='home'>
         <div className="postModule">
           <h1>Posts!</h1>
           <PostForm onPostSubmit={this.handlePostSubmit} />

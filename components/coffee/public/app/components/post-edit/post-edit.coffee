@@ -5,6 +5,8 @@ AppActions = require '../../actions/app-actions'
 PostStore = require('../../stores/app-store')
 StoreWatchMixin = require '../../mixins/store-watch-mixin'
 Post = require '../post-shared/post-item'
+injectTapEventPlugin = require 'react-tap-event-plugin'
+injectTapEventPlugin()
 
 PostEditForm = React.createClass
   handleChange: (e) ->
@@ -44,18 +46,22 @@ PostEditForm = React.createClass
     @refs.content.getDOMNode.value = ''
     return
 
+  handleFocus: (e) ->
+    e.target.getDOMNode().focus()
+
   render: ->
-    <form className='postForm form' onSubmit={this.handleSubmit}  >
+    <form className='postForm form' onSubmit={this.handleSubmit}>
       <div className='form-group'>
         <input className='form-control'
-          onChange={@handleChange} 
+          onChange={@handleChange}
+          onTouchStart={@handleFocus}
           type='text'
           ref='title'/>
       </div>
       <div className='form-group'>
-        <textarea className='form-control' ref='content' onChange={@handleChange}/>
+        <textarea className='form-control' ref='content' onTouchStart={@handleFocus} onChange={@handleChange}/>
       </div>
-      <input className='btn' type='submit' value='Update'/>
+      <button className='btn' type='submit' onTouchTap={@handleSubmit}>Update</button>
     </form>
 
 getPost = (id) ->

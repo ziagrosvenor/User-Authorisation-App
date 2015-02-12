@@ -4,6 +4,24 @@
 .is-hidden {
 	display: none;
 }
+
+.home-enter {
+  margin-right: -400px;
+  -webkit-transition: margin-right 0.5s ease-in;
+}
+
+.home-enter.home-enter-active {
+  margin-right: 0;
+}
+
+.home-leave {
+	margin-right: 0;
+  -webkit-transition: margin-right 0.5s ease-in;
+}
+
+.home-leave.home-leave-active {
+	margin-right: -400px;
+}
 // Bootstrap tables ------------------------------------------------------------
 // ----------------------------------------------------------------------------
 @import "modules/tables";
@@ -32,8 +50,24 @@
 .iconNav {
 	width: 50px;
 	height: 50px;
-	margin: 15px 0;
-	fill: #000;
+	padding: 4px;
+	margin: 6px 0;
+	fill: lighten(#000, 20%);
+}
+
+.iconSideNav {
+	width: 30px;
+	height: 30px;
+	padding: 4px;
+	margin: 6px 0;
+	fill: rgba(white, 0.8);
+	-webkit-align-self: center;
+  align-self: center;
+}
+
+.iconGlobe {
+	position: absolute;
+	right: 0;
 }
 
 .isAlert {
@@ -41,13 +75,18 @@
 }
 
 .iconClose {
-	width: 30px;
-	height: 30px;
+	width: 35px;
+	height: 35px;
 }
 // Navigation -----------------------------------------------------------------
 //-----------------------------------------------------------------------------
 .nav {
 	background-color: $light-blue;
+	height: 62px;
+}
+
+.nav-index {
+	height: auto;
 }
 
 .is-active {
@@ -58,22 +97,56 @@
 }
 
 .dropdown {
-	position: fixed;
+	position: absolute;
 	z-index: 10;
-	top: 70px;
-	left: 15px;
+	top: 51px;
+	right: 0;
 	background-color: #ddd;
 	padding: 10px;
 }
 
-.search {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 80px;
-	background-color: $light-blue;
+.Layout-topBar {
+  background: rgb(255, 255, 255);
+  border-bottom: 1px solid black;
+  font-family: sans-serif;
+  line-height: 50px;
+  text-align: center;
 }
+
+.Layout-hamburger {
+  left: 0;
+  padding: 8px;
+  position: absolute;
+}
+
+.Layout-content {
+	position: relative;
+	background-color: white;
+	z-index: 9999;
+  height: 100%;
+}
+
+.Layout-nav {
+	position: relative;
+  background: #34495E;
+  border-bottom: rgba(100, 100, 100, 0.3);
+  height: 100%;
+  padding: 10px;
+}
+
+.Layout-navLink,
+.Layout-lastNavLink {
+  color: black;
+  display: block;
+  font-family: sans-serif;
+  padding: 10px 0;
+  text-decoration: none;
+}
+
+.Layout-navLink {
+  border-bottom: 1px solid rgba(20, 20, 20, 0.3);
+}
+
 // Forms ----------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 @import "modules/forms";
@@ -94,6 +167,10 @@
 	textarea {
 		height: 10rem;
 	}
+}
+
+input:focus{
+	font-size: 16px; /* Adding 16px on focus will prevent page zoom */
 }
 
 .heading {
@@ -174,7 +251,7 @@
 
 .searchList {
 	background-color: white;
-
+	width: 100%;
 	img {
 		width: 50px;
 		height: 50px;
@@ -193,4 +270,20 @@
 		}
 	}
 
+}
+
+.search-view {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.search {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 80px;
+	background-color: $light-blue;
 }

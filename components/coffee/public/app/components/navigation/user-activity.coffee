@@ -34,7 +34,7 @@ UserActivity = React.createClass
       'isAlert': status == 1
     
     iconStyle =
-      display: 'inline'
+      float: 'right'
 
     if @props.activity
       activity = _.map @props.activity, (item, i) ->

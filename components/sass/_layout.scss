@@ -5,6 +5,19 @@
   @extend %flex-main;
 }
 
+body[orient="portrait"] {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.nav-wrapper {
+  width: 95%;
+  margin: auto;
+}
+
 .half-column {
   width: 50%;
   float: left;
@@ -29,4 +42,14 @@
 
 .postModule {
   margin: 1rem;
+}
+
+.sideNavItem {
+  @extend %flex-main;
+
+  span {
+    color: white;
+    -webkit-align-self: center;
+    align-self: center;
+  }
 }

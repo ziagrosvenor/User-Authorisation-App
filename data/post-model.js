@@ -1,5 +1,12 @@
 module.exports = function(Schema) {
-  var PostSchema;
+  var Likes, PostSchema;
+  Likes = new Schema({
+    userId: String,
+    postId: String,
+    authorId: String,
+    timestamp: Number,
+    date: Date
+  });
   PostSchema = new Schema({
     id: {
       type: String
@@ -25,7 +32,8 @@ module.exports = function(Schema) {
     },
     content: {
       type: String
-    }
+    },
+    likes: [Likes]
   });
   return PostSchema;
 };

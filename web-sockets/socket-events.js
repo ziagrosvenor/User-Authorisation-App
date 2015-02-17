@@ -104,9 +104,9 @@ module.exports = function(io, Posts, Users) {
         }
         console.log(data);
         activityItem = {
+          userId: like.authorId,
           type: 'Post liked',
           seen: false,
-          userId: like.authorId,
           timestamp: timestamp
         };
         io.emit('post_like_added', likeToPush);

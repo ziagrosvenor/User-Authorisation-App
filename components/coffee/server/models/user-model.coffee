@@ -1,5 +1,6 @@
 module.exports = (Schema) ->
   Activity = new Schema
+    userId: String
     type: String
     seen: Boolean
     timestamp: Number

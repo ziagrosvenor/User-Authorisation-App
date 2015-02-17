@@ -35,18 +35,9 @@ _userActivitySeen = ->
     activity.seen = true
     return activity
 
-_addActivity = (type) ->
-  activity = _.map user.activity, (activityItem) ->
-    return activityItem
-
-  newActivity =
-    type: type
-    seen: false
-    timestamp: Date.now()
-
-  activity.push(newActivity)
-
-  user['activity'] = activity
+_addActivity = (activity) ->
+  if user._id is activity.userId
+    user.activity.push(activity)
 
 UserStore = assign {}, EventEmitter.prototype,
   
@@ -84,10 +75,11 @@ UserStore.dispatcherIndex = AppDispatcher.register (payload) ->
   switch action.actionType
     when actionTypes.RECIEVE_USER then _addUser(payload.action.user)
     when actionTypes.ACTIVITY_SEEN then _userActivitySeen()
-    when actionTypes.RECIEVE_CREATED_POST then _addActivity('post added')
     when actionTypes.RECIEVE_ALL_USERS then _updateSearchResult(payload.action.users)
     when actionTypes.CLEAR_USERS then _clearUsers()
     when actionTypes.RECIEVE_OTHER_USER then _addOtherUser(action.user)
+    when actionTypes.RECIEVE_ACTIVITY_UPDATE then _addActivity(action.activity)
+
 
   UserStore.emitChange()
   return true

@@ -1,6 +1,7 @@
 module.exports = function(Schema) {
   var Activity, UserSchema;
   Activity = new Schema({
+    userId: String,
     type: String,
     seen: Boolean,
     timestamp: Number

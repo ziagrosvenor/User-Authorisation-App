@@ -50,6 +50,10 @@ Layout = React.createClass
             <MenuIcon className='iconSideNav'/>
             <span>Home Page</span>
           </SideNavItem>
+          <SideNavItem href='/stats'>
+            <MenuIcon className='iconSideNav'/>
+            <span>Stats</span>
+          </SideNavItem>
         </div>
 
     @transferPropsTo (

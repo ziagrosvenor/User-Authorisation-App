@@ -8,6 +8,7 @@ Posts = require './components/post-list/app-posts'
 PostEdit = require './components/post-edit/post-edit'
 AppSearch = require './components/search/app-search'
 UserProfile = require './components/users/user-profile'
+UserStats = require './components/stats/user-stats'
 injectTapEventPlugin = require 'react-tap-event-plugin'
 Template = require './components/app-template'
 SimpleScroller =
@@ -58,6 +59,7 @@ routes =
     <Route name='edit' path='/edit-post/:id' handler={PostEdit}/>
     <Route name='user' path='/user/:userId' handler={UserProfile}/>
     <Route name='search' path='/search' handler={AppSearch}/>
+    <Route name='stats' path='/stats' handler={UserStats}/>
   </Route>
 
 Router.run routes, (Handler, state) =>

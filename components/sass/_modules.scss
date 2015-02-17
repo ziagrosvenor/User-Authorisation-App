@@ -287,3 +287,17 @@ input:focus{
 	height: 80px;
 	background-color: $light-blue;
 }
+
+.chartArea {
+  width: 300px;
+  height: 200px;
+  margin: 20px auto;
+}
+
+.bar {
+  display: inline-block;
+  // width: 20px;
+  // height: 75px; Gets overriden by D3-assigned height below
+  margin-right: 2px;
+  fill: lighten($light-blue, 20%);
+}

@@ -8,6 +8,7 @@ var gulp = require('gulp'),
   cjsx = require('gulp-cjsx'),
   coffeelint = require('gulp-coffeelint'),
 	nodemon = require('gulp-nodemon'),
+  shell = require('gulp-shell'),
 	browserSync = require('browser-sync');
 
 var coffeeServerSources = [
@@ -132,7 +133,7 @@ gulp.task('coffee', function () {
   gulp.src(coffeeTestSources)
     .pipe(coffee({ bare: true })
       .on('error', gutil.log))
-    .pipe(gulp.dest(__dirname + '/test'));
+    .pipe(gulp.dest(__dirname + '/route-tests'));
     
   gulp.src(coffeePublicSources)
     .pipe(coffee({ bare: true })
@@ -152,6 +153,10 @@ gulp.task('watch', function() {
   gulp.watch(coffeeTestSources, ['coffee']);
   gulp.watch('components/coffee/**/**/**.coffee', ['lint']);
 });
+
+gulp.task('scaffold', shell.task('./node_modules/.bin/pioneer --coffee'));
+
+gulp.task('test', shell.task('./node_modules/.bin/pioneer'));
 
 gulp.task('lint', function() {
   gulp.src('./components/coffee/**/**/*.coffee')

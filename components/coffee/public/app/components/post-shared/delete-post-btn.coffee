@@ -8,6 +8,6 @@ DeletePost = React.createClass
   handleTap: ->
     AppActions.deletePost(this.props.id)
   render: () ->
-    <div className='btn' onTouchTap={this.handleTap}>X</div>
+    <button className='btn' id='deleteBtn' onTouchTap={this.handleTap}>X</button>
 
 module.exports = DeletePost

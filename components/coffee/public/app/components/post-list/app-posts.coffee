@@ -50,6 +50,7 @@ PostForm = React.createClass
       <div className='form-group'>
         <input className='form-control' 
           type='text'
+          name='title'
           onTouchStart={@handleFocus}
           placeholder="What's New?"
           ref='title'/>
@@ -57,6 +58,7 @@ PostForm = React.createClass
       <div className='form-group'>
         <textarea className='form-control'
           onTouchStart={@handleFocus}
+          name='content'
           placeholder="Share something"
           ref='content'/>
       </div>

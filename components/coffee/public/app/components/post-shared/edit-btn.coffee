@@ -11,7 +11,7 @@ EditPost = React.createClass
   handleTap: (e, item) ->
     @transitionTo('/edit-post/' + @props.id)
   render: ->
-    <button onTouchTap={@handleTap} className='btn'>
+    <button onTouchTap={@handleTap} id='editBtn' className='btn'>
       Edit
     </button>
 

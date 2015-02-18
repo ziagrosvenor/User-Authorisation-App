@@ -40,6 +40,36 @@
         selector: '.postList .post:first-child p'
       }).should.eventually.eql(content);
     });
+    this.Then(/^I can edit the post to read "([^"]*)", "([^"]*)"$/, function(newTitle, newContent) {
+      this.Widget.click('.postList .post:first-child #editBtn').then((function(_this) {
+        return function() {
+          var PostForm, form;
+          PostForm = _this.Widget.Form.extend({
+            root: '.postForm',
+            submitSelector: function() {
+              return this.find('button');
+            }
+          });
+          form = new PostForm;
+          return form.submitWith({
+            title: newTitle,
+            content: newContent
+          });
+        };
+      })(this));
+      return this.Widget.click('#hamburgerIcon').then((function(_this) {
+        return function() {
+          return _this.Widget.click('.sideNavItem:nth-child(2)').then(function() {
+            _this.Widget.read({
+              selector: '.postList .post:first-child h2'
+            }).should.eventually.eql(newTitle);
+            return _this.Widget.read({
+              selector: '.postList .post:first-child p'
+            }).should.eventually.eql(newContent);
+          });
+        };
+      })(this));
+    });
     return this.Then(/^I can delete the post$/, function() {
       return this.Widget.click('.postList .post:first-child #deleteBtn').then((function(_this) {
         return function() {

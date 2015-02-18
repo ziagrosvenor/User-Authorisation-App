@@ -1,4 +1,4 @@
-Feature: Simple Feature
+Feature: Signup Feature
 
   Background:
     Given I visit Auth App

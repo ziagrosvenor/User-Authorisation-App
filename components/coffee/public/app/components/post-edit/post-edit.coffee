@@ -53,13 +53,18 @@ PostEditForm = React.createClass
     <form className='postForm form' onSubmit={this.handleSubmit}>
       <div className='form-group'>
         <input className='form-control'
-          onChange={@handleChange}
-          onTouchStart={@handleFocus}
+          ref='title'
+          name='title'
           type='text'
-          ref='title'/>
+          onChange={@handleChange}
+          onTouchStart={@handleFocus}/>
       </div>
       <div className='form-group'>
-        <textarea className='form-control' ref='content' onTouchStart={@handleFocus} onChange={@handleChange}/>
+        <textarea className='form-control'
+          ref='content'
+          name='content'
+          onTouchStart={@handleFocus}
+          onChange={@handleChange}/>
       </div>
       <button className='btn' type='submit' onTouchTap={@handleSubmit}>Update</button>
     </form>

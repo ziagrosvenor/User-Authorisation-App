@@ -276,7 +276,8 @@ React = require('react');
 IconAlert = React.createClass({
   render: function() {
     return this.transferPropsTo(React.createElement("svg", {
-      "viewBox": "0 0 100 100"
+      "viewBox": "0 0 100 100",
+      "id": "hamburgerIcon"
     }, React.createElement("g", null, React.createElement("rect", {
       "y": "0.25",
       "width": "99.504",
@@ -570,15 +571,17 @@ PostEditForm = React.createClass({
       "className": 'form-group'
     }, React.createElement("input", {
       "className": 'form-control',
-      "onChange": this.handleChange,
-      "onTouchStart": this.handleFocus,
+      "ref": 'title',
+      "name": 'title',
       "type": 'text',
-      "ref": 'title'
+      "onChange": this.handleChange,
+      "onTouchStart": this.handleFocus
     })), React.createElement("div", {
       "className": 'form-group'
     }, React.createElement("textarea", {
       "className": 'form-control',
       "ref": 'content',
+      "name": 'content',
       "onTouchStart": this.handleFocus,
       "onChange": this.handleChange
     })), React.createElement("button", {
@@ -716,6 +719,7 @@ PostForm = React.createClass({
     }, React.createElement("input", {
       "className": 'form-control',
       "type": 'text',
+      "name": 'title',
       "onTouchStart": this.handleFocus,
       "placeholder": "What's New?",
       "ref": 'title'
@@ -724,6 +728,7 @@ PostForm = React.createClass({
     }, React.createElement("textarea", {
       "className": 'form-control',
       "onTouchStart": this.handleFocus,
+      "name": 'content',
       "placeholder": "Share something",
       "ref": 'content'
     })), React.createElement("button", {
@@ -779,8 +784,9 @@ DeletePost = React.createClass({
     return AppActions.deletePost(this.props.id);
   },
   render: function() {
-    return React.createElement("div", {
+    return React.createElement("button", {
       "className": 'btn',
+      "id": 'deleteBtn',
       "onTouchTap": this.handleTap
     }, "X");
   }
@@ -809,6 +815,7 @@ EditPost = React.createClass({
   render: function() {
     return React.createElement("button", {
       "onTouchTap": this.handleTap,
+      "id": 'editBtn',
       "className": 'btn'
     }, "Edit");
   }

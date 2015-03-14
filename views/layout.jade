@@ -5,8 +5,11 @@ html
 		title= title
 		meta(name="viewport" content="width=device-width, initial-scale=1, user-scalable=no")
 		meta(name="apple-mobile-web-app-capable" content="yes")
+		link(href='http://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css')
+		link(href="css/main.css" rel="stylesheet")
 		link(href="css/global.css" rel="stylesheet")
 	body
+		include ../node_modules/material-ui-sass/material-ui/material-design-fonticons/fonts/mdfonticon.svg
 		block content
 		script(type="text/javascript", src="bower_components/jquery/dist/jquery.min.js")
 		script(type="text/javascript", src="bower_components/jquery-validate/dist/jquery.validate.min.js")

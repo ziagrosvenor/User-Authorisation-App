@@ -22,6 +22,92 @@
 .home-leave.home-leave-active {
 	margin-right: -400px;
 }
+
+@-webkit-keyframes enter-from-bottom {
+  from {
+    top: 400px;
+  }
+  to {
+    top: 0;
+  }
+}
+
+@-webkit-keyframes exit-from-bottom {
+  from {
+    top: 0;
+  }
+  to {
+    top: 400px;
+  }
+}
+
+@-webkit-keyframes opacity-fade-in {
+  from {
+    background-color: rgba(black, 0.1);
+  }
+  to {
+    background-color: rgba(black, 0.7);
+  }
+}
+
+@-webkit-keyframes opacity-fade-out {
+  from {
+    background-color: rgba(black, 0.7);
+  }
+  to {
+    background-color: rgba(black, 0.0);
+  }
+}
+
+.postModal {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  -webkit-animation: enter-from-bottom 0.4s 0s 1;
+}
+
+.modal-leaving {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  -webkit-animation: exit-from-bottom 0.4s 0s 1;
+}
+
+.modal-bg {
+  position: absolute;
+  z-index: 9998;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  -webkit-animation: opacity-fade-in 0.2s 0s 1;
+  background-color: rgba(black, 0.7);
+}
+
+.modal-bg-leaving {
+  position: absolute;
+  z-index: 9998;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  -webkit-animation: opacity-fade-out 0.4s 0s 1;
+}
+
+.postAddForm {
+  position: absolute;
+  padding: 15px;
+  z-index: 9999;
+  left: 15px;
+  top: 15px;
+  right: 15px;
+  background-color: white;
+
+}
 // Bootstrap tables ------------------------------------------------------------
 // ----------------------------------------------------------------------------
 @import "modules/tables";
@@ -48,11 +134,11 @@
 //SVG Icons -------------------------------------------------------------------
 
 .iconNav {
-	width: 50px;
-	height: 50px;
+	width: 40px;
+	height: 40px;
 	padding: 4px;
 	margin: 6px 0;
-	fill: lighten(#000, 20%);
+	fill: white;
 }
 
 .iconSideNav {
@@ -78,11 +164,19 @@
 	width: 35px;
 	height: 35px;
 }
+
+path.color0 {
+  fill: #1072b8;
+}
+
+path.color1 {
+  fill: #35526b;
+}
 // Navigation -----------------------------------------------------------------
 //-----------------------------------------------------------------------------
 .nav {
-	background-color: $light-blue;
-	height: 62px;
+	background-color: #b0076e;
+	height: 52px;
 }
 
 .nav-index {
@@ -96,13 +190,31 @@
 	z-index: 10;
 }
 
+.tool-tip {
+  background-color: white;
+  width: 20px;
+  height: 20px;
+  -webkit-transform: rotate(53deg);
+  position: absolute;
+  top: -3px;
+  left: 75px;
+}
+
 .dropdown {
 	position: absolute;
 	z-index: 10;
 	top: 51px;
-	right: 0;
-	background-color: #ddd;
+	left: -75px;
+  width: 115px;
+	background-color: white;
 	padding: 10px;
+  -webkit-box-shadow: 1px 6px 37px -5px rgba(0,0,0,0.75);
+  -moz-box-shadow: 1px 6px 37px -5px rgba(0,0,0,0.75);
+  box-shadow: 1px 6px 37px -5px rgba(0,0,0,0.75);
+}
+
+.notifications {
+  position: relative;
 }
 
 .Layout-topBar {
@@ -121,14 +233,14 @@
 
 .Layout-content {
 	position: relative;
-	background-color: white;
+	background-color: #ececf8;
 	z-index: 9999;
   height: 100%;
 }
 
 .Layout-nav {
 	position: relative;
-  background: #34495E;
+  background: #505050;
   border-bottom: rgba(100, 100, 100, 0.3);
   height: 100%;
   padding: 10px;
@@ -151,26 +263,73 @@
 // ----------------------------------------------------------------------------
 @import "modules/forms";
 
-.list-add-form {
-	label, .input-flex {
-		width: 100%;
-		font-size: 1.4rem;
-	}
-	label {
-		margin-bottom: 0.5rem;
-	}
-	.input-flex {
-		box-sizing: border-box;
-		margin-bottom: 2rem;
-		padding: 1rem;
-	}
-	textarea {
-		height: 10rem;
-	}
+// .list-add-form {
+// 	label, .input-flex {
+// 		width: 100%;
+// 		font-size: 1.4rem;
+// 	}
+// 	label {
+// 		margin-bottom: 0.5rem;
+// 	}
+// 	.input-flex {
+// 		box-sizing: border-box;
+// 		margin-bottom: 2rem;
+// 		padding: 1rem;
+// 	}
+// 	textarea {
+// 		height: 10rem;
+// 	}
+// }
+
+// input:focus{
+// 	font-size: 16px; /* Adding 16px on focus will prevent page zoom */
+// }
+// 
+.post {
+  padding: 10px;
+  background-color: white;
+}
+.post-title {
+  font-size: 1.6rem;
 }
 
-input:focus{
-	font-size: 16px; /* Adding 16px on focus will prevent page zoom */
+.post-content {
+  font-size: 1.2rem;
+}
+
+.post * {
+  color: lighten(black, 40%);
+}
+
+.mui-text-field {
+  width: 100% !important;
+}
+
+.mui-text-field-floating-label {
+  margin-bottom: 0 !important;
+}
+
+.mui-text-field-input {
+  padding-top: 15px !important;
+}
+
+.mui-flat-button {
+  width: 100%;
+}
+
+.mui-drop-down-menu {
+  width: 50% !important;
+}
+.mui-floating-action-button-container {
+
+  span {
+    color: white;
+    font-weight: bold;
+  }
+}
+
+.mui-date-picker-dialog {
+  padding-top: 10px !important;
 }
 
 .heading {

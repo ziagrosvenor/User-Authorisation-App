@@ -44,6 +44,10 @@ body[orient="portrait"] {
   margin: 1rem;
 }
 
+.post-row {
+  @extend %flex-center;
+}
+
 .sideNavItem {
   @extend %flex-main;
 

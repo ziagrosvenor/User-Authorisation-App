@@ -20,6 +20,7 @@ AppActions = {
       actionType: AppConstants.VIEW_CREATE_POST,
       post: post
     });
+    console.log("post", post);
     return socket.emit('new_post', post);
   },
   updatePost: function(post) {
@@ -62,7 +63,7 @@ module.exports = AppActions;
 
 
 
-},{"../constants/app-constants":22,"../dispatchers/app-dispatcher":23,"../factory/user-factory":25,"../stores/app-store":29,"../web-api-utils/websocket-utils":32,"socket.io-client":271}],2:[function(require,module,exports){
+},{"../constants/app-constants":24,"../dispatchers/app-dispatcher":25,"../factory/user-factory":27,"../stores/app-store":31,"../web-api-utils/websocket-utils":34,"socket.io-client":337}],2:[function(require,module,exports){
 var AppConstants, AppDispatcher, ServerActions;
 
 AppConstants = require('../constants/app-constants');
@@ -130,7 +131,7 @@ module.exports = ServerActions;
 
 
 
-},{"../constants/app-constants":22,"../dispatchers/app-dispatcher":23}],3:[function(require,module,exports){
+},{"../constants/app-constants":24,"../dispatchers/app-dispatcher":25}],3:[function(require,module,exports){
 var App, Layout, LeftNavContainer, MenuIcon, Nav, Notifications, React, Router, SIDEBAR_WIDTH, SearchIcon, SearchUsers, SideNavItem, StoreWatchMixin, TOPBAR_HEIGHT, TouchableArea, UserStore, getComponentState, injectTapEventPlugin;
 
 React = require('react');
@@ -165,7 +166,7 @@ injectTapEventPlugin();
 
 SIDEBAR_WIDTH = 192;
 
-TOPBAR_HEIGHT = 62;
+TOPBAR_HEIGHT = 52;
 
 SideNavItem = React.createClass({
   mixins: [Router.Navigation, Router.State],
@@ -203,10 +204,14 @@ Layout = React.createClass({
     }, React.createElement(SearchIcon, {
       "className": 'iconSideNav'
     }), React.createElement("span", null, "Find People")), React.createElement(SideNavItem, {
-      "href": '/posts'
+      "href": '/homepage'
     }, React.createElement(MenuIcon, {
       "className": 'iconSideNav'
     }), React.createElement("span", null, "Home Page")), React.createElement(SideNavItem, {
+      "href": '/posts'
+    }, React.createElement(MenuIcon, {
+      "className": 'iconSideNav'
+    }), React.createElement("span", null, "Job History")), React.createElement(SideNavItem, {
       "href": '/stats'
     }, React.createElement(MenuIcon, {
       "className": 'iconSideNav'
@@ -228,7 +233,57 @@ module.exports = Layout;
 
 
 
-},{"../mixins/store-watch-mixin":28,"../stores/user-store":30,"./icons/icon-menu":6,"./icons/search-icon":7,"./navigation/search-users":8,"./navigation/user-activity":9,"./navigation/user-navigation":11,"react":270,"react-router":60,"react-tap-event-plugin":97,"react-touch/lib/interactions/leftnav/LeftNavContainer":103,"react-touch/lib/primitives/App":106,"react-touch/lib/primitives/TouchableArea":107}],4:[function(require,module,exports){
+},{"../mixins/store-watch-mixin":30,"../stores/user-store":32,"./icons/icon-menu":7,"./icons/search-icon":8,"./navigation/search-users":9,"./navigation/user-activity":10,"./navigation/user-navigation":12,"react":336,"react-router":126,"react-tap-event-plugin":163,"react-touch/lib/interactions/leftnav/LeftNavContainer":169,"react-touch/lib/primitives/App":172,"react-touch/lib/primitives/TouchableArea":173}],4:[function(require,module,exports){
+var AppActions, Homepage, RaisedButton, React, Router, StoreWatchMixin, UserStore, getUserState, _;
+
+React = require('react');
+
+Router = require('react-router');
+
+_ = require('lodash');
+
+StoreWatchMixin = require('../../mixins/store-watch-mixin');
+
+UserStore = require('../../stores/user-store');
+
+AppActions = require('../../actions/app-actions');
+
+RaisedButton = require('material-ui').RaisedButton;
+
+getUserState = function() {
+  return {
+    userName: UserStore.getFullName()
+  };
+};
+
+Homepage = React.createClass({
+  mixins: [new StoreWatchMixin(getUserState), Router.State],
+  render: function() {
+    var user;
+    if (this.state.userName) {
+      user = React.createElement("div", null, React.createElement("h2", {
+        "className": "page-header"
+      }, "Welcome ", this.state.userName, "!"));
+    } else {
+      user = React.createElement("div", null, "loading...");
+    }
+    return React.createElement("div", {
+      "className": "page-wrapper"
+    }, user, React.createElement(RaisedButton, {
+      "secondary": true
+    }, "Find Advice"), React.createElement(RaisedButton, {
+      "secondary": true
+    }, "Get a mentor"), React.createElement(RaisedButton, {
+      "secondary": true
+    }, "View Profile"));
+  }
+});
+
+module.exports = Homepage;
+
+
+
+},{"../../actions/app-actions":1,"../../mixins/store-watch-mixin":30,"../../stores/user-store":32,"lodash":44,"material-ui":45,"react":336,"react-router":126}],5:[function(require,module,exports){
 var IconAlert, React;
 
 React = require('react/addons');
@@ -249,7 +304,7 @@ module.exports = IconAlert;
 
 
 
-},{"react/addons":109}],5:[function(require,module,exports){
+},{"react/addons":175}],6:[function(require,module,exports){
 var IconClose, React;
 
 React = require('react');
@@ -268,7 +323,7 @@ module.exports = IconClose;
 
 
 
-},{"react":270}],6:[function(require,module,exports){
+},{"react":336}],7:[function(require,module,exports){
 var IconAlert, React;
 
 React = require('react');
@@ -298,7 +353,7 @@ module.exports = IconAlert;
 
 
 
-},{"react":270}],7:[function(require,module,exports){
+},{"react":336}],8:[function(require,module,exports){
 var IconSearch, React;
 
 React = require('react/addons');
@@ -317,7 +372,7 @@ module.exports = IconSearch;
 
 
 
-},{"react/addons":109}],8:[function(require,module,exports){
+},{"react/addons":175}],9:[function(require,module,exports){
 var AppActions, IconClose, IconSearch, React, SearchField, SocketUtils, UserSearch, injectTapEventPlugin;
 
 React = require('react');
@@ -382,16 +437,12 @@ module.exports = UserSearch;
 
 
 
-},{"../../actions/app-actions":1,"../../web-api-utils/websocket-utils":32,"../icons/close-icon":5,"../icons/search-icon":7,"react":270,"react-tap-event-plugin":97}],9:[function(require,module,exports){
-var AppActions, IconAlert, React, UserActivity, injectTapEventPlugin, _;
+},{"../../actions/app-actions":1,"../../web-api-utils/websocket-utils":34,"../icons/close-icon":6,"../icons/search-icon":8,"react":336,"react-tap-event-plugin":163}],10:[function(require,module,exports){
+var AppActions, IconAlert, React, UserActivity, _;
 
 React = require('react/addons');
 
 _ = require('lodash');
-
-injectTapEventPlugin = require('react-tap-event-plugin');
-
-injectTapEventPlugin();
 
 AppActions = require('../../actions/app-actions');
 
@@ -441,14 +492,17 @@ UserActivity = React.createClass({
       });
     }
     return React.createElement("div", {
+      "className": "notifications",
       "style": iconStyle
     }, React.createElement(IconAlert, {
       "style": iconStyle,
       "className": iconClasses,
       "onTouchTap": this.handleClick
-    }), React.createElement("ul", {
+    }), React.createElement("div", {
       "className": dropdownClasses
-    }, activity));
+    }, React.createElement("span", {
+      "className": "tool-tip"
+    }), React.createElement("ul", null, activity)));
   }
 });
 
@@ -456,7 +510,7 @@ module.exports = UserActivity;
 
 
 
-},{"../../actions/app-actions":1,"../icons/alert-icon":4,"lodash":42,"react-tap-event-plugin":97,"react/addons":109}],10:[function(require,module,exports){
+},{"../../actions/app-actions":1,"../icons/alert-icon":5,"lodash":44,"react/addons":175}],11:[function(require,module,exports){
 var React, Router, UserLink, injectTapEventPlugin;
 
 React = require('react');
@@ -488,10 +542,18 @@ module.exports = UserLink;
 
 
 
-},{"react":270,"react-router":60,"react-tap-event-plugin":97}],11:[function(require,module,exports){
-var React, UserNavigation;
+},{"react":336,"react-router":126,"react-tap-event-plugin":163}],12:[function(require,module,exports){
+var React, UserNavigation, logoStyle;
 
 React = require('react');
+
+logoStyle = {
+  width: "35px",
+  height: "35px",
+  position: "absolute",
+  left: "45%",
+  top: "8px"
+};
 
 UserNavigation = React.createClass({
   render: function() {
@@ -499,7 +561,10 @@ UserNavigation = React.createClass({
       "className": 'nav'
     }, React.createElement("div", {
       "className": 'nav-wrapper'
-    }, this.props.children));
+    }, React.createElement("img", {
+      "style": logoStyle,
+      "src": "./img/adwuk-logo.png"
+    }), this.props.children));
   }
 });
 
@@ -507,7 +572,7 @@ module.exports = UserNavigation;
 
 
 
-},{"react":270}],12:[function(require,module,exports){
+},{"react":336}],13:[function(require,module,exports){
 var AppActions, Post, PostEdit, PostEditForm, PostStore, React, Router, StoreWatchMixin, getPost, injectTapEventPlugin;
 
 React = require('react');
@@ -643,10 +708,16 @@ module.exports = PostEdit;
 
 
 
-},{"../../actions/app-actions":1,"../../mixins/store-watch-mixin":28,"../../stores/app-store":29,"../post-shared/post-item":17,"react":270,"react-router":60,"react-tap-event-plugin":97}],13:[function(require,module,exports){
-var AppActions, DeletePost, EditPost, Nav, Notifications, Post, PostForm, PostList, PostModule, PostStore, React, SearchUsers, StoreWatchMixin, UserStore, getComponentState, injectTapEventPlugin;
+},{"../../actions/app-actions":1,"../../mixins/store-watch-mixin":30,"../../stores/app-store":31,"../post-shared/post-item":19,"react":336,"react-router":126,"react-tap-event-plugin":163}],14:[function(require,module,exports){
+var AppActions, DatePicker, DeletePost, DropDownMenu, EditPost, FlatButton, FloatingActionButton, Nav, Navigation, Notifications, Post, PostForm, PostList, PostModule, PostStore, R, React, SearchUsers, Slider, StoreWatchMixin, TextField, UserStore, classSet, getComponentState, _ref;
 
 React = require('react/addons');
+
+R = require('ramda');
+
+classSet = React.addons.classSet;
+
+Navigation = require('react-router').Navigation;
 
 AppActions = require('../../actions/app-actions');
 
@@ -668,9 +739,7 @@ DeletePost = require('../post-shared/delete-post-btn');
 
 EditPost = require('../post-shared/edit-btn');
 
-injectTapEventPlugin = require('react-tap-event-plugin');
-
-injectTapEventPlugin();
+_ref = require("material-ui"), TextField = _ref.TextField, FlatButton = _ref.FlatButton, FloatingActionButton = _ref.FloatingActionButton, Slider = _ref.Slider, DropDownMenu = _ref.DropDownMenu, DatePicker = _ref.DatePicker;
 
 PostList = React.createClass({
   render: function() {
@@ -681,8 +750,6 @@ PostList = React.createClass({
         "key": i
       }, React.createElement(DeletePost, {
         "id": post._id
-      }), React.createElement(EditPost, {
-        "id": post.id
       }));
     });
     return React.createElement("div", {
@@ -692,47 +759,155 @@ PostList = React.createClass({
 });
 
 PostForm = React.createClass({
+  getInitialState: function() {
+    return {
+      typeOfWork: 'none',
+      workTimes: 'none'
+    };
+  },
   handleSubmit: function(e) {
-    var content, title;
+    var allKeys, job, jobToSubmit, key, makeObject, _i, _len;
     e.preventDefault();
-    title = this.refs.title.getDOMNode().value.trim();
-    content = this.refs.content.getDOMNode().value.trim();
-    if (!title || !content) {
-      return;
+    job = {
+      role: void 0,
+      description: void 0,
+      location: void 0,
+      details: {
+        employerName: void 0,
+        rating: void 0,
+        typeOfWork: void 0,
+        wage: void 0,
+        workTimes: void 0,
+        startDate: void 0,
+        endDate: void 0
+      }
+    };
+    allKeys = R.flatten(R.append(R.keys(job.details), R.keys(job)));
+    makeObject = (function(_this) {
+      return function(accObject, key, id, list) {
+        var node;
+        if (key === 'role' || key === 'description' || key === 'location') {
+          accObject[key] = _this.refs[key].getDOMNode().childNodes[2].value.trim();
+        }
+        if (key === 'employerName') {
+          accObject['details'] = accObject['details'] || {};
+          accObject['details'][key] = _this.refs[key].getDOMNode().childNodes[2].value.trim();
+        }
+        if (key === 'rating') {
+          accObject['details'][key] = _this.refs[key].getDOMNode().childNodes[5].value.trim();
+        }
+        if (key === 'startDate' || key === 'endDate') {
+          node = _this.refs[key].getDOMNode().querySelectorAll('.mui-text-field input');
+          accObject['details'][key] = node[0].value;
+        }
+        if (key === 'typeOfWork' || key === 'workTimes') {
+          accObject['details'][key] = _this.state[key];
+        }
+        return accObject;
+      };
+    })(this);
+    jobToSubmit = R.reduceIndexed(makeObject, {}, allKeys);
+    for (_i = 0, _len = allKeys.length; _i < _len; _i++) {
+      key = allKeys[_i];
+      if (key === 'role' || key === 'description' || key === 'location') {
+        if (jobToSubmit[key] === "") {
+          return;
+        }
+      } else if (key !== "details" && jobToSubmit["details"][key] === "") {
+        return;
+      }
     }
-    this.props.onPostSubmit({
-      title: title,
-      content: content
-    });
-    this.refs.title.getDOMNode().value = '';
-    this.refs.content.getDOMNode().value = '';
+    this.props.onPostSubmit(jobToSubmit);
   },
   handleFocus: function(e) {
     return e.target.getDOMNode().focus();
   },
+  handleWorkTypeChange: function(e, index, item) {
+    return this.setState({
+      typeOfWork: item.text
+    });
+  },
+  handleWorkTimeChange: function(e, index, item) {
+    return this.setState({
+      workTimes: item.text
+    });
+  },
   render: function() {
+    var jobTypes, times;
+    jobTypes = [
+      {
+        payload: '1',
+        text: 'Manual Work'
+      }, {
+        payload: '2',
+        text: 'Office Work'
+      }, {
+        payload: '3',
+        text: 'Retail Work'
+      }, {
+        payload: '4',
+        text: 'Charity Work'
+      }, {
+        payload: '5',
+        text: 'Self Employed'
+      }, {
+        payload: '6',
+        text: 'Other'
+      }
+    ];
+    times = [
+      {
+        payload: '1',
+        text: 'Full Time'
+      }, {
+        payload: '2',
+        text: 'Part Time'
+      }, {
+        payload: '2',
+        text: 'No Contract'
+      }, {
+        payload: '3',
+        text: 'Voluntary'
+      }
+    ];
     return React.createElement("form", {
-      "className": 'postForm form',
       "onSubmit": this.handleSubmit
-    }, React.createElement("div", {
-      "className": 'form-group'
-    }, React.createElement("input", {
-      "className": 'form-control',
-      "type": 'text',
-      "name": 'title',
-      "onTouchStart": this.handleFocus,
-      "placeholder": "What's New?",
-      "ref": 'title'
-    })), React.createElement("div", {
-      "className": 'form-group'
-    }, React.createElement("textarea", {
-      "className": 'form-control',
-      "onTouchStart": this.handleFocus,
-      "name": 'content',
-      "placeholder": "Share something",
-      "ref": 'content'
-    })), React.createElement("button", {
-      "className": 'btn',
+    }, React.createElement("div", null, React.createElement(TextField, {
+      "hintText": "What was your job role?",
+      "floatingLabelText": "Job Role",
+      "ref": "role"
+    })), React.createElement("div", null, React.createElement(TextField, {
+      "hintText": "Describe the job",
+      "floatingLabelText": "Job Description",
+      "ref": "description"
+    })), React.createElement("div", null, React.createElement(TextField, {
+      "hintText": "Add the job location",
+      "floatingLabelText": "Location",
+      "ref": "location"
+    })), React.createElement("div", null, React.createElement(TextField, {
+      "hintText": "Name your post",
+      "floatingLabelText": "Employer Name",
+      "ref": "employerName"
+    })), React.createElement("div", null, React.createElement("label", null, "Rating"), React.createElement(Slider, {
+      "name": "ratingSlider",
+      "ref": "rating"
+    })), React.createElement("div", null, React.createElement(DropDownMenu, {
+      "menuItems": jobTypes,
+      "onChange": this.handleWorkTypeChange
+    }), React.createElement(DropDownMenu, {
+      "menuItems": times,
+      "onChange": this.handleWorkTimeChange
+    })), React.createElement("div", null, React.createElement(DatePicker, {
+      "floatingLabelText": "Date employed from",
+      "hintText": "When did you start?",
+      "mode": "portrait",
+      "ref": "startDate"
+    })), React.createElement("div", null, React.createElement(DatePicker, {
+      "floatingLabelText": "Date employed until",
+      "hintText": "When did you leave?",
+      "mode": "portrait",
+      "ref": "endDate"
+    })), React.createElement(FlatButton, {
       "type": 'submit',
       "onTouchTap": this.handleSubmit,
       "value": 'Post'
@@ -747,20 +922,45 @@ getComponentState = function() {
 };
 
 PostModule = React.createClass({
-  mixins: [new StoreWatchMixin(getComponentState)],
+  mixins: [new StoreWatchMixin(getComponentState), Navigation],
+  getInitialState: function() {
+    return {
+      leaving: false
+    };
+  },
   handlePostSubmit: function(post) {
     return AppActions.addPost(post);
   },
+  handleTap: function() {
+    this.setState({
+      leaving: true
+    });
+    return setTimeout((function(_this) {
+      return function() {
+        return _this.transitionTo('/posts');
+      };
+    })(this), 250);
+  },
   render: function() {
-    return React.createElement("div", {
-      "className": 'home'
+    var modal, modalBg;
+    modal = classSet({
+      "modal-leaving": this.state.leaving,
+      "postModal": !this.state.leaving
+    });
+    modalBg = classSet({
+      "modal-bg-leaving": this.state.leaving,
+      "modal-bg": !this.state.leaving
+    });
+    return React.createElement("div", null, React.createElement("div", {
+      "className": modal
     }, React.createElement("div", {
-      "className": "postModule"
-    }, React.createElement("h1", null, "Posts!"), React.createElement(PostForm, {
+      "className": "postAddForm"
+    }, React.createElement(PostForm, {
       "onPostSubmit": this.handlePostSubmit
-    }), React.createElement(PostList, {
-      "data": this.state.posts
-    })));
+    }))), React.createElement("div", {
+      "className": modalBg,
+      "onTouchTap": this.handleTap
+    }));
   }
 });
 
@@ -768,27 +968,190 @@ module.exports = PostModule;
 
 
 
-},{"../../actions/app-actions":1,"../../mixins/store-watch-mixin":28,"../../stores/app-store":29,"../../stores/user-store":30,"../navigation/search-users":8,"../navigation/user-activity":9,"../navigation/user-navigation":11,"../post-shared/delete-post-btn":14,"../post-shared/edit-btn":15,"../post-shared/post-item":17,"react-tap-event-plugin":97,"react/addons":109}],14:[function(require,module,exports){
-var AppActions, DeletePost, React, injectTapEventPlugin;
+},{"../../actions/app-actions":1,"../../mixins/store-watch-mixin":30,"../../stores/app-store":31,"../../stores/user-store":32,"../navigation/search-users":9,"../navigation/user-activity":10,"../navigation/user-navigation":12,"../post-shared/delete-post-btn":16,"../post-shared/edit-btn":17,"../post-shared/post-item":19,"material-ui":45,"ramda":116,"react-router":126,"react/addons":175}],15:[function(require,module,exports){
+var AppActions, DatePicker, DeletePost, DropDownMenu, EditPost, FlatButton, FloatingActionButton, Nav, Navigation, Notifications, Post, PostForm, PostList, PostModule, PostStore, React, SearchUsers, StoreWatchMixin, TextField, UserStore, getComponentState, _ref;
+
+React = require('react/addons');
+
+Navigation = require('react-router').Navigation;
+
+AppActions = require('../../actions/app-actions');
+
+PostStore = require('../../stores/app-store');
+
+UserStore = require('../../stores/user-store');
+
+StoreWatchMixin = require('../../mixins/store-watch-mixin');
+
+Post = require('../post-shared/post-item');
+
+Nav = require('../navigation/user-navigation');
+
+Notifications = require('../navigation/user-activity');
+
+SearchUsers = require('../navigation/search-users');
+
+DeletePost = require('../post-shared/delete-post-btn');
+
+EditPost = require('../post-shared/edit-btn');
+
+_ref = require("material-ui"), TextField = _ref.TextField, FlatButton = _ref.FlatButton, FloatingActionButton = _ref.FloatingActionButton, DropDownMenu = _ref.DropDownMenu, DatePicker = _ref.DatePicker;
+
+PostList = React.createClass({
+  render: function() {
+    var posts;
+    posts = this.props.data.map(function(post, i) {
+      return React.createElement(Post, {
+        "data": post,
+        "key": i
+      }, React.createElement(DeletePost, {
+        "id": post._id
+      }));
+    });
+    return React.createElement("div", {
+      "className": 'postList'
+    }, posts);
+  }
+});
+
+PostForm = React.createClass({
+  handleSubmit: function(e) {
+    var content, title;
+    e.preventDefault();
+    title = this.refs.title.getDOMNode().childNodes[2].value.trim();
+    content = this.refs.content.getDOMNode().childNodes[2].value.trim();
+    if (!title || !content) {
+      return;
+    }
+    this.props.onPostSubmit({
+      title: title,
+      content: content
+    });
+    this.refs.title.getDOMNode().childNodes[2].value = '';
+    this.refs.content.getDOMNode().childNodes[2].value = '';
+  },
+  handleFocus: function(e) {
+    return e.target.getDOMNode().focus();
+  },
+  render: function() {
+    var jobTypes, times;
+    jobTypes = [
+      {
+        payload: '1',
+        text: 'Manual Work'
+      }, {
+        payload: '2',
+        text: 'Office Work'
+      }, {
+        payload: '3',
+        text: 'Retail Work'
+      }, {
+        payload: '4',
+        text: 'Charity Work'
+      }, {
+        payload: '5',
+        text: 'Self Employed'
+      }, {
+        payload: '6',
+        text: 'Other'
+      }
+    ];
+    times = [
+      {
+        payload: '1',
+        text: 'Full Time'
+      }, {
+        payload: '2',
+        text: 'Part Time'
+      }, {
+        payload: '2',
+        text: 'No Contract'
+      }, {
+        payload: '3',
+        text: 'Voluntary'
+      }
+    ];
+    return React.createElement("form", {
+      "onSubmit": this.handleSubmit
+    }, React.createElement("div", {
+      "className": "form-group"
+    }, React.createElement(TextField, {
+      "hintText": "Name your post",
+      "floatingLabelText": "Job Role",
+      "ref": "title"
+    })), React.createElement("div", {
+      "className": "form-group"
+    }, React.createElement(TextField, {
+      "hintText": "Name your post",
+      "floatingLabelText": "Employer Name",
+      "ref": "content"
+    })), React.createElement("div", {
+      "className": "form-group"
+    }, React.createElement(DropDownMenu, {
+      "menuItems": jobTypes
+    }), React.createElement(DropDownMenu, {
+      "menuItems": times
+    })), React.createElement("div", {
+      "className": "form-group"
+    }, React.createElement(DatePicker, {
+      "floatingLabelText": "Date employed from",
+      "hintText": "When did you start?",
+      "mode": "portrait"
+    })), React.createElement(FlatButton, {
+      "type": 'submit',
+      "onTouchTap": this.handleSubmit,
+      "value": 'Post'
+    }, "Submit"));
+  }
+});
+
+getComponentState = function() {
+  return {
+    posts: PostStore.getPosts()
+  };
+};
+
+PostModule = React.createClass({
+  mixins: [new StoreWatchMixin(getComponentState), Navigation],
+  handleAdd: function(e) {
+    return this.transitionTo('/add');
+  },
+  render: function() {
+    return React.createElement("div", {
+      "className": 'home'
+    }, React.createElement("div", {
+      "className": "postModule"
+    }, React.createElement(PostList, {
+      "data": this.state.posts
+    }), React.createElement(FlatButton, {
+      "onTouchTap": this.handleAdd
+    }, "Add a Job")));
+  }
+});
+
+module.exports = PostModule;
+
+
+
+},{"../../actions/app-actions":1,"../../mixins/store-watch-mixin":30,"../../stores/app-store":31,"../../stores/user-store":32,"../navigation/search-users":9,"../navigation/user-activity":10,"../navigation/user-navigation":12,"../post-shared/delete-post-btn":16,"../post-shared/edit-btn":17,"../post-shared/post-item":19,"material-ui":45,"react-router":126,"react/addons":175}],16:[function(require,module,exports){
+var AppActions, DeletePost, FloatingActionButton, React;
 
 React = require('react');
 
 AppActions = require('../../actions/app-actions');
 
-injectTapEventPlugin = require('react-tap-event-plugin');
-
-injectTapEventPlugin();
+FloatingActionButton = require("material-ui").FloatingActionButton;
 
 DeletePost = React.createClass({
   handleTap: function() {
     return AppActions.deletePost(this.props.id);
   },
   render: function() {
-    return React.createElement("button", {
-      "className": 'btn',
-      "id": 'deleteBtn',
+    return React.createElement(FloatingActionButton, React.__spread({}, this.props, {
       "onTouchTap": this.handleTap
-    }, "X");
+    }, {
+      "mini": true
+    }), "X");
   }
 });
 
@@ -796,16 +1159,14 @@ module.exports = DeletePost;
 
 
 
-},{"../../actions/app-actions":1,"react":270,"react-tap-event-plugin":97}],15:[function(require,module,exports){
-var EditPost, React, Router, injectTapEventPlugin;
+},{"../../actions/app-actions":1,"material-ui":45,"react":336}],17:[function(require,module,exports){
+var EditPost, FlatButton, React, Router;
 
 React = require('react');
 
 Router = require('react-router');
 
-injectTapEventPlugin = require('react-tap-event-plugin');
-
-injectTapEventPlugin();
+FlatButton = require('material-ui').FlatButton;
 
 EditPost = React.createClass({
   mixins: [Router.Navigation, Router.State],
@@ -813,10 +1174,9 @@ EditPost = React.createClass({
     return this.transitionTo('/edit-post/' + this.props.id);
   },
   render: function() {
-    return React.createElement("button", {
+    return React.createElement(FlatButton, {
       "onTouchTap": this.handleTap,
-      "id": 'editBtn',
-      "className": 'btn'
+      "id": 'editBtn'
     }, "Edit");
   }
 });
@@ -825,7 +1185,7 @@ module.exports = EditPost;
 
 
 
-},{"react":270,"react-router":60,"react-tap-event-plugin":97}],16:[function(require,module,exports){
+},{"material-ui":45,"react":336,"react-router":126}],18:[function(require,module,exports){
 var AppActions, LikeBtn, React, injectTapEventPlugin;
 
 React = require('react');
@@ -858,16 +1218,37 @@ module.exports = LikeBtn;
 
 
 
-},{"../../actions/app-actions":1,"react":270,"react-tap-event-plugin":97}],17:[function(require,module,exports){
-var Post, React;
+},{"../../actions/app-actions":1,"react":336,"react-tap-event-plugin":163}],19:[function(require,module,exports){
+var Checkbox, Paper, Post, React, moment, _ref;
 
 React = require('react');
 
+_ref = require('material-ui'), Paper = _ref.Paper, Checkbox = _ref.Checkbox;
+
+moment = require('moment');
+
 Post = React.createClass({
   render: function() {
-    return React.createElement("div", {
+    var date, postUpdateTime;
+    date = this.props.data.updated;
+    postUpdateTime = moment(date).fromNow();
+    return React.createElement(Paper, {
+      "zDepth": 1.
+    }, React.createElement("div", {
       "className": "post"
-    }, React.createElement("h2", null, this.props.data.title), React.createElement("h5", null, this.props.data.author), React.createElement("p", null, this.props.data.content), React.createElement("h6", null, this.props.data.updated), React.createElement("h6", null, "Likes ", this.props.data.likes.length), React.createElement("div", null, this.props.children));
+    }, React.createElement("h2", {
+      "className": "post-title"
+    }, this.props.data.title), React.createElement("p", {
+      "className": "post-content"
+    }, this.props.data.content), React.createElement("div", {
+      "className": "post-row"
+    }, React.createElement("h6", {
+      "className": "post-date"
+    }, postUpdateTime), React.createElement("div", {
+      "className": "post-likes"
+    }, React.createElement("span", null, "Likes ", this.props.data.likes.length)), React.createElement("div", {
+      "className": "post-ui"
+    }, this.props.children))));
   }
 });
 
@@ -875,7 +1256,7 @@ module.exports = Post;
 
 
 
-},{"react":270}],18:[function(require,module,exports){
+},{"material-ui":45,"moment":113,"react":336}],20:[function(require,module,exports){
 var AppActions, AppSearch, PostStore, React, SearchUsers, StoreWatchMixin, UserLink, UserStore, getComponentState, injectTapEventPlugin;
 
 React = require('react/addons');
@@ -926,7 +1307,7 @@ module.exports = AppSearch;
 
 
 
-},{"../../actions/app-actions":1,"../../mixins/store-watch-mixin":28,"../../stores/app-store":29,"../../stores/user-store":30,"../navigation/search-users":8,"../navigation/user-link":10,"react-tap-event-plugin":97,"react/addons":109}],19:[function(require,module,exports){
+},{"../../actions/app-actions":1,"../../mixins/store-watch-mixin":30,"../../stores/app-store":31,"../../stores/user-store":32,"../navigation/search-users":9,"../navigation/user-link":11,"react-tap-event-plugin":163,"react/addons":175}],21:[function(require,module,exports){
 var d3, d3Chart, height, margin, width;
 
 d3 = require('d3');
@@ -975,8 +1356,8 @@ module.exports = d3Chart;
 
 
 
-},{"d3":33}],20:[function(require,module,exports){
-var AppActions, BarChart, Chart, PostStore, React, StoreWatchMixin, d3Chart, dataset, getComponentState, injectTapEventPlugin, _;
+},{"d3":35}],22:[function(require,module,exports){
+var AppActions, Chart, PostStore, React, Slider, StoreWatchMixin, calcPercent, d3Chart, dataset, drawDonutChart, duration, getComponentState, transition, _;
 
 React = require('react/addons');
 
@@ -988,17 +1369,60 @@ AppActions = require('../../actions/app-actions');
 
 PostStore = require('../../stores/app-store');
 
-BarChart = require('react-d3/barchart');
-
-injectTapEventPlugin = require('react-tap-event-plugin');
-
-injectTapEventPlugin();
+Slider = require('material-ui').Slider;
 
 d3Chart = require('./chart');
 
 dataset = _.map(_.range(14), function(i) {
   return Math.random() * 50;
 });
+
+duration = 400;
+
+transition = 200;
+
+drawDonutChart = function(element, percent, width, height, text_y) {
+  var arc, format, path, pathPercent, pie, progress, radius, svg, text;
+  width = typeof width !== 'undefined' ? width : 290;
+  height = typeof height !== 'undefined' ? height : 290;
+  text_y = typeof text_y !== 'undefined' ? text_y : '-.10em';
+  dataset = {
+    lower: calcPercent(0),
+    upper: calcPercent(percent)
+  };
+  radius = Math.min(width, height) / 2;
+  pie = d3.layout.pie().sort(null);
+  format = d3.format('.0%');
+  arc = d3.svg.arc().innerRadius(radius - 30).outerRadius(radius);
+  svg = d3.select(element).append('svg').attr('width', width).attr('height', height).append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+  path = svg.selectAll('path').data(pie(dataset.lower)).enter().append('path').attr('class', function(d, i) {
+    return 'color' + i;
+  }).attr('d', arc).each(function(d) {
+    this._current = d;
+  });
+  pathPercent = d3.select('.color0').attr('stroke', "10px");
+  text = svg.append('text').attr('text-anchor', 'middle').attr('dy', text_y);
+  if (typeof percent === 'string') {
+    text.text(percent);
+  } else {
+    progress = 0;
+    path = path.data(pie(dataset.upper));
+    path.transition().duration(duration).attrTween('d', function(a) {
+      var i, i2;
+      i = d3.interpolate(this._current, a);
+      i2 = d3.interpolate(progress, percent);
+      this._current = i(0);
+      return function(t) {
+        text.text(format(i2(t) / 100));
+        return arc(i(t));
+      };
+    });
+  }
+};
+
+calcPercent = function(percent) {
+  return [percent, 100 - percent];
+};
 
 getComponentState = function() {
   return PostStore.getPosts();
@@ -1010,17 +1434,6 @@ Chart = React.createClass({
       posts: getComponentState()
     };
   },
-  componentDidMount: function() {
-    var node;
-    node = this.refs.chart.getDOMNode();
-    return d3Chart.create(node, this.getChartState());
-  },
-  componentDidUpdate: function() {
-    var node;
-    node = this.refs.chart.getDOMNode();
-    d3Chart.destroy(node);
-    return d3Chart.create(node, this.getChartState());
-  },
   getChartState: function() {
     var likesData;
     likesData = this.state.posts.map(function(post, i) {
@@ -1030,22 +1443,28 @@ Chart = React.createClass({
         return 0;
       }
     });
-    console.log(likesData);
     return {
       data: dataset
     };
   },
-  componentWillUnmount: function() {
-    var node;
-    node = this.refs.chart.getDOMNode();
-    return d3Chart.destroy(node);
+  handleSlide: function(e) {
+    var node, percent;
+    percent = Number(this.refs.slider.getDOMNode().childNodes[5].value.trim()) * 100;
+    node = this.refs.donut.getDOMNode();
+    node.innerHTML = "";
+    return drawDonutChart(node, percent, 230, 230);
   },
   render: function() {
     return React.createElement("div", {
       "className": 'page-wrapper'
-    }, React.createElement("h2", null, "Likes on posts"), React.createElement("div", {
-      "ref": 'chart',
-      "className": 'chartArea'
+    }, React.createElement("div", {
+      "style": {
+        margin: "auto"
+      },
+      "ref": "donut"
+    }), React.createElement(Slider, {
+      "ref": "slider",
+      "onChange": this.handleSlide
     }));
   }
 });
@@ -1054,7 +1473,7 @@ module.exports = Chart;
 
 
 
-},{"../../actions/app-actions":1,"../../mixins/store-watch-mixin":28,"../../stores/app-store":29,"./chart":19,"lodash":42,"react-d3/barchart":45,"react-tap-event-plugin":97,"react/addons":109}],21:[function(require,module,exports){
+},{"../../actions/app-actions":1,"../../mixins/store-watch-mixin":30,"../../stores/app-store":31,"./chart":21,"lodash":44,"material-ui":45,"react/addons":175}],23:[function(require,module,exports){
 var AppActions, LikeBtn, Post, PostStore, React, Router, StoreWatchMixin, UserProfile, UserStore, getUserState, _;
 
 React = require('react');
@@ -1121,7 +1540,7 @@ module.exports = UserProfile;
 
 
 
-},{"../../actions/app-actions":1,"../../components/post-shared/like-post-btn":16,"../../components/post-shared/post-item":17,"../../mixins/store-watch-mixin":28,"../../stores/app-store":29,"../../stores/user-store":30,"lodash":42,"react":270,"react-router":60}],22:[function(require,module,exports){
+},{"../../actions/app-actions":1,"../../components/post-shared/like-post-btn":18,"../../components/post-shared/post-item":19,"../../mixins/store-watch-mixin":30,"../../stores/app-store":31,"../../stores/user-store":32,"lodash":44,"react":336,"react-router":126}],24:[function(require,module,exports){
 module.exports = {
   VIEW_CREATE_POST: 'VIEW_CREATE_POST',
   RECIEVE_CREATED_POST: 'RECIEVE_CREATED_POST',
@@ -1141,7 +1560,7 @@ module.exports = {
 
 
 
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var AppDispatcher, Dispatcher, assign;
 
 Dispatcher = require('flux').Dispatcher;
@@ -1167,22 +1586,22 @@ module.exports = AppDispatcher;
 
 
 
-},{"flux":34,"object-assign":43}],24:[function(require,module,exports){
+},{"flux":36,"object-assign":114}],26:[function(require,module,exports){
 var Q, request;
 
-request = require('superagent');
+request = require("superagent");
 
-Q = require('q');
+Q = require("q");
 
 module.exports = {
   get: function() {
     var deferred;
     deferred = Q.defer();
-    request.get('/api/posts', function(res) {
+    request.get("/api/posts", function(res) {
       if (res.status === 200) {
         return deferred.resolve(res.body);
       } else {
-        return deferred.reject('Status code #{res.status}');
+        return deferred.reject("Status code " + res.status);
       }
     });
     return deferred.promise;
@@ -1190,11 +1609,11 @@ module.exports = {
   post: function(data) {
     var deferred;
     deferred = Q.defer();
-    request.post('/api/posts').send(data).set('Accept', 'application/json').end(function(res) {
+    request.post("/api/posts").send(data).set("Accept", "application/json").end(function(res) {
       if (res.status === 200) {
         return deferred.resolve(res.body);
       } else {
-        return deferred.reject('Status code #{res.status}');
+        return deferred.reject("Status code " + res.status);
       }
     });
     return deferred.promise;
@@ -1202,11 +1621,11 @@ module.exports = {
   update: function(data) {
     var deferred;
     deferred = Q.defer();
-    request.put('/api/posts').send(data).set('Accept', 'application/json').end(function(res) {
+    request.put("/api/posts").send(data).set("Accept", "application/json").end(function(res) {
       if (res.status === 200) {
         return deferred.resolve(res.body);
       } else {
-        return deferred.reject('Status code #{res.status}');
+        return deferred.reject("Status code " + res.status);
       }
     });
     return deferred.promise;
@@ -1214,13 +1633,13 @@ module.exports = {
   "delete": function(postId) {
     var deferred;
     deferred = Q.defer();
-    request.del('/api/posts').send({
+    request.del("/api/posts").send({
       id: postId
-    }).set('Accept', 'application/json').end(function(res) {
+    }).set("Accept", "application/json").end(function(res) {
       if (res.status === 200) {
         return deferred.resolve(res.body);
       } else {
-        return console.error('fail');
+        return console.error("fail");
       }
     });
     return deferred.promise;
@@ -1229,7 +1648,7 @@ module.exports = {
 
 
 
-},{"q":44,"superagent":319}],25:[function(require,module,exports){
+},{"q":115,"superagent":385}],27:[function(require,module,exports){
 var Q, request;
 
 request = require('superagent');
@@ -1269,7 +1688,7 @@ module.exports = function() {
 
 
 
-},{"q":44,"superagent":319}],26:[function(require,module,exports){
+},{"q":115,"superagent":385}],28:[function(require,module,exports){
 var Q, request;
 
 request = require('superagent');
@@ -1293,8 +1712,8 @@ module.exports = {
 
 
 
-},{"q":44,"superagent":319}],27:[function(require,module,exports){
-var AJAXUtils, APP, AppActions, AppSearch, AppStyle, DefaultRoute, FPSCounter, Link, PostEdit, Posts, React, ReactTouch, Route, RouteHandler, Router, SimpleScroller, SocketUtils, Template, UserProfile, UserStats, injectTapEventPlugin, routes;
+},{"q":115,"superagent":385}],29:[function(require,module,exports){
+var AJAXUtils, APP, AppActions, AppSearch, AppStyle, DefaultRoute, FPSCounter, Homepage, Link, PostAdd, PostEdit, PostHandler, PostList, React, ReactTouch, Route, RouteHandler, Router, SimpleScroller, SocketUtils, Template, UserProfile, UserStats, injectTapEventPlugin, routes;
 
 React = require('react/addons');
 
@@ -1306,13 +1725,17 @@ FPSCounter = require('react-touch/lib/environment/FPSCounter');
 
 AppActions = require('./actions/app-actions');
 
-Posts = require('./components/post-list/app-posts');
+PostList = require('./components/post-list/app-post-list');
+
+PostAdd = require('./components/post-list/app-post-add');
 
 PostEdit = require('./components/post-edit/post-edit');
 
 AppSearch = require('./components/search/app-search');
 
 UserProfile = require('./components/users/user-profile');
+
+Homepage = require('./components/homepage/homepage');
 
 UserStats = require('./components/stats/user-stats');
 
@@ -1321,6 +1744,10 @@ injectTapEventPlugin = require('react-tap-event-plugin');
 Template = require('./components/app-template');
 
 SimpleScroller = require('react-touch/lib/interactions/simplescroller/SimpleScroller');
+
+injectTapEventPlugin();
+
+React.initializeTouchEvents(true);
 
 AJAXUtils = require('./web-api-utils/ajax-utils');
 
@@ -1338,6 +1765,12 @@ RouteHandler = Router.RouteHandler;
 
 Link = Router.Link;
 
+PostHandler = React.createClass({
+  render: function() {
+    return React.createElement("div", null, React.createElement(PostList, null), React.createElement(RouteHandler, null));
+  }
+});
+
 AppStyle = {
   bottom: 0,
   left: 0,
@@ -1346,10 +1779,6 @@ AppStyle = {
   right: 0,
   top: 0
 };
-
-injectTapEventPlugin();
-
-React.initializeTouchEvents(true);
 
 APP = React.createClass({
   handleTouch: function(e) {
@@ -1369,12 +1798,20 @@ FPSCounter.start();
 routes = React.createElement(Route, {
   "handler": APP
 }, React.createElement(DefaultRoute, {
-  "handler": Posts
+  "handler": PostList
+}), React.createElement(Route, {
+  "name": 'homepage',
+  "path": '/homepage',
+  "handler": Homepage
 }), React.createElement(Route, {
   "name": 'posts',
   "path": '/posts',
-  "handler": Posts
-}), React.createElement(Route, {
+  "handler": PostHandler
+}, React.createElement(Route, {
+  "name": 'form',
+  "path": '/add',
+  "handler": PostAdd
+})), React.createElement(Route, {
   "name": 'edit',
   "path": '/edit-post/:id',
   "handler": PostEdit
@@ -1404,7 +1841,7 @@ Router.run(routes, (function(_this) {
 
 
 
-},{"./actions/app-actions":1,"./components/app-template":3,"./components/post-edit/post-edit":12,"./components/post-list/app-posts":13,"./components/search/app-search":18,"./components/stats/user-stats":20,"./components/users/user-profile":21,"./web-api-utils/ajax-utils":31,"./web-api-utils/websocket-utils":32,"react-router":60,"react-tap-event-plugin":97,"react-touch":98,"react-touch/lib/environment/FPSCounter":99,"react-touch/lib/interactions/simplescroller/SimpleScroller":104,"react/addons":109}],28:[function(require,module,exports){
+},{"./actions/app-actions":1,"./components/app-template":3,"./components/homepage/homepage":4,"./components/post-edit/post-edit":13,"./components/post-list/app-post-add":14,"./components/post-list/app-post-list":15,"./components/search/app-search":20,"./components/stats/user-stats":22,"./components/users/user-profile":23,"./web-api-utils/ajax-utils":33,"./web-api-utils/websocket-utils":34,"react-router":126,"react-tap-event-plugin":163,"react-touch":164,"react-touch/lib/environment/FPSCounter":165,"react-touch/lib/interactions/simplescroller/SimpleScroller":170,"react/addons":175}],30:[function(require,module,exports){
 var PostStore, React, StoreWatchMixin;
 
 React = require('react');
@@ -1432,7 +1869,7 @@ module.exports = StoreWatchMixin;
 
 
 
-},{"../stores/app-store":29,"react":270}],29:[function(require,module,exports){
+},{"../stores/app-store":31,"react":336}],31:[function(require,module,exports){
 var AppConstants, AppDispatcher, CHANGE_EVENT, EventEmitter, PostStore, UserStore, assign, otherUsersPosts, posts, _, _addLike, _addOtherUsersPosts, _addPost, _addPosts, _deletePost, _updatePost;
 
 AppConstants = require('../constants/app-constants');
@@ -1495,7 +1932,6 @@ _addLike = function(like) {
   if (UserStore.getOtherUsersId() === like.authorId) {
     otherUsersPosts.map(function(post, i) {
       if (like.postId === post.id) {
-        console.log(like.postId, post.id);
         return otherUsersPosts[i]['likes'].push(like);
       }
     });
@@ -1503,7 +1939,6 @@ _addLike = function(like) {
   if (UserStore.getId() === like.authorId) {
     return posts.map(function(post, i) {
       if (like.postId === post.id) {
-        console.log(like.postId, post.id);
         return posts[i]['likes'].push(like);
       }
     });
@@ -1523,15 +1958,18 @@ PostStore = assign({}, EventEmitter.prototype, {
   getNewPostData: function(post) {
     var timestamp;
     timestamp = Date.now();
-    return {
-      id: 'p_' + timestamp,
-      authorId: UserStore.getId(),
-      authorEmail: UserStore.getEmail(),
-      author: UserStore.getFullName(),
-      date: new Date(timestamp),
-      title: post.title,
-      content: post.content
+    post['uid'] = 'p_' + timestamp;
+    post['meta'] = {
+      type: "job",
+      dateAdded: new Date(timestamp),
+      deleted: false
     };
+    post['author'] = {
+      id: UserStore.getId(),
+      email: UserStore.getEmail(),
+      name: UserStore.getFullName()
+    };
+    return post;
   },
   getPosts: function() {
     return posts;
@@ -1586,7 +2024,7 @@ module.exports = PostStore;
 
 
 
-},{"../constants/app-constants":22,"../dispatchers/app-dispatcher":23,"./user-store":30,"events":40,"lodash":42,"object-assign":43}],30:[function(require,module,exports){
+},{"../constants/app-constants":24,"../dispatchers/app-dispatcher":25,"./user-store":32,"events":42,"lodash":44,"object-assign":114}],32:[function(require,module,exports){
 var AppConstants, AppDispatcher, CHANGE_EVENT, EventEmitter, UserStore, actionTypes, assign, otherUser, searchUsersResult, user, _, _addActivity, _addOtherUser, _addUser, _clearUsers, _updateSearchResult, _userActivitySeen;
 
 AppConstants = require('../constants/app-constants');
@@ -1704,7 +2142,7 @@ module.exports = UserStore;
 
 
 
-},{"../constants/app-constants":22,"../dispatchers/app-dispatcher":23,"events":40,"lodash":42,"object-assign":43}],31:[function(require,module,exports){
+},{"../constants/app-constants":24,"../dispatchers/app-dispatcher":25,"events":42,"lodash":44,"object-assign":114}],33:[function(require,module,exports){
 var AJAXUtils, ServerActions, _posts, _user, _users;
 
 ServerActions = require('../actions/server-actions');
@@ -1736,7 +2174,7 @@ module.exports = AJAXUtils;
 
 
 
-},{"../actions/server-actions":2,"../factory/app-factory":24,"../factory/user-factory":25,"../factory/users-factory":26}],32:[function(require,module,exports){
+},{"../actions/server-actions":2,"../factory/app-factory":26,"../factory/user-factory":27,"../factory/users-factory":28}],34:[function(require,module,exports){
 var ServerActions, SocketUtils, socket;
 
 ServerActions = require('../actions/server-actions');
@@ -1782,7 +2220,7 @@ module.exports = SocketUtils;
 
 
 
-},{"../actions/server-actions":2,"socket.io-client":271}],33:[function(require,module,exports){
+},{"../actions/server-actions":2,"socket.io-client":337}],35:[function(require,module,exports){
 !function() {
   var d3 = {
     version: "3.5.5"
@@ -11287,7 +11725,7 @@ module.exports = SocketUtils;
   if (typeof define === "function" && define.amd) define(d3); else if (typeof module === "object" && module.exports) module.exports = d3;
   this.d3 = d3;
 }();
-},{}],34:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -11299,7 +11737,7 @@ module.exports = SocketUtils;
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":35}],35:[function(require,module,exports){
+},{"./lib/Dispatcher":37}],37:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -11550,7 +11988,7 @@ var _prefix = 'ID_';
 
 
 module.exports = Dispatcher;
-},{"./invariant":36}],36:[function(require,module,exports){
+},{"./invariant":38}],38:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -11605,7 +12043,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -12716,7 +13154,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":38,"ieee754":39}],38:[function(require,module,exports){
+},{"base64-js":40,"ieee754":41}],40:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -12842,7 +13280,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],39:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -12928,7 +13366,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],40:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13231,7 +13669,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],41:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -13296,7 +13734,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],42:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -20085,7 +20523,8666 @@ process.chdir = function (dir) {
 }.call(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],43:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
+module.exports = {
+  AppBar: require('./js/app-bar'),
+  AppCanvas: require('./js/app-canvas'),
+  Checkbox: require('./js/checkbox'),
+  DatePicker: require('./js/date-picker/date-picker'),
+  Dialog: require('./js/dialog'),
+  DialogWindow: require('./js/dialog-window'),
+  DropDownIcon: require('./js/drop-down-icon'),
+  DropDownMenu: require('./js/drop-down-menu'),
+  EnhancedButton: require('./js/enhanced-button'),
+  FlatButton: require('./js/flat-button'),
+  FloatingActionButton: require('./js/floating-action-button'),
+  FontIcon: require('./js/font-icon'),
+  IconButton: require('./js/icon-button'),
+  Input: require('./js/input'),
+  LeftNav: require('./js/left-nav'),
+  MenuItem: require('./js/menu-item'),
+  Menu: require('./js/menu'),
+  Mixins: {
+    Classable: require('./js/mixins/classable'),
+    ClickAwayable: require('./js/mixins/click-awayable'),
+    WindowListenable: require('./js/mixins/window-listenable')
+  },
+  Paper: require('./js/paper'),
+  RadioButton: require('./js/radio-button'),
+  RadioButtonGroup: require('./js/radio-button-group'),
+  RaisedButton: require('./js/raised-button'),
+  Slider: require('./js/slider'),
+  SvgIcon: require('./js/svg-icons/svg-icon'),
+  Icons: {
+    NavigationMenu: require('./js/svg-icons/navigation-menu'),
+    NavigationChevronLeft: require('./js/svg-icons/navigation-chevron-left'),
+    NavigationChevronRight: require('./js/svg-icons/navigation-chevron-right')
+  },
+  Tab: require('./js/tabs/tab'),
+  Tabs: require('./js/tabs/tabs'),
+  Toggle: require('./js/toggle'),
+  Snackbar: require('./js/snackbar'),
+  TextField: require('./js/text-field'),
+  Toolbar: require('./js/toolbar'),
+  ToolbarGroup: require('./js/toolbar-group'),
+  Tooltip: require('./js/tooltip'),
+  Utils: {
+    CssEvent: require('./js/utils/css-event'),
+    Dom: require('./js/utils/dom'),
+    Events: require('./js/utils/events'),
+    KeyCode: require('./js/utils/key-code'),
+    KeyLine: require('./js/utils/key-line')
+  }
+};
+
+},{"./js/app-bar":46,"./js/app-canvas":47,"./js/checkbox":48,"./js/date-picker/date-picker":54,"./js/dialog":57,"./js/dialog-window":56,"./js/drop-down-icon":58,"./js/drop-down-menu":59,"./js/enhanced-button":60,"./js/flat-button":63,"./js/floating-action-button":64,"./js/font-icon":65,"./js/icon-button":66,"./js/input":68,"./js/left-nav":69,"./js/menu":71,"./js/menu-item":70,"./js/mixins/classable":72,"./js/mixins/click-awayable":73,"./js/mixins/window-listenable":75,"./js/paper":77,"./js/radio-button":79,"./js/radio-button-group":78,"./js/raised-button":80,"./js/slider":84,"./js/snackbar":85,"./js/svg-icons/navigation-chevron-left":87,"./js/svg-icons/navigation-chevron-right":88,"./js/svg-icons/navigation-menu":89,"./js/svg-icons/svg-icon":90,"./js/tabs/tab":95,"./js/tabs/tabs":97,"./js/text-field":98,"./js/toggle":99,"./js/toolbar":101,"./js/toolbar-group":100,"./js/tooltip":102,"./js/utils/css-event":104,"./js/utils/dom":106,"./js/utils/events":107,"./js/utils/key-code":108,"./js/utils/key-line":109}],46:[function(require,module,exports){
+(function (process){
+var React = require('react');
+var Classable = require('./mixins/classable');
+var IconButton = require('./icon-button');
+var NavigationMenu = require('./svg-icons/navigation-menu');
+var Paper = require('./paper');
+
+var AppBar = React.createClass({displayName: "AppBar",
+
+  mixins: [Classable],
+
+  propTypes: {
+    onMenuIconButtonTouchTap: React.PropTypes.func,
+    showMenuIconButton: React.PropTypes.bool,
+    iconClassNameLeft: React.PropTypes.string,
+    iconElementLeft: React.PropTypes.element,
+    iconElementRight: React.PropTypes.element,
+    title : React.PropTypes.node,
+    zDepth: React.PropTypes.number,
+  },
+
+  getDefaultProps: function() {
+    return {
+      showMenuIconButton: true,
+      title: '',
+      zDepth: 1
+    }
+  },
+
+  componentDidMount: function() {
+    if (process.NODE_ENV !== 'production' && 
+       (this.props.iconElementLeft && this.props.iconClassNameLeft)) {
+        var warning = 'Properties iconClassNameLeft and iconElementLeft cannot be simultaneously ' +
+                      'defined. Please use one or the other.';
+        console.warn(warning);
+    }
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      this.props,onTouchTap=$__0.onTouchTap,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{onTouchTap:1});
+
+    var classes = this.getClasses('mui-app-bar'),
+      title, menuElementLeft, menuElementRight;
+
+    if (this.props.title) {
+      // If the title is a string, wrap in an h1 tag.
+      // If not, just use it as a node.
+      title = toString.call(this.props.title) === '[object String]' ?
+        React.createElement("h1", {className: "mui-app-bar-title"}, this.props.title) :
+        this.props.title;
+    }
+
+    if (this.props.showMenuIconButton) {
+      if (this.props.iconElementLeft) {
+        menuElementLeft = (
+          React.createElement("div", {className: "mui-app-bar-navigation-icon-button"}, 
+            this.props.iconElementLeft
+          )
+        );
+      } else {
+        var child = (this.props.iconClassNameLeft) ? '' : React.createElement(NavigationMenu, null);
+        menuElementLeft = (
+          React.createElement(IconButton, {
+            className: "mui-app-bar-navigation-icon-button", 
+            iconClassName: this.props.iconClassNameLeft, 
+            onTouchTap: this._onMenuIconButtonTouchTap}, 
+              child
+          )
+        );
+      }
+    }
+
+    menuElementRight = (this.props.children) ? this.props.children : 
+                       (this.props.iconElementRight) ? this.props.iconElementRight : '';
+
+    return (
+      React.createElement(Paper, {rounded: false, className: classes, zDepth: this.props.zDepth}, 
+        menuElementLeft, 
+        title, 
+        menuElementRight
+      )
+    );
+  },
+
+  _onMenuIconButtonTouchTap: function(e) {
+    if (this.props.onMenuIconButtonTouchTap) this.props.onMenuIconButtonTouchTap(e);
+  }
+
+});
+
+module.exports = AppBar;
+
+}).call(this,require("DF1urx"))
+},{"./icon-button":66,"./mixins/classable":72,"./paper":77,"./svg-icons/navigation-menu":89,"DF1urx":43,"react":336}],47:[function(require,module,exports){
+var React = require('react'),
+  Classable = require('./mixins/classable');
+
+var AppCanvas = React.createClass({displayName: "AppCanvas",
+
+  mixins: [Classable],
+
+  propTypes: {
+    predefinedLayout: React.PropTypes.number
+  },
+
+  render: function() {
+    var classes = this.getClasses({
+      'mui-app-canvas': true,
+      'mui-predefined-layout-1': this.props.predefinedLayout === 1
+    });
+
+    return (
+      React.createElement("div", {className: classes}, 
+        this.props.children
+      )
+    );
+  }
+
+});
+
+module.exports = AppCanvas;
+
+},{"./mixins/classable":72,"react":336}],48:[function(require,module,exports){
+var React = require('react');
+var EnhancedSwitch = require('./enhanced-switch');
+var Classable = require('./mixins/classable');
+var CheckboxOutline = require('./svg-icons/toggle-check-box-outline-blank');
+var CheckboxChecked = require('./svg-icons/toggle-check-box-checked');
+
+var Checkbox = React.createClass({displayName: "Checkbox",
+
+  mixins: [Classable],
+
+  propTypes: {
+    onCheck: React.PropTypes.func,
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      this.props,onCheck=$__0.onCheck,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{onCheck:1});
+
+    var classes = this.getClasses("mui-checkbox");
+
+    var checkboxElement = (
+      React.createElement("div", null, 
+        React.createElement(CheckboxOutline, {className: "mui-checkbox-box"}), 
+        React.createElement(CheckboxChecked, {className: "mui-checkbox-check"})
+      )
+    );
+
+    var enhancedSwitchProps = {
+      ref: "enhancedSwitch",
+      inputType: "checkbox",
+      switchElement: checkboxElement,
+      className: classes,
+      iconClassName: "mui-checkbox-icon",
+      onSwitch: this._handleCheck,
+      labelPosition: (this.props.labelPosition) ? this.props.labelPosition : "right"
+    };
+
+    return (
+      React.createElement(EnhancedSwitch, React.__spread({},  
+        other, 
+        enhancedSwitchProps))
+    );
+  },
+
+  isChecked: function() {
+    return this.refs.enhancedSwitch.isSwitched();
+  },
+
+  setChecked: function(newCheckedValue) {
+    this.refs.enhancedSwitch.setSwitched(newCheckedValue);
+  },
+
+  _handleCheck: function(e, isInputChecked) {
+    if (this.props.onCheck) this.props.onCheck(e, isInputChecked);
+  }
+});
+
+module.exports = Checkbox;
+
+},{"./enhanced-switch":61,"./mixins/classable":72,"./svg-icons/toggle-check-box-checked":91,"./svg-icons/toggle-check-box-outline-blank":92,"react":336}],49:[function(require,module,exports){
+var React = require('react');
+var Classable = require('../mixins/classable');
+var DateTime = require('../utils/date-time');
+var DayButton = require('./day-button');
+
+var CalendarMonth = React.createClass({displayName: "CalendarMonth",
+
+  mixins: [Classable],
+
+  propTypes: {
+    displayDate: React.PropTypes.object.isRequired,
+    onDayTouchTap: React.PropTypes.func,
+    selectedDate: React.PropTypes.object.isRequired
+  },
+
+  render: function() {
+    var classes = this.getClasses('mui-date-picker-calendar-month');
+
+    return (
+      React.createElement("div", {className: classes}, 
+        this._getWeekElements()
+      )
+    );
+  },
+
+  _getWeekElements: function() {
+    var weekArray = DateTime.getWeekArray(this.props.displayDate);
+
+    return weekArray.map(function(week, i) {
+      return (
+        React.createElement("div", {
+          key: i, 
+          className: "mui-date-picker-calendar-month-week"}, 
+          this._getDayElements(week)
+        )
+      );
+    }, this);
+  },
+
+  _getDayElements: function(week) {
+    return week.map(function(day, i) {
+      var selected = DateTime.isEqualDate(this.props.selectedDate, day);
+      return (
+        React.createElement(DayButton, {
+          key: i, 
+          date: day, 
+          onTouchTap: this._handleDayTouchTap, 
+          selected: selected})
+      );
+    }, this);
+  },
+
+  _handleDayTouchTap: function(e, date) {
+    if (this.props.onDayTouchTap) this.props.onDayTouchTap(e, date);
+  }
+
+});
+
+module.exports = CalendarMonth;
+},{"../mixins/classable":72,"../utils/date-time":105,"./day-button":55,"react":336}],50:[function(require,module,exports){
+var React = require('react');
+var DateTime = require('../utils/date-time');
+var IconButton = require('../icon-button');
+var NavigationChevronLeft = require('../svg-icons/navigation-chevron-left');
+var NavigationChevronRight = require('../svg-icons/navigation-chevron-right');
+var SlideInTransitionGroup = require('../transition-groups/slide-in');
+
+var CalendarToolbar = React.createClass({displayName: "CalendarToolbar",
+
+  propTypes: {
+    displayDate: React.PropTypes.object.isRequired,
+    onLeftTouchTap: React.PropTypes.func,
+    onRightTouchTap: React.PropTypes.func
+  },
+
+  getInitialState: function() {
+    return {
+      transitionDirection: 'up'
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    var direction;
+
+    if (nextProps.displayDate !== this.props.displayDate) {
+      direction = nextProps.displayDate > this.props.displayDate ? 'up' : 'down';
+      this.setState({
+        transitionDirection: direction
+      });
+    }
+  },
+
+  render: function() {
+    var month = DateTime.getFullMonth(this.props.displayDate);
+    var year = this.props.displayDate.getFullYear();
+
+    return (
+      React.createElement("div", {className: "mui-date-picker-calendar-toolbar"}, 
+
+        React.createElement(SlideInTransitionGroup, {
+          className: "mui-date-picker-calendar-toolbar-title", 
+          direction: this.state.transitionDirection}, 
+          React.createElement("div", {key: month + '_' + year}, month, " ", year)
+        ), 
+
+        React.createElement(IconButton, {
+          className: "mui-date-picker-calendar-toolbar-button-left", 
+          onTouchTap: this.props.onLeftTouchTap}, 
+            React.createElement(NavigationChevronLeft, null)
+        ), 
+
+        React.createElement(IconButton, {
+          className: "mui-date-picker-calendar-toolbar-button-right", 
+          iconClassName: "navigation-chevron-right", 
+          onTouchTap: this.props.onRightTouchTap}, 
+            React.createElement(NavigationChevronRight, null)
+        )
+
+      )
+    );
+  }
+
+});
+
+module.exports = CalendarToolbar;
+},{"../icon-button":66,"../svg-icons/navigation-chevron-left":87,"../svg-icons/navigation-chevron-right":88,"../transition-groups/slide-in":103,"../utils/date-time":105,"react":336}],51:[function(require,module,exports){
+var React = require('react');
+var Classable = require('../mixins/classable');
+var WindowListenable = require('../mixins/window-listenable');
+var DateTime = require('../utils/date-time');
+var KeyCode = require('../utils/key-code');
+var CalendarMonth = require('./calendar-month');
+var CalendarToolbar = require('./calendar-toolbar');
+var DateDisplay = require('./date-display');
+var SlideInTransitionGroup = require('../transition-groups/slide-in');
+
+var Calendar = React.createClass({displayName: "Calendar",
+
+  mixins: [Classable, WindowListenable],
+
+  propTypes: {
+    initialDate: React.PropTypes.object,
+    isActive: React.PropTypes.bool
+  },
+
+  windowListeners: {
+    'keydown': '_handleWindowKeyDown'
+  },
+
+  getDefaultProps: function() {
+    return {
+      initialDate: new Date()
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      displayDate: DateTime.getFirstDayOfMonth(this.props.initialDate),
+      selectedDate: this.props.initialDate,
+      transitionDirection: 'left'
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.initialDate !== this.props.initialDate) {
+      var d = nextProps.initialDate || new Date();
+      this.setState({
+        displayDate: DateTime.getFirstDayOfMonth(d),
+        selectedDate: d
+      });
+    }
+  },
+
+  render: function() {
+    var weekCount = DateTime.getWeekArray(this.state.displayDate).length;
+    var classes = this.getClasses('mui-date-picker-calendar', {
+      'mui-is-4week': weekCount === 4,
+      'mui-is-5week': weekCount === 5,
+      'mui-is-6week': weekCount === 6
+    });
+
+    return (
+      React.createElement("div", {className: classes}, 
+
+        React.createElement(DateDisplay, {
+          className: "mui-date-picker-calendar-date-display", 
+          selectedDate: this.state.selectedDate}), 
+
+        React.createElement("div", {
+          className: "mui-date-picker-calendar-container"}, 
+          React.createElement(CalendarToolbar, {
+            displayDate: this.state.displayDate, 
+            onLeftTouchTap: this._handleLeftTouchTap, 
+            onRightTouchTap: this._handleRightTouchTap}), 
+
+          React.createElement("ul", {className: "mui-date-picker-calendar-week-title"}, 
+            React.createElement("li", {className: "mui-date-picker-calendar-week-title-day"}, "S"), 
+            React.createElement("li", {className: "mui-date-picker-calendar-week-title-day"}, "M"), 
+            React.createElement("li", {className: "mui-date-picker-calendar-week-title-day"}, "T"), 
+            React.createElement("li", {className: "mui-date-picker-calendar-week-title-day"}, "W"), 
+            React.createElement("li", {className: "mui-date-picker-calendar-week-title-day"}, "T"), 
+            React.createElement("li", {className: "mui-date-picker-calendar-week-title-day"}, "F"), 
+            React.createElement("li", {className: "mui-date-picker-calendar-week-title-day"}, "S")
+          ), 
+
+          React.createElement(SlideInTransitionGroup, {
+            direction: this.state.transitionDirection}, 
+            React.createElement(CalendarMonth, {
+              key: this.state.displayDate.toDateString(), 
+              displayDate: this.state.displayDate, 
+              onDayTouchTap: this._handleDayTouchTap, 
+              selectedDate: this.state.selectedDate})
+          )
+        )
+      )
+    );
+  },
+
+  getSelectedDate: function() {
+    return this.state.selectedDate;
+  },
+
+  _addDisplayDate: function(m) {
+    var newDisplayDate = DateTime.clone(this.state.displayDate);
+    newDisplayDate.setMonth(newDisplayDate.getMonth() + m);
+    this._setDisplayDate(newDisplayDate);
+  },
+
+  _addSelectedDays: function(days) {
+    this._setSelectedDate(DateTime.addDays(this.state.selectedDate, days));
+  },
+
+  _addSelectedMonths: function(months) {
+    this._setSelectedDate(DateTime.addMonths(this.state.selectedDate, months));
+  },
+
+  _setDisplayDate: function(d, newSelectedDate) {
+    var newDisplayDate = DateTime.getFirstDayOfMonth(d);
+    var direction = newDisplayDate > this.state.displayDate ? 'left' : 'right';
+
+    if (newDisplayDate !== this.state.displayDate) {
+      this.setState({
+        displayDate: newDisplayDate,
+        transitionDirection: direction,
+        selectedDate: newSelectedDate || this.state.selectedDate
+      });
+    }
+  },
+
+  _setSelectedDate: function(d) {
+    var newDisplayDate = DateTime.getFirstDayOfMonth(d);
+
+    if (newDisplayDate !== this.state.displayDate) {
+      this._setDisplayDate(newDisplayDate, d);
+    } else {
+      this.setState({
+        selectedDate: d
+      });
+    }
+  },
+
+  _handleDayTouchTap: function(e, date) {
+    this._setSelectedDate(date);
+  },
+
+  _handleLeftTouchTap: function() {
+    this._addDisplayDate(-1);
+  },
+
+  _handleRightTouchTap: function() {
+    this._addDisplayDate(1);
+  },
+
+  _handleWindowKeyDown: function(e) {
+    var newSelectedDate;
+
+    if (this.props.isActive) {
+
+      switch (e.keyCode) {
+
+        case KeyCode.UP:
+          if (e.shiftKey) {
+            this._addSelectedMonths(-1);
+          } else {
+            this._addSelectedDays(-7);
+          }
+          break;
+
+        case KeyCode.DOWN:
+          if (e.shiftKey) {
+            this._addSelectedMonths(1);
+          } else {
+            this._addSelectedDays(7);
+          }
+          break;
+
+        case KeyCode.RIGHT:
+          if (e.shiftKey) {
+            this._addSelectedMonths(1);
+          } else {
+            this._addSelectedDays(1);
+          }
+          break;
+
+        case KeyCode.LEFT:
+          if (e.shiftKey) {
+            this._addSelectedMonths(-1);
+          } else {
+            this._addSelectedDays(-1);
+          }
+          break;
+
+      }
+
+    } 
+  }
+
+});
+
+module.exports = Calendar;
+},{"../mixins/classable":72,"../mixins/window-listenable":75,"../transition-groups/slide-in":103,"../utils/date-time":105,"../utils/key-code":108,"./calendar-month":49,"./calendar-toolbar":50,"./date-display":52,"react":336}],52:[function(require,module,exports){
+var React = require('react');
+var Classable = require('../mixins/classable');
+var DateTime = require('../utils/date-time');
+var SlideInTransitionGroup = require('../transition-groups/slide-in');
+
+var DateDisplay = React.createClass({displayName: "DateDisplay",
+
+  mixins: [Classable],
+
+  propTypes: {
+    selectedDate: React.PropTypes.object.isRequired
+  },
+
+  getInitialState: function() {
+    return {
+      transitionDirection: 'up'
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    var direction;
+
+    if (nextProps.selectedDate !== this.props.selectedDate) {
+      direction = nextProps.selectedDate > this.props.selectedDate ? 'up' : 'down';
+      this.setState({
+        transitionDirection: direction
+      });
+    }
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      this.props,selectedDate=$__0.selectedDate,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{selectedDate:1});
+    var classes = this.getClasses('mui-date-picker-date-display');
+    var dayOfWeek = DateTime.getDayOfWeek(this.props.selectedDate);
+    var month = DateTime.getShortMonth(this.props.selectedDate);
+    var day = this.props.selectedDate.getDate();
+    var year = this.props.selectedDate.getFullYear();
+
+    return (
+      null
+    );
+  }
+
+});
+
+module.exports = DateDisplay;
+},{"../mixins/classable":72,"../transition-groups/slide-in":103,"../utils/date-time":105,"react":336}],53:[function(require,module,exports){
+var React = require('react');
+var Classable = require('../mixins/classable');
+var WindowListenable = require('../mixins/window-listenable');
+var KeyCode = require('../utils/key-code');
+var Calendar = require('./calendar');
+var DialogWindow = require('../dialog-window');
+var FlatButton = require('../flat-button');
+
+var DatePickerDialog = React.createClass({displayName: "DatePickerDialog",
+
+  mixins: [Classable, WindowListenable],
+
+  propTypes: {
+    initialDate: React.PropTypes.object,
+    onAccept: React.PropTypes.func
+  },
+
+  windowListeners: {
+    'keyup': '_handleWindowKeyUp'
+  },
+
+  getInitialState: function() {
+    return {
+      isCalendarActive: false
+    };
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      
+      this.props,initialDate=$__0.initialDate,onAccept=$__0.onAccept,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{initialDate:1,onAccept:1});
+    var classes = this.getClasses('mui-date-picker-dialog');
+    var actions = [
+      React.createElement(FlatButton, {
+        key: 0, 
+        label: "Cancel", 
+        secondary: true, 
+        onTouchTap: this._handleCancelTouchTap}),
+      React.createElement(FlatButton, {
+        key: 1, 
+        label: "OK", 
+        secondary: true, 
+        onTouchTap: this._handleOKTouchTap})
+    ];
+
+    return (
+      React.createElement(DialogWindow, React.__spread({},  other, 
+        {ref: "dialogWindow", 
+        className: classes, 
+        actions: actions, 
+        contentClassName: "mui-date-picker-dialog-window", 
+        onDismiss: this._handleDialogDismiss, 
+        onShow: this._handleDialogShow, 
+        repositionOnUpdate: false}), 
+        React.createElement(Calendar, {
+          ref: "calendar", 
+          initialDate: this.props.initialDate, 
+          isActive: this.state.isCalendarActive})
+      )
+    );
+  },
+
+  show: function() {
+    this.refs.dialogWindow.show();
+  },
+
+  dismiss: function() {
+    this.refs.dialogWindow.dismiss();
+  },
+
+  _handleCancelTouchTap: function() {
+    this.dismiss();
+  },
+
+  _handleOKTouchTap: function() {
+    this.dismiss();
+    if (this.props.onAccept) {
+      this.props.onAccept(this.refs.calendar.getSelectedDate());
+    }
+  },
+
+  _handleDialogShow: function() {
+    this.setState({
+      isCalendarActive: true
+    });
+  },
+
+  _handleDialogDismiss: function() {
+    this.setState({
+      isCalendarActive: false
+    });
+  },
+
+  _handleWindowKeyUp: function(e) {
+    if (this.refs.dialogWindow.isOpen()) {
+      switch (e.keyCode) {
+        case KeyCode.ENTER:
+          this._handleOKTouchTap();
+          break;
+      }
+    } 
+  }
+
+});
+
+module.exports = DatePickerDialog;
+},{"../dialog-window":56,"../flat-button":63,"../mixins/classable":72,"../mixins/window-listenable":75,"../utils/key-code":108,"./calendar":51,"react":336}],54:[function(require,module,exports){
+var React = require('react');
+var Classable = require('../mixins/classable');
+var WindowListenable = require('../mixins/window-listenable');
+var DateTime = require('../utils/date-time');
+var KeyCode = require('../utils/key-code');
+var DatePickerDialog = require('./date-picker-dialog');
+var TextField = require('../text-field');
+
+var DatePicker = React.createClass({displayName: "DatePicker",
+
+  mixins: [Classable, WindowListenable],
+
+  propTypes: {
+    defaultDate: React.PropTypes.object,
+    formatDate: React.PropTypes.func,
+    mode: React.PropTypes.oneOf(['portrait', 'landscape', 'inline']),
+    onFocus: React.PropTypes.func,
+    onTouchTap: React.PropTypes.func,
+    onChange: React.PropTypes.func
+  },
+
+  windowListeners: {
+    'keyup': '_handleWindowKeyUp'
+  },
+
+  getDefaultProps: function() {
+    return {
+      formatDate: DateTime.format
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      date: this.props.defaultDate,
+      dialogDate: new Date()
+    };
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      
+      
+      
+      this.props,formatDate=$__0.formatDate,mode=$__0.mode,onFocus=$__0.onFocus,onTouchTap=$__0.onTouchTap,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{formatDate:1,mode:1,onFocus:1,onTouchTap:1});
+    var classes = this.getClasses('mui-date-picker', {
+      'mui-is-landscape': this.props.mode === 'landscape',
+      'mui-is-inline': this.props.mode === 'inline'
+    });
+    var defaultInputValue;
+
+    if (this.props.defaultDate) {
+      defaultInputValue = this.props.formatDate(this.props.defaultDate);
+    }
+
+    return (
+      React.createElement("div", {className: classes}, 
+        React.createElement(TextField, React.__spread({}, 
+          other, 
+          {ref: "input", 
+          defaultValue: defaultInputValue, 
+          onFocus: this._handleInputFocus, 
+          onTouchTap: this._handleInputTouchTap})), 
+        React.createElement(DatePickerDialog, {
+          ref: "dialogWindow", 
+          initialDate: this.state.dialogDate, 
+          onAccept: this._handleDialogAccept})
+      )
+
+    );
+  },
+
+  getDate: function() {
+    return this.state.date;
+  },
+
+  setDate: function(d) {
+    this.setState({
+      date: d
+    });
+    this.refs.input.setValue(this.props.formatDate(d));
+  },
+
+  _handleDialogAccept: function(d) {
+    this.setDate(d);
+    if (this.props.onChange) this.props.onChange(null, d);
+  },
+
+  _handleInputFocus: function(e) {
+    e.target.blur();
+    if (this.props.onFocus) this.props.onFocus(e);
+  },
+
+  _handleInputTouchTap: function(e) {
+    this.setState({
+      dialogDate: this.getDate()
+    });
+
+    this.refs.dialogWindow.show();
+    if (this.props.onTouchTap) this.props.onTouchTap(e);
+  },
+
+  _handleWindowKeyUp: function(e) {
+    //TO DO: open the dialog if input has focus
+  }
+
+});
+
+module.exports = DatePicker;
+
+},{"../mixins/classable":72,"../mixins/window-listenable":75,"../text-field":98,"../utils/date-time":105,"../utils/key-code":108,"./date-picker-dialog":53,"react":336}],55:[function(require,module,exports){
+var React = require('react');
+var Classable = require('../mixins/classable');
+var DateTime = require('../utils/date-time');
+var EnhancedButton = require('../enhanced-button');
+
+var DayButton = React.createClass({displayName: "DayButton",
+
+  mixins: [Classable],
+
+  propTypes: {
+    date: React.PropTypes.object,
+    onTouchTap: React.PropTypes.func,
+    selected: React.PropTypes.bool
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      
+      
+      
+      this.props,className=$__0.className,date=$__0.date,onTouchTap=$__0.onTouchTap,selected=$__0.selected,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{className:1,date:1,onTouchTap:1,selected:1});
+    var classes = this.getClasses('mui-date-picker-day-button', { 
+      'mui-is-current-date': DateTime.isEqualDate(this.props.date, new Date()),
+      'mui-is-selected': this.props.selected
+    });
+
+    return this.props.date ? (
+      React.createElement(EnhancedButton, React.__spread({},  other, 
+        {className: classes, 
+        disableFocusRipple: true, 
+        disableTouchRipple: true, 
+        onTouchTap: this._handleTouchTap}), 
+        React.createElement("div", {className: "mui-date-picker-day-button-select"}), 
+        React.createElement("span", {className: "mui-date-picker-day-button-label"}, this.props.date.getDate())
+      )
+    ) : (
+      React.createElement("span", {className: classes})
+    );
+  },
+
+  _handleTouchTap: function(e) {
+    if (this.props.onTouchTap) this.props.onTouchTap(e, this.props.date);
+  }
+
+});
+
+module.exports = DayButton;
+},{"../enhanced-button":60,"../mixins/classable":72,"../utils/date-time":105,"react":336}],56:[function(require,module,exports){
+var React = require('react');
+var WindowListenable = require('./mixins/window-listenable');
+var CssEvent = require('./utils/css-event');
+var KeyCode = require('./utils/key-code');
+var Classable = require('./mixins/classable');
+var FlatButton = require('./flat-button');
+var Overlay = require('./overlay');
+var Paper = require('./paper');
+
+var DialogWindow = React.createClass({displayName: "DialogWindow",
+
+  mixins: [Classable, WindowListenable],
+
+  propTypes: {
+    actions: React.PropTypes.array,
+    contentClassName: React.PropTypes.string,
+    openImmediately: React.PropTypes.bool,
+    onClickAway: React.PropTypes.func,
+    onDismiss: React.PropTypes.func,
+    onShow: React.PropTypes.func,
+    repositionOnUpdate: React.PropTypes.bool
+  },
+
+  windowListeners: {
+    'keyup': '_handleWindowKeyUp'
+  },
+
+  getDefaultProps: function() {
+    return {
+      actions: [],
+      repositionOnUpdate: true
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      open: this.props.openImmediately || false
+    };
+  },
+
+  componentDidMount: function() {
+    this._positionDialog();
+  },
+
+  componentDidUpdate: function (prevProps, prevState) {
+    this._positionDialog();
+  },
+
+  render: function() {
+    var classes = this.getClasses('mui-dialog-window', { 
+      'mui-is-shown': this.state.open
+    });
+    var contentClasses = 'mui-dialog-window-contents';
+    var actions = this._getActionsContainer(this.props.actions);
+
+    if (this.props.contentClassName) {
+      contentClasses += ' ' + this.props.contentClassName;
+    }
+
+    return (
+      React.createElement("div", {className: classes}, 
+        React.createElement(Paper, {ref: "dialogWindow", className: contentClasses, zDepth: 4}, 
+          this.props.children, 
+          actions
+        ), 
+        React.createElement(Overlay, {show: this.state.open, onTouchTap: this._handleOverlayTouchTap})
+      )
+    );
+  },
+
+  isOpen: function() {
+    return this.state.open;
+  },
+
+  dismiss: function() {
+
+    CssEvent.onTransitionEnd(this.getDOMNode(), function() {
+      //allow scrolling
+      var body = document.getElementsByTagName('body')[0];
+      body.style.overflow = '';
+    });
+
+    this.setState({ open: false });
+    if (this.props.onDismiss) this.props.onDismiss();
+  },
+
+  show: function() {
+    //prevent scrolling
+    var body = document.getElementsByTagName('body')[0];
+    body.style.overflow = 'hidden';
+
+    this.setState({ open: true });
+    if (this.props.onShow) this.props.onShow();
+  },
+
+  _addClassName: function(reactObject, className) {
+    var originalClassName = reactObject.props.className;
+
+    reactObject.props.className = originalClassName ?
+      originalClassName + ' ' + className : className;
+  },
+
+  _getAction: function(actionJSON, key) {
+    var onClickHandler = actionJSON.onClick ? actionJSON.onClick : this.dismiss;
+    return (
+      React.createElement(FlatButton, {
+        key: key, 
+        secondary: true, 
+        onClick: onClickHandler, 
+        label: actionJSON.text})
+    );
+  },
+
+  _getActionsContainer: function(actions) {
+    var actionContainer;
+    var actionObjects = [];
+
+    if (actions.length) {
+      for (var i = 0; i < actions.length; i++) {
+        currentAction = actions[i];
+
+        //if the current action isn't a react object, create one
+        if (!React.isValidElement(currentAction)) {
+          currentAction = this._getAction(currentAction, i);
+        }
+
+        this._addClassName(currentAction, 'mui-dialog-window-action');
+        actionObjects.push(currentAction);
+      };
+
+      actionContainer = (
+        React.createElement("div", {className: "mui-dialog-window-actions"}, 
+          actionObjects
+        )
+      );
+    }
+
+    return actionContainer;
+  },
+
+  _positionDialog: function() {
+    var container, dialogWindow, containerHeight, dialogWindowHeight;
+
+    if (this.state.open) {
+
+      container = this.getDOMNode(),
+      dialogWindow = this.refs.dialogWindow.getDOMNode(),
+      containerHeight = container.offsetHeight,
+
+      //Reset the height in case the window was resized.
+      dialogWindow.style.height = '';
+      dialogWindowHeight = dialogWindow.offsetHeight;
+
+      //Vertically center the dialog window, but make sure it doesn't
+      //transition to that position.
+      if (this.props.repositionOnUpdate || !container.style.paddingTop) {
+        container.style.paddingTop = 
+          ((containerHeight - dialogWindowHeight) / 2) - 64 + 'px';
+      }
+      
+
+    }
+  },
+
+  _handleOverlayTouchTap: function() {
+    this.dismiss();
+    if (this.props.onClickAway) this.props.onClickAway();
+  },
+
+  _handleWindowKeyUp: function(e) {
+    if (e.keyCode == KeyCode.ESC) {
+      this.dismiss();
+    }
+  }
+
+});
+
+module.exports = DialogWindow;
+
+},{"./flat-button":63,"./mixins/classable":72,"./mixins/window-listenable":75,"./overlay":76,"./paper":77,"./utils/css-event":104,"./utils/key-code":108,"react":336}],57:[function(require,module,exports){
+var React = require('react');
+var Classable = require('./mixins/classable');
+var DialogWindow = require('./dialog-window');
+
+var Dialog = React.createClass({displayName: "Dialog",
+
+  mixins: [Classable],
+
+  propTypes: {
+    title: React.PropTypes.string
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      
+      this.props,className=$__0.className,title=$__0.title,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{className:1,title:1});
+    var classes = this.getClasses('mui-dialog');
+
+    return (
+      React.createElement(DialogWindow, React.__spread({}, 
+        other, 
+        {ref: "dialogWindow", 
+        className: classes}), 
+
+        React.createElement("h3", {className: "mui-dialog-title"}, this.props.title), 
+        React.createElement("div", {ref: "dialogContent", className: "mui-dialog-content"}, 
+          this.props.children
+        )
+        
+      )
+    );
+  },
+
+  dismiss: function() {
+    this.refs.dialogWindow.dismiss();
+  },
+
+  show: function() {
+    this.refs.dialogWindow.show();
+  }
+
+});
+
+module.exports = Dialog;
+},{"./dialog-window":56,"./mixins/classable":72,"react":336}],58:[function(require,module,exports){
+var React = require('react');
+var Classable = require('./mixins/classable');
+var ClickAwayable = require('./mixins/click-awayable');
+var KeyLine = require('./utils/key-line');
+var Paper = require('./paper');
+var FontIcon = require('./font-icon');
+var Menu = require('./menu');
+var MenuItem = require('./menu-item');
+
+var DropDownIcon = React.createClass({displayName: "DropDownIcon",
+
+  mixins: [Classable, ClickAwayable],
+
+  propTypes: {
+    onChange: React.PropTypes.func,
+    menuItems: React.PropTypes.array.isRequired,
+    closeOnMenuItemClick: React.PropTypes.bool
+  },
+
+  getInitialState: function() {
+    return {
+      open: false
+    }
+  },
+  
+  getDefaultProps: function() {
+    return {
+      closeOnMenuItemClick: true
+    }
+  },
+
+  componentClickAway: function() {
+    this.setState({ open: false });
+  },
+
+  render: function() {
+    var classes = this.getClasses('mui-drop-down-icon', {
+      'mui-open': this.state.open
+    });
+
+    var icon;
+    if (this.props.iconClassName) icon = React.createElement(FontIcon, {className: this.props.iconClassName});
+   
+    return (
+      React.createElement("div", {className: classes}, 
+          React.createElement("div", {className: "mui-menu-control", onClick: this._onControlClick}, 
+              icon, 
+              this.props.children
+          ), 
+          React.createElement(Menu, {ref: "menuItems", menuItems: this.props.menuItems, hideable: true, visible: this.state.open, onItemClick: this._onMenuItemClick})
+        )
+    );
+  },
+
+  _onControlClick: function(e) {
+    this.setState({ open: !this.state.open });
+  },
+
+  _onMenuItemClick: function(e, key, payload) {
+    if (this.props.onChange) this.props.onChange(e, key, payload);
+    
+    if (this.props.closeOnMenuItemClick) {
+      this.setState({ open: false });
+    }
+  }
+
+});
+
+module.exports = DropDownIcon;
+
+},{"./font-icon":65,"./menu":71,"./menu-item":70,"./mixins/classable":72,"./mixins/click-awayable":73,"./paper":77,"./utils/key-line":109,"react":336}],59:[function(require,module,exports){
+var React = require('react');
+var Classable = require('./mixins/classable');
+var ClickAwayable = require('./mixins/click-awayable');
+var DropDownArrow = require('./svg-icons/drop-down-arrow');
+var KeyLine = require('./utils/key-line');
+var Paper = require('./paper');
+var Menu = require('./menu');
+
+var DropDownMenu = React.createClass({displayName: "DropDownMenu",
+
+  mixins: [Classable, ClickAwayable],
+
+  propTypes: {
+    autoWidth: React.PropTypes.bool,
+    onChange: React.PropTypes.func,
+    menuItems: React.PropTypes.array.isRequired
+  },
+
+  getDefaultProps: function() {
+    return {
+      autoWidth: true
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      open: false,
+      selectedIndex: this.props.selectedIndex || 0
+    }
+  },
+
+  componentClickAway: function() {
+    this.setState({ open: false });
+  },
+
+  componentDidMount: function() {
+    if (this.props.autoWidth) this._setWidth();
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.hasOwnProperty('selectedIndex')) {
+      this.setState({selectedIndex: nextProps.selectedIndex});
+    }
+  },
+
+  render: function() {
+    var classes = this.getClasses('mui-drop-down-menu', {
+      'mui-open': this.state.open
+    });
+
+    return (
+      React.createElement("div", {className: classes}, 
+        React.createElement("div", {className: "mui-menu-control", onClick: this._onControlClick}, 
+          React.createElement(Paper, {className: "mui-menu-control-bg", zDepth: 0}), 
+          React.createElement("div", {className: "mui-menu-label"}, 
+            this.props.menuItems[this.state.selectedIndex].text
+          ), 
+          React.createElement(DropDownArrow, {className: "mui-menu-drop-down-icon"}), 
+          React.createElement("div", {className: "mui-menu-control-underline"})
+        ), 
+        React.createElement(Menu, {
+          ref: "menuItems", 
+          autoWidth: this.props.autoWidth, 
+          selectedIndex: this.state.selectedIndex, 
+          menuItems: this.props.menuItems, 
+          hideable: true, 
+          visible: this.state.open, 
+          onItemClick: this._onMenuItemClick})
+      )
+    );
+  },
+
+  _setWidth: function() {
+    var el = this.getDOMNode(),
+      menuItemsDom = this.refs.menuItems.getDOMNode();
+
+    el.style.width = menuItemsDom.offsetWidth + 'px';
+  },
+
+  _onControlClick: function(e) {
+    this.setState({ open: !this.state.open });
+  },
+
+  _onMenuItemClick: function(e, key, payload) {
+    if (this.props.onChange && this.state.selectedIndex !== key) this.props.onChange(e, key, payload);
+    this.setState({
+      selectedIndex: key,
+      open: false
+    });
+  }
+
+});
+
+module.exports = DropDownMenu;
+},{"./menu":71,"./mixins/classable":72,"./mixins/click-awayable":73,"./paper":77,"./svg-icons/drop-down-arrow":86,"./utils/key-line":109,"react":336}],60:[function(require,module,exports){
+var React = require('react');
+var KeyCode = require('./utils/key-code');
+var Classable = require('./mixins/classable');
+var WindowListenable = require('./mixins/window-listenable');
+var FocusRipple = require('./ripples/focus-ripple');
+var TouchRipple = require('./ripples/touch-ripple');
+
+var EnhancedButton = React.createClass({displayName: "EnhancedButton",
+
+  mixins: [Classable, WindowListenable],
+
+  propTypes: {
+    centerRipple: React.PropTypes.bool,
+    className: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    disableFocusRipple: React.PropTypes.bool,
+    disableTouchRipple: React.PropTypes.bool,
+    linkButton: React.PropTypes.bool,
+    onBlur: React.PropTypes.func,
+    onFocus: React.PropTypes.func,
+    onTouchTap: React.PropTypes.func
+  },
+
+  windowListeners: {
+    'keydown': '_handleWindowKeydown',
+    'keyup': '_handleWindowKeyup'
+  },
+
+  getInitialState: function() {
+    return {
+      isKeyboardFocused: false 
+    };
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      
+      
+      
+      
+      
+      
+         this.props,centerRipple=$__0.centerRipple,disabled=$__0.disabled,disableFocusRipple=$__0.disableFocusRipple,disableTouchRipple=$__0.disableTouchRipple,linkButton=$__0.linkButton,onBlur=$__0.onBlur,onFocus=$__0.onFocus,onTouchTap=$__0.onTouchTap,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{centerRipple:1,disabled:1,disableFocusRipple:1,disableTouchRipple:1,linkButton:1,onBlur:1,onFocus:1,onTouchTap:1});
+    var classes = this.getClasses('mui-enhanced-button', {
+      'mui-is-disabled': disabled,
+      'mui-is-keyboard-focused': this.state.isKeyboardFocused,
+      'mui-is-link-button': linkButton
+    });
+    var touchRipple = (
+      React.createElement(TouchRipple, {
+        ref: "touchRipple", 
+        key: "touchRipple", 
+        centerRipple: centerRipple}, 
+        this.props.children
+        )
+    );
+    var focusRipple = (
+      React.createElement(FocusRipple, {
+        key: "focusRipple", 
+        show: this.state.isKeyboardFocused})
+    );
+    var buttonProps = {
+      className: classes,
+      disabled: disabled,
+      onBlur: this._handleBlur,
+      onFocus: this._handleFocus,
+      onTouchTap: this._handleTouchTap
+    };
+    var buttonChildren = [
+      disabled || disableTouchRipple ? this.props.children : touchRipple,
+      disabled || disableFocusRipple ? null : focusRipple
+    ];
+
+    if (disabled && linkButton) {
+      return (
+        React.createElement("span", React.__spread({},  other, 
+          {className: classes, 
+          disabled: disabled}), 
+          this.props.children
+        )
+      );
+    }
+
+    return linkButton ? (
+      React.createElement("a", React.__spread({},  other,  buttonProps), 
+        buttonChildren
+      )
+    ) : (
+      React.createElement("button", React.__spread({},  other,  buttonProps), 
+        buttonChildren
+      )
+    );
+  },
+
+  isKeyboardFocused: function() {
+    return this.state.isKeyboardFocused;
+  },
+
+  _handleWindowKeydown: function(e) {
+    if (e.keyCode == KeyCode.TAB) this._tabPressed = true;
+    if (e.keyCode == KeyCode.ENTER && this.state.isKeyboardFocused) {
+      this._handleTouchTap(e);
+    }
+  },
+
+  _handleWindowKeyup: function(e) {
+    if (e.keyCode == KeyCode.SPACE && this.state.isKeyboardFocused) {
+      this._handleTouchTap(e);
+    }
+  },
+
+  _handleBlur: function(e) {
+    this.setState({
+      isKeyboardFocused: false
+    });
+
+    if (this.props.onBlur) this.props.onBlur(e);
+  },
+
+  _handleFocus: function(e) {
+    //setTimeout is needed becuase the focus event fires first
+    //Wait so that we can capture if this was a keyboard focus
+    //or touch focus
+    setTimeout(function() {
+      if (this._tabPressed) {
+        this.setState({
+          isKeyboardFocused: true
+        });
+      }
+    }.bind(this), 150);
+    
+    if (this.props.onFocus) this.props.onFocus(e);
+  },
+
+  _handleTouchTap: function(e) {
+    this._tabPressed = false;
+    this.setState({
+      isKeyboardFocused: false
+    });
+    if (this.props.onTouchTap) this.props.onTouchTap(e);
+  }
+
+});
+
+module.exports = EnhancedButton;
+},{"./mixins/classable":72,"./mixins/window-listenable":75,"./ripples/focus-ripple":82,"./ripples/touch-ripple":83,"./utils/key-code":108,"react":336}],61:[function(require,module,exports){
+(function (process){
+var React = require('react');
+var KeyCode = require('./utils/key-code');
+var Classable = require('./mixins/classable');
+var DomIdable = require('./mixins/dom-idable');
+var WindowListenable = require('./mixins/window-listenable');
+var FocusRipple = require('./ripples/focus-ripple');
+var TouchRipple = require('./ripples/touch-ripple');
+var Paper = require('./paper');
+
+var EnhancedSwitch = React.createClass({displayName: "EnhancedSwitch",
+
+  mixins: [Classable, DomIdable, WindowListenable],
+
+	propTypes: {
+      id: React.PropTypes.string,
+      inputType: React.PropTypes.string.isRequired,
+      switchElement: React.PropTypes.element.isRequired,
+      iconClassName: React.PropTypes.string.isRequired,
+      name: React.PropTypes.string,
+	    value: React.PropTypes.string,
+	    label: React.PropTypes.string,
+	    onSwitch: React.PropTypes.func,
+	    required: React.PropTypes.bool,
+	    disabled: React.PropTypes.bool,
+	    defaultSwitched: React.PropTypes.bool,
+      labelPosition: React.PropTypes.oneOf(['left', 'right']),
+      disableFocusRipple: React.PropTypes.bool,
+      disableTouchRipple: React.PropTypes.bool
+	  },
+
+  windowListeners: {
+    'keydown': '_handleWindowKeydown',
+    'keyup': '_handleWindowKeyup'
+  },
+
+  getDefaultProps: function() {
+    return {
+      iconClassName: ''
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      switched: this.props.defaultSwitched ||
+        (this.props.valueLink && this.props.valueLink.value),
+      isKeyboardFocused: false
+    }
+  },
+
+  componentDidMount: function() {
+    var inputNode = this.refs.checkbox.getDOMNode();
+    this.setState({switched: inputNode.checked});
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    var hasCheckedLinkProp = nextProps.hasOwnProperty('checkedLink');
+    var hasCheckedProp = nextProps.hasOwnProperty('checked');
+    var hasToggledProp = nextProps.hasOwnProperty('toggled');
+    var hasNewDefaultProp = 
+      (nextProps.hasOwnProperty('defaultSwitched') && 
+      (nextProps.defaultSwitched != this.props.defaultSwitched));
+    var newState = {};
+
+    if (hasCheckedProp) {
+      newState.switched = nextProps.checked;
+    } else if (hasToggledProp) {
+      newState.switched = nextProps.toggled;
+    } else if (hasCheckedLinkProp) {
+      newState.switched = nextProps.checkedLink.value;
+    }
+
+    if (newState) this.setState(newState);
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      this.props,type=$__0.type,name=$__0.name,value=$__0.value,label=$__0.label,onSwitch=$__0.onSwitch,defaultSwitched=$__0.defaultSwitched,onBlur=$__0.onBlur,onFocus=$__0.onFocus,onMouseUp=$__0.onMouseUp,onMouseDown=$__0.onMouseDown,onMouseOut=$__0.onMouseOut,onTouchStart=$__0.onTouchStart,onTouchEnd=$__0.onTouchEnd,disableTouchRipple=$__0.disableTouchRipple,disableFocusRipple=$__0.disableFocusRipple,iconClassName=$__0.iconClassName,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{type:1,name:1,value:1,label:1,onSwitch:1,defaultSwitched:1,onBlur:1,onFocus:1,onMouseUp:1,onMouseDown:1,onMouseOut:1,onTouchStart:1,onTouchEnd:1,disableTouchRipple:1,disableFocusRipple:1,iconClassName:1});
+
+    var classes = this.getClasses('mui-enhanced-switch', {
+      'mui-is-switched': this.state.switched,
+      'mui-is-disabled': this.props.disabled,
+      'mui-is-required': this.props.required
+    });
+
+    var inputId = this.props.id || this.getDomId();
+    
+    var labelElement = this.props.label ? (
+      React.createElement("label", {className: "mui-switch-label", htmlFor: inputId}, 
+        this.props.label
+      )
+    ) : null;
+
+    var inputProps = {
+      ref: "checkbox",
+      type: this.props.inputType,
+      name: this.props.name,
+      value: this.props.value,
+      defaultChecked: this.props.defaultSwitched,
+      onBlur: this._handleBlur,
+      onFocus: this._handleFocus,
+      onMouseUp: this._handleMouseUp,
+      onMouseDown: this._handleMouseDown,
+      onMouseOut: this._handleMouseOut,
+      onTouchStart: this._handleTouchStart,
+      onTouchEnd: this._handleTouchEnd
+    };
+
+    if (!this.props.hasOwnProperty('checkedLink')) {
+      inputProps.onChange = this._handleChange;
+    }
+
+    var inputElement = (
+      React.createElement("input", React.__spread({},  
+        other,  
+        inputProps, 
+        {className: "mui-enhanced-switch-input"}))
+    );
+
+    var touchRipple = (
+      React.createElement(TouchRipple, {
+        ref: "touchRipple", 
+        key: "touchRipple", 
+        centerRipple: true})
+    );
+
+    var focusRipple = (
+      React.createElement(FocusRipple, {
+        key: "focusRipple", 
+        show: this.state.isKeyboardFocused})
+    );
+
+    var ripples = [
+      this.props.disabled || disableTouchRipple ? null : touchRipple,
+      this.props.disabled || disableFocusRipple ? null : focusRipple
+    ];
+
+    iconClassName += ' mui-enhanced-switch-wrap';
+
+    var switchElement = (this.props.iconClassName.indexOf("toggle") == -1) ? (
+        React.createElement("div", {className: iconClassName}, 
+          this.props.switchElement, 
+          ripples
+        )
+      ) : (
+        React.createElement("div", {className: iconClassName}, 
+          React.createElement("div", {className: "mui-toggle-track"}), 
+          React.createElement(Paper, {className: "mui-toggle-thumb", zDepth: 1}, " ", ripples, " ")
+        )      
+    );
+
+    var labelPositionExist = this.props.labelPosition;
+
+    // Position is left if not defined or invalid.
+    var elementsInOrder = (labelPositionExist && 
+      (this.props.labelPosition.toUpperCase() === "RIGHT")) ? (
+        React.createElement("div", null, 
+          switchElement, 
+          labelElement
+        )
+      ) : (
+        React.createElement("div", null, 
+          labelElement, 
+          switchElement
+        )
+    );
+
+    return (
+      React.createElement("div", {className: classes}, 
+          inputElement, 
+          elementsInOrder
+      )
+    );
+  },
+
+
+  isSwitched: function() {
+    return this.refs.checkbox.getDOMNode().checked;
+  },
+
+  // no callback here because there is no event
+  setSwitched: function(newSwitchedValue) {
+    if (!this.props.hasOwnProperty('checked') || this.props.checked == false) {
+      this.setState({switched: newSwitchedValue});  
+      this.refs.checkbox.getDOMNode().checked = newSwitchedValue;
+    } else if (process.NODE_ENV !== 'production') {
+      var message = 'Cannot call set method while checked is defined as a property.';
+      console.error(message);
+    }
+  },
+
+  getValue: function() {
+    return this.refs.checkbox.getDOMNode().value;
+  },
+
+  isKeyboardFocused: function() {
+    return this.state.isKeyboardFocused;
+  },
+
+  _handleChange: function(e) {
+    
+    this._tabPressed = false;
+    this.setState({
+      isKeyboardFocused: false
+    });
+
+    var isInputChecked = this.refs.checkbox.getDOMNode().checked;
+    
+    if (!this.props.hasOwnProperty('checked')) this.setState({switched: isInputChecked});
+    if (this.props.onSwitch) this.props.onSwitch(e, isInputChecked);
+  },
+
+  /** 
+   * Because both the ripples and the checkbox input cannot share pointer 
+   * events, the checkbox input takes control of pointer events and calls 
+   * ripple animations manually.
+   */
+
+  // Checkbox inputs only use SPACE to change their state. Using ENTER will 
+  // update the ui but not the input.
+  _handleWindowKeydown: function(e) {
+    if (e.keyCode == KeyCode.TAB) this._tabPressed = true;
+    if (e.keyCode == KeyCode.SPACE && this.state.isKeyboardFocused) {
+      this._handleChange(e);
+    }
+  },
+
+  _handleWindowKeyup: function(e) {
+    if (e.keyCode == KeyCode.SPACE && this.state.isKeyboardFocused) {
+      this._handleChange(e);
+    }
+  },
+
+  _handleMouseDown: function(e) {
+    //only listen to left clicks
+    if (e.button === 0) this.refs.touchRipple.start(e);
+  },
+
+  _handleMouseUp: function(e) {
+    this.refs.touchRipple.end();
+  },
+
+  _handleMouseOut: function(e) {
+    this.refs.touchRipple.end();
+  },
+
+  _handleTouchStart: function(e) {
+    this.refs.touchRipple.start(e);
+  },
+
+  _handleTouchEnd: function(e) {
+    this.refs.touchRipple.end();
+  },
+
+  _handleBlur: function(e) {
+    this.setState({
+      isKeyboardFocused: false
+    });
+
+    if (this.props.onBlur) this.props.onBlur(e);
+  },
+
+  _handleFocus: function(e) {
+    //setTimeout is needed becuase the focus event fires first
+    //Wait so that we can capture if this was a keyboard focus
+    //or touch focus
+    setTimeout(function() {
+      if (this._tabPressed) {
+        this.setState({
+          isKeyboardFocused: true
+        });
+      }
+    }.bind(this), 150);
+    
+    if (this.props.onFocus) this.props.onFocus(e);
+  }
+
+});
+
+module.exports = EnhancedSwitch;
+
+}).call(this,require("DF1urx"))
+},{"./mixins/classable":72,"./mixins/dom-idable":74,"./mixins/window-listenable":75,"./paper":77,"./ripples/focus-ripple":82,"./ripples/touch-ripple":83,"./utils/key-code":108,"DF1urx":43,"react":336}],62:[function(require,module,exports){
+var React = require('react');
+var Classable = require('./mixins/classable');
+
+var EnhancedTextarea = React.createClass({displayName: "EnhancedTextarea",
+
+  mixins: [Classable],
+
+  propTypes: {
+    onChange: React.PropTypes.func,
+    onHeightChange: React.PropTypes.func,
+    textareaClassName: React.PropTypes.string,
+    rows: React.PropTypes.number
+  },
+
+  getDefaultProps: function() {
+    return {
+      rows: 1
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      height: this.props.rows * 24
+    };
+  },
+
+  componentDidMount: function() {
+    this._syncHeightWithShadow();
+  },
+
+  render: function() {
+
+    var $__0=
+      
+      
+      
+      
+      
+      
+      
+      this.props,className=$__0.className,onChange=$__0.onChange,onHeightChange=$__0.onHeightChange,textareaClassName=$__0.textareaClassName,rows=$__0.rows,valueLink=$__0.valueLink,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{className:1,onChange:1,onHeightChange:1,textareaClassName:1,rows:1,valueLink:1});
+
+    var classes = this.getClasses('mui-enhanced-textarea');
+    var textareaClassName = 'mui-enhanced-textarea-input';
+    var style = {
+      height: this.state.height + 'px'
+    };
+
+    if (this.props.textareaClassName) {
+      textareaClassName += ' ' + this.props.textareaClassName;
+    }
+
+    if (this.props.hasOwnProperty('valueLink')) {
+      other.value = this.props.valueLink.value;
+    }
+
+    return (
+      React.createElement("div", {className: classes}, 
+        React.createElement("textarea", {
+          ref: "shadow", 
+          className: "mui-enhanced-textarea-shadow", 
+          tabIndex: "-1", 
+          rows: this.props.rows, 
+          defaultValue: this.props.defaultValue, 
+          readOnly: true, 
+          value: this.props.value}), 
+        React.createElement("textarea", React.__spread({}, 
+          other, 
+          {ref: "input", 
+          className: textareaClassName, 
+          rows: this.props.rows, 
+          style: style, 
+          onChange: this._handleChange}))
+      )
+    );
+  },
+
+  getInputNode: function() {
+    return this.refs.input.getDOMNode();
+  },
+
+  _syncHeightWithShadow: function(newValue, e) {
+    var shadow = this.refs.shadow.getDOMNode();
+    var currentHeight = this.state.height;
+    var newHeight;
+
+    if (newValue !== undefined) shadow.value = newValue;
+    newHeight = shadow.scrollHeight;
+
+    if (currentHeight !== newHeight) {
+      this.setState({height: newHeight});
+      if (this.props.onHeightChange) this.props.onHeightChange(e, newHeight);
+    }
+  },
+
+  _handleChange: function(e) {
+    this._syncHeightWithShadow(e.target.value);
+
+    if (this.props.hasOwnProperty('valueLink')) {
+      this.props.valueLink.requestChange(e.target.value);
+    }
+
+    if (this.props.onChange) this.props.onChange(e);
+  },
+  
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.value != this.props.value) {
+      this._syncHeightWithShadow(nextProps.value);
+    }
+  }
+});
+
+module.exports = EnhancedTextarea;
+
+},{"./mixins/classable":72,"react":336}],63:[function(require,module,exports){
+var React = require('react');
+var Classable = require('./mixins/classable');
+var EnhancedButton = require('./enhanced-button');
+
+var FlatButton = React.createClass({displayName: "FlatButton",
+
+  mixins: [Classable],
+
+  propTypes: {
+    className: React.PropTypes.string,
+    label: function(props, propName, componentName){
+      if (!props.children && !props.label) {
+        return new Error('Warning: Required prop `label` or `children` was not specified in `'+ componentName + '`.')
+      }
+    },
+    primary: React.PropTypes.bool,
+    secondary: React.PropTypes.bool
+  },
+
+  render: function() {
+    var $__0=
+        
+        
+        
+        
+        this.props,label=$__0.label,primary=$__0.primary,secondary=$__0.secondary,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{label:1,primary:1,secondary:1});
+    var classes = this.getClasses('mui-flat-button', {
+      'mui-is-primary': primary,
+      'mui-is-secondary': !primary && secondary
+    });
+    var children;
+
+    if (label) children = React.createElement("span", {className: "mui-flat-button-label"}, label);
+    else children = this.props.children;
+
+    return (
+      React.createElement(EnhancedButton, React.__spread({},  other, 
+        {className: classes}), 
+        children
+      )
+    );
+  }
+
+});
+
+module.exports = FlatButton;
+},{"./enhanced-button":60,"./mixins/classable":72,"react":336}],64:[function(require,module,exports){
+(function (process){
+var React = require('react');
+var Classable = require('./mixins/classable');
+var EnhancedButton = require('./enhanced-button');
+var FontIcon = require('./font-icon');
+var Paper = require('./paper');
+
+var RaisedButton = React.createClass({displayName: "RaisedButton",
+
+  mixins: [Classable],
+
+  propTypes: {
+    className: React.PropTypes.string,
+    iconClassName: React.PropTypes.string,
+    mini: React.PropTypes.bool,
+    onMouseDown: React.PropTypes.func,
+    onMouseUp: React.PropTypes.func,
+    onMouseOut: React.PropTypes.func,
+    onTouchEnd: React.PropTypes.func,
+    onTouchStart: React.PropTypes.func,
+    secondary: React.PropTypes.bool
+  },
+
+  getInitialState: function() {
+    var zDepth = this.props.disabled ? 0 : 2;
+    return {
+      zDepth: zDepth,
+      initialZDepth: zDepth
+    };
+  },
+
+  componentDidMount: function() {
+    if (process.NODE_ENV !== 'production') {
+      if (this.props.iconClassName && this.props.children) {
+        var warning = 'You have set both an iconClassName and a child icon. ' +
+                      'It is recommended you use only one method when adding ' +
+                      'icons to FloatingActionButtons.';
+        console.warn(warning);
+      }
+    }
+  },
+
+
+  render: function() {
+    var $__0=
+      
+      
+      
+         this.props,icon=$__0.icon,mini=$__0.mini,secondary=$__0.secondary,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{icon:1,mini:1,secondary:1});
+    var classes = this.getClasses('mui-floating-action-button', {
+      'mui-is-mini': mini,
+      'mui-is-secondary': secondary
+    });
+
+    var icon;
+    if (this.props.iconClassName) icon = React.createElement(FontIcon, {className: "mui-floating-action-button-icon " + this.props.iconClassName})
+
+
+    return (
+      React.createElement(Paper, {
+        className: classes, 
+        innerClassName: "mui-floating-action-button-inner", 
+        zDepth: this.state.zDepth, 
+        circle: true}, 
+
+        React.createElement(EnhancedButton, React.__spread({},  other, 
+          {className: "mui-floating-action-button-container", 
+          onMouseDown: this._handleMouseDown, 
+          onMouseUp: this._handleMouseUp, 
+          onMouseOut: this._handleMouseOut, 
+          onTouchStart: this._handleTouchStart, 
+          onTouchEnd: this._handleTouchEnd}), 
+
+          icon, 
+          this.props.children
+
+        )
+        
+      )
+    );
+  },
+
+  _handleMouseDown: function(e) {
+    //only listen to left clicks
+    if (e.button === 0) {
+      this.setState({ zDepth: this.state.initialZDepth + 1 });
+    }
+    if (this.props.onMouseDown) this.props.onMouseDown(e);
+  },
+
+  _handleMouseUp: function(e) {
+    this.setState({ zDepth: this.state.initialZDepth });
+    if (this.props.onMouseUp) this.props.onMouseUp(e);
+  },
+
+  _handleMouseOut: function(e) {
+    this.setState({ zDepth: this.state.initialZDepth });
+    if (this.props.onMouseOut) this.props.onMouseOut(e);
+  },
+
+  _handleTouchStart: function(e) {
+    this.setState({ zDepth: this.state.initialZDepth + 1 });
+    if (this.props.onTouchStart) this.props.onTouchStart(e);
+  },
+
+  _handleTouchEnd: function(e) {
+    this.setState({ zDepth: this.state.initialZDepth });
+    if (this.props.onTouchEnd) this.props.onTouchEnd(e);
+  }
+
+});
+
+module.exports = RaisedButton;
+
+}).call(this,require("DF1urx"))
+},{"./enhanced-button":60,"./font-icon":65,"./mixins/classable":72,"./paper":77,"DF1urx":43,"react":336}],65:[function(require,module,exports){
+var React = require('react');
+var Classable = require('./mixins/classable');
+
+var FontIcon = React.createClass({displayName: "FontIcon",
+
+  mixins: [Classable],
+
+  render: function() {
+
+    var $__0=
+      
+      
+      this.props,className=$__0.className,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{className:1});
+    var classes = this.getClasses('mui-font-icon');
+
+    return (
+      React.createElement("span", React.__spread({},  other, {className: classes}))
+    );
+  }
+
+});
+
+module.exports = FontIcon;
+},{"./mixins/classable":72,"react":336}],66:[function(require,module,exports){
+(function (process){
+var React = require('react');
+var Classable = require('./mixins/classable');
+var EnhancedButton = require('./enhanced-button');
+var FontIcon = require('./font-icon');
+var Tooltip = require('./tooltip');
+
+var IconButton = React.createClass({displayName: "IconButton",
+
+  mixins: [Classable],
+
+  propTypes: {
+    className: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    iconClassName: React.PropTypes.string,
+    onBlur: React.PropTypes.func,
+    onFocus: React.PropTypes.func,
+    tooltip: React.PropTypes.string,
+    touch: React.PropTypes.bool
+  },
+
+  getInitialState: function() {
+    return {
+      tooltipShown: false 
+    };
+  },
+
+  componentDidMount: function() {
+    if (this.props.tooltip) {
+      this._positionTooltip();
+    }
+    if (process.NODE_ENV !== 'production') {
+      if (this.props.iconClassName && this.props.children) {
+        var warning = 'You have set both an iconClassName and a child icon. ' +
+                      'It is recommended you use only one method when adding ' +
+                      'icons to IconButtons.';
+        console.warn(warning);
+      }
+    }
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+         this.props,tooltip=$__0.tooltip,touch=$__0.touch,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{tooltip:1,touch:1});
+    var classes = this.getClasses('mui-icon-button');
+    var tooltip;
+    var fonticon;
+
+    if (this.props.tooltip) {
+      tooltip = (
+        React.createElement(Tooltip, {
+          ref: "tooltip", 
+          className: "mui-icon-button-tooltip", 
+          label: tooltip, 
+          show: this.state.tooltipShown, 
+          touch: touch})
+      );
+    }
+
+    if (this.props.iconClassName) {
+      fonticon = (
+        React.createElement(FontIcon, {className: this.props.iconClassName})
+      );
+    }
+
+    return (
+      React.createElement(EnhancedButton, React.__spread({},  other, 
+        {ref: "button", 
+        centerRipple: true, 
+        className: classes, 
+        onBlur: this._handleBlur, 
+        onFocus: this._handleFocus, 
+        onMouseOut: this._handleMouseOut, 
+        onMouseOver: this._handleMouseOver}), 
+
+        tooltip, 
+        fonticon, 
+        this.props.children
+
+      )
+    );
+  },
+
+  _positionTooltip: function() {
+    var tooltip = this.refs.tooltip.getDOMNode();
+    var tooltipWidth = tooltip.offsetWidth;
+    var buttonWidth = 48;
+
+    tooltip.style.left = (tooltipWidth - buttonWidth) / 2 * -1 + 'px';
+  },
+
+  _showTooltip: function() {
+    if (!this.props.disabled) this.setState({ tooltipShown: true });
+  },
+
+  _hideTooltip: function() {
+    this.setState({ tooltipShown: false });
+  },
+
+  _handleBlur: function(e) {
+    this._hideTooltip();
+    if (this.props.onBlur) this.props.onBlur(e);
+  },
+
+  _handleFocus: function(e) {
+    this._showTooltip();
+    if (this.props.onFocus) this.props.onFocus(e);
+  },
+
+  _handleMouseOut: function(e) {
+    if (!this.refs.button.isKeyboardFocused()) this._hideTooltip();
+    if (this.props.onMouseOut) this.props.onMouseOut(e);
+  },
+
+  _handleMouseOver: function(e) {
+    this._showTooltip();
+    if (this.props.onMouseOver) this.props.onMouseOver(e);
+  }
+
+});
+
+module.exports = IconButton;
+
+}).call(this,require("DF1urx"))
+},{"./enhanced-button":60,"./font-icon":65,"./mixins/classable":72,"./tooltip":102,"DF1urx":43,"react":336}],67:[function(require,module,exports){
+var React = require('react');
+
+var InkBar = React.createClass({displayName: "InkBar",
+  
+  propTypes: {
+    position: React.PropTypes.string
+  },
+  
+  render: function() {
+
+    var styles = {
+      left: this.props.left,
+      width: this.props.width
+    }
+
+    return (
+      React.createElement("div", {className: "mui-ink-bar", style: styles}, 
+        " "
+      )
+    );
+  }
+
+});
+
+module.exports = InkBar;
+},{"react":336}],68:[function(require,module,exports){
+(function (process){
+var React = require('react');
+var Classable = require('./mixins/classable');
+var classSet = require('react-classset');
+
+var Input = React.createClass({displayName: "Input",
+
+  propTypes: {
+    multiline: React.PropTypes.bool,
+    inlinePlaceholder: React.PropTypes.bool,
+    rows: React.PropTypes.number,
+    inputStyle: React.PropTypes.string,
+    error: React.PropTypes.string,
+    description: React.PropTypes.string,
+    placeholder: React.PropTypes.string,
+    type: React.PropTypes.string,
+    onChange: React.PropTypes.func
+  },
+
+  mixins: [Classable],
+
+  getInitialState: function() {
+    return {
+      value: this.props.defaultValue,
+      rows: this.props.rows
+    };
+  },
+
+  getDefaultProps: function() {
+    return {
+      multiline: false,
+      type: "text"
+    };
+  },
+
+  componentDidMount: function() {
+    if (process.NODE_ENV !== 'production') {
+      console.warn('Input has been deprecated. Please use TextField instead. See http://material-ui.com/#/components/text-fields');
+    }
+  },
+
+  render: function() {
+    var classes = this.getClasses('mui-input', {
+      'mui-floating': this.props.inputStyle === 'floating',
+      'mui-text': this.props.type === 'text',
+      'mui-error': this.props.error || false,
+      'mui-disabled': !!this.props.disabled,
+    });
+    var placeholder = this.props.inlinePlaceholder ? this.props.placeholder : "";
+    var inputIsNotEmpty = !!this.state.value;
+    var inputClassName = classSet({
+      'mui-is-not-empty': inputIsNotEmpty
+    });
+    var textareaClassName = classSet({
+      'mui-input-textarea': true,
+      'mui-is-not-empty': inputIsNotEmpty
+    });
+    var inputElement = this.props.multiline ?
+      this.props.valueLink ?
+        React.createElement("textarea", React.__spread({},  this.props, {ref: "input", 
+          className: textareaClassName, 
+          placeholder: placeholder, 
+          rows: this.state.rows})) :
+        React.createElement("textarea", React.__spread({},  this.props, {ref: "input", 
+          value: this.state.value, 
+          className: textareaClassName, 
+          placeholder: placeholder, 
+          rows: this.state.rows, 
+          onChange: this._onTextAreaChange})) :
+        this.props.valueLink ?
+          React.createElement("input", React.__spread({},  this.props, {ref: "input", 
+            className: inputClassName, 
+            placeholder: placeholder})) :
+          React.createElement("input", React.__spread({},  this.props, {ref: "input", 
+            className: inputClassName, 
+            value: this.state.value, 
+            placeholder: placeholder, 
+            onChange: this._onInputChange}));
+    var placeholderSpan = this.props.inlinePlaceholder ? null : 
+      React.createElement("span", {className: "mui-input-placeholder", onClick: this._onPlaceholderClick}, 
+        this.props.placeholder
+      );
+
+    return (
+      React.createElement("div", {ref: this.props.ref, className: classes}, 
+        inputElement, 
+        placeholderSpan, 
+        React.createElement("span", {className: "mui-input-highlight"}), 
+        React.createElement("span", {className: "mui-input-bar"}), 
+        React.createElement("span", {className: "mui-input-description"}, this.props.description), 
+        React.createElement("span", {className: "mui-input-error"}, this.props.error)
+      )
+    );
+  },
+
+  getValue: function() {
+    return this.state.value;
+  },
+
+  setValue: function(txt) {
+    this.setState({value: txt});
+  },
+
+  clearValue: function() {
+    this.setValue('');
+  },
+
+  blur: function() {
+    if(this.isMounted()) this.refs.input.getDOMNode().blur();
+  },
+  
+  focus: function() {
+    if (this.isMounted()) this.refs.input.getDOMNode().focus();
+  },
+
+  _onInputChange: function(e) {
+    var value = e.target.value;
+    this.setState({value: value});
+    if (this.props.onChange) this.props.onChange(e, value);
+  },
+
+  _onPlaceholderClick: function(e) {
+    this.focus();
+  },
+
+  _onTextAreaChange: function(e) {
+    this._onInputChange(e);
+    this._onLineBreak(e);
+  },
+
+  _onLineBreak: function(e) {
+    var value = e.target.value;
+    var lines = value.split('\n').length;
+
+    if (lines > this.state.rows) {
+      if (this.state.rows !== 20) {
+        this.setState({ rows: ((this.state.rows) + 1)});
+      }
+    }
+  }
+
+});
+
+module.exports = Input;
+
+}).call(this,require("DF1urx"))
+},{"./mixins/classable":72,"DF1urx":43,"react":336,"react-classset":110}],69:[function(require,module,exports){
+var React = require('react'),
+  KeyCode = require('./utils/key-code'),
+  Classable = require('./mixins/classable'),
+  WindowListenable = require('./mixins/window-listenable'),
+  Overlay = require('./overlay'),
+  Paper = require('./paper'),
+  Menu = require('./menu');
+
+var LeftNav = React.createClass({displayName: "LeftNav",
+
+  mixins: [Classable, WindowListenable],
+
+  propTypes: {
+    docked: React.PropTypes.bool,
+    header: React.PropTypes.element,
+    onChange: React.PropTypes.func,
+    menuItems: React.PropTypes.array.isRequired,
+    selectedIndex: React.PropTypes.number
+  },
+
+  windowListeners: {
+    'keyup': '_onWindowKeyUp'
+  },
+
+  getDefaultProps: function() {
+    return {
+      docked: true
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      open: this.props.docked
+    };
+  },
+
+  toggle: function() {
+    this.setState({ open: !this.state.open });
+    return this;
+  },
+
+  close: function() {
+    this.setState({ open: false });
+    return this;
+  },
+
+  open: function() {
+    this.setState({ open: true });
+    return this;
+  },
+
+  render: function() {
+    var classes = this.getClasses('mui-left-nav', {
+        'mui-closed': !this.state.open
+      }),
+      selectedIndex = this.props.selectedIndex,
+      overlay;
+
+    if (!this.props.docked) overlay = React.createElement(Overlay, {show: this.state.open, onTouchTap: this._onOverlayTouchTap});
+
+    return (
+      React.createElement("div", {className: classes}, 
+
+        overlay, 
+        React.createElement(Paper, {
+          ref: "clickAwayableElement", 
+          className: "mui-left-nav-menu", 
+          zDepth: 2, 
+          rounded: false}, 
+          
+          this.props.header, 
+          React.createElement(Menu, {
+            ref: "menuItems", 
+            zDepth: 0, 
+            menuItems: this.props.menuItems, 
+            selectedIndex: selectedIndex, 
+            onItemClick: this._onMenuItemClick})
+
+        )
+      )
+    );
+  },
+
+  _onMenuItemClick: function(e, key, payload) {
+    if (!this.props.docked) this.close();
+    if (this.props.onChange && this.props.selectedIndex !== key) {
+      this.props.onChange(e, key, payload);
+    }
+  },
+
+  _onOverlayTouchTap: function() {
+    this.close();
+  },
+
+  _onWindowKeyUp: function(e) {
+    if (e.keyCode == KeyCode.ESC &&
+        !this.props.docked &&
+        this.state.open) {
+      this.close();
+    }
+  }
+
+});
+
+module.exports = LeftNav;
+},{"./menu":71,"./mixins/classable":72,"./mixins/window-listenable":75,"./overlay":76,"./paper":77,"./utils/key-code":108,"react":336}],70:[function(require,module,exports){
+var React = require('react');
+var Classable = require('./mixins/classable');
+var FontIcon = require('./font-icon');
+var Toggle = require('./toggle');
+
+var Types = {
+  LINK: 'LINK',
+  SUBHEADER: 'SUBHEADER',
+  NESTED: 'NESTED'
+};
+
+var MenuItem = React.createClass({displayName: "MenuItem",
+
+  mixins: [Classable],
+
+  propTypes: {
+    index: React.PropTypes.number.isRequired,
+    iconClassName: React.PropTypes.string,
+    iconRightClassName: React.PropTypes.string,
+    attribute: React.PropTypes.string,
+    number: React.PropTypes.string,
+    data: React.PropTypes.string,
+    toggle: React.PropTypes.bool,
+    onTouchTap: React.PropTypes.func,
+    onClick: React.PropTypes.func,
+    onToggle: React.PropTypes.func,
+    selected: React.PropTypes.bool
+  },
+
+  statics: {
+    Types: Types
+  },
+
+  getDefaultProps: function() {
+    return {
+      toggle: false
+    };
+  },
+
+  render: function() {
+    var classes = this.getClasses('mui-menu-item', {
+      'mui-is-selected': this.props.selected
+    });
+    var icon;
+    var data;
+    var iconRight;
+    var attribute;
+    var number;
+    var toggle;
+
+    if (this.props.iconClassName) icon = React.createElement(FontIcon, {className: 'mui-menu-item-icon ' + this.props.iconClassName});
+    if (this.props.iconRightClassName) iconRight = React.createElement(FontIcon, {className: 'mui-menu-item-icon-right ' + this.props.iconRightClassName});
+    if (this.props.data) data = React.createElement("span", {className: "mui-menu-item-data"}, this.props.data);
+    if (this.props.number !== undefined) number = React.createElement("span", {className: "mui-menu-item-number"}, this.props.number);
+    if (this.props.attribute !== undefined) attribute = React.createElement("span", {className: "mui-menu-item-attribute"}, this.props.attribute);
+    
+    if (this.props.toggle) {
+      var $__0=
+        
+        
+        
+        
+        
+        
+        this.props,toggle=$__0.toggle,onClick=$__0.onClick,onToggle=$__0.onToggle,children=$__0.children,label=$__0.label,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{toggle:1,onClick:1,onToggle:1,children:1,label:1});
+      toggle = React.createElement(Toggle, React.__spread({},  other, {onToggle: this._handleToggle}));
+    }
+
+    return (
+      React.createElement("div", {
+        key: this.props.index, 
+        className: classes, 
+        onTouchTap: this._handleTouchTap, 
+        onClick: this._handleOnClick}, 
+
+        icon, 
+        this.props.children, 
+        data, 
+        attribute, 
+        number, 
+        toggle, 
+        iconRight
+        
+      )
+    );
+  },
+
+  _handleTouchTap: function(e) {
+    if (this.props.onTouchTap) this.props.onTouchTap(e, this.props.index);
+  },
+
+  _handleOnClick: function(e) {
+    if (this.props.onClick) this.props.onClick(e, this.props.index);
+  },
+
+  _handleToggle: function(e, toggled) {
+    if (this.props.onToggle) this.props.onToggle(e, this.props.index, toggled);
+  }
+
+});
+
+module.exports = MenuItem;
+
+},{"./font-icon":65,"./mixins/classable":72,"./toggle":99,"react":336}],71:[function(require,module,exports){
+var React = require('react');
+var CssEvent = require('./utils/css-event');
+var Dom = require('./utils/dom');
+var KeyLine = require('./utils/key-line');
+var Classable = require('./mixins/classable');
+var ClickAwayable = require('./mixins/click-awayable');
+var Paper = require('./paper');
+var MenuItem = require('./menu-item');
+
+/***********************
+ * Nested Menu Component
+ ***********************/
+var NestedMenuItem = React.createClass({displayName: "NestedMenuItem",
+
+  mixins: [Classable, ClickAwayable],
+
+  propTypes: {
+    index: React.PropTypes.number.isRequired,
+    text: React.PropTypes.string,
+    menuItems: React.PropTypes.array.isRequired,
+    zDepth: React.PropTypes.number,
+    onItemClick: React.PropTypes.func,
+    onItemTap: React.PropTypes.func
+  },
+
+  getInitialState: function() {
+    return { open: false }
+  },
+
+  componentClickAway: function() {
+    this.setState({ open: false });
+  },
+
+  componentDidMount: function() {
+    this._positionNestedMenu();
+  },
+
+  componentDidUpdate: function(prevProps, prevState) {
+    this._positionNestedMenu();
+  },
+
+  render: function() {
+    var classes = this.getClasses('mui-nested-menu-item', {
+      'mui-open': this.state.open
+    });
+
+    return (
+      React.createElement("div", {className: classes}, 
+        React.createElement(MenuItem, {index: this.props.index, iconRightClassName: "muidocs-icon-custom-arrow-drop-right", onClick: this._onParentItemClick}, 
+          this.props.text
+        ), 
+        React.createElement(Menu, {
+          ref: "nestedMenu", 
+          menuItems: this.props.menuItems, 
+          onItemClick: this._onMenuItemClick, 
+          onItemTap: this._onMenuItemTap, 
+          hideable: true, 
+          visible: this.state.open, 
+          zDepth: this.props.zDepth + 1})
+      )
+    );
+  },
+
+  _positionNestedMenu: function() {
+    var el = this.getDOMNode(),
+      nestedMenu = this.refs.nestedMenu.getDOMNode();
+
+    nestedMenu.style.left = el.offsetWidth + 'px';
+  },
+
+  _onParentItemClick: function() {
+    this.setState({ open: !this.state.open });
+  },
+
+  _onMenuItemClick: function(e, index, menuItem) {
+    this.setState({ open: false });
+    if (this.props.onItemClick) this.props.onItemClick(e, index, menuItem);
+  },
+  
+  _onMenuItemTap: function(e, index, menuItem) {
+    this.setState({ open: false });
+    if (this.props.onItemTap) this.props.onItemTap(e, index, menuItem);
+  }
+
+});
+
+/****************
+ * Menu Component
+ ****************/
+var Menu = React.createClass({displayName: "Menu",
+
+  mixins: [Classable],
+
+  propTypes: {
+    autoWidth: React.PropTypes.bool,
+    onItemTap: React.PropTypes.func,
+    onItemClick: React.PropTypes.func,
+    onToggleClick: React.PropTypes.func,
+    menuItems: React.PropTypes.array.isRequired,
+    selectedIndex: React.PropTypes.number,
+    hideable: React.PropTypes.bool,
+    visible: React.PropTypes.bool,
+    zDepth: React.PropTypes.number
+  },
+
+  getInitialState: function() {
+    return { nestedMenuShown: false }
+  },
+
+  getDefaultProps: function() {
+    return {
+      autoWidth: true,
+      hideable: false,
+      visible: true,
+      zDepth: 1
+    };
+  },
+
+  componentDidMount: function() {
+    var el = this.getDOMNode();
+
+    //Set the menu with
+    this._setKeyWidth(el);
+
+    //Save the initial menu height for later
+    this._initialMenuHeight = el.offsetHeight + KeyLine.Desktop.GUTTER_LESS;
+
+    //Show or Hide the menu according to visibility
+    this._renderVisibility();
+  },
+
+  componentDidUpdate: function(prevProps, prevState) {
+    if (this.props.visible !== prevProps.visible) this._renderVisibility();
+  },
+
+  render: function() {
+    var classes = this.getClasses('mui-menu', {
+      'mui-menu-hideable': this.props.hideable,
+      'mui-visible': this.props.visible
+    });
+
+    return (
+      React.createElement(Paper, {ref: "paperContainer", zDepth: this.props.zDepth, className: classes}, 
+        this._getChildren()
+      )
+    );
+  },
+
+  _getChildren: function() {
+    var children = [],
+      menuItem,
+      itemComponent,
+      isSelected;
+
+    //This array is used to keep track of all nested menu refs
+    this._nestedChildren = [];
+
+    for (var i=0; i < this.props.menuItems.length; i++) {
+      menuItem = this.props.menuItems[i];
+      isSelected = i === this.props.selectedIndex;
+
+      var $__0=
+        
+        
+        
+        
+        
+        
+        
+        menuItem,icon=$__0.icon,data=$__0.data,attribute=$__0.attribute,number=$__0.number,toggle=$__0.toggle,onClick=$__0.onClick,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{icon:1,data:1,attribute:1,number:1,toggle:1,onClick:1});
+
+      switch (menuItem.type) {
+
+        case MenuItem.Types.LINK:
+          itemComponent = (
+            React.createElement("a", {key: i, index: i, className: "mui-menu-item", href: menuItem.payload, target: menuItem.target}, menuItem.text)
+          );
+        break;
+
+        case MenuItem.Types.SUBHEADER:
+          itemComponent = (
+            React.createElement("div", {key: i, index: i, className: "mui-subheader"}, menuItem.text)
+          );
+          break;
+
+        case MenuItem.Types.NESTED:
+          itemComponent = (
+            React.createElement(NestedMenuItem, {
+              ref: i, 
+              key: i, 
+              index: i, 
+              text: menuItem.text, 
+              menuItems: menuItem.items, 
+              zDepth: this.props.zDepth, 
+              onItemClick: this._onNestedItemClick, 
+              onItemTap: this._onNestedItemClick})
+          );
+          this._nestedChildren.push(i);
+          break;
+
+        default:
+          itemComponent = (
+            React.createElement(MenuItem, React.__spread({}, 
+              other, 
+              {selected: isSelected, 
+              key: i, 
+              index: i, 
+              icon: menuItem.icon, 
+              data: menuItem.data, 
+              attribute: menuItem.attribute, 
+              number: menuItem.number, 
+              toggle: menuItem.toggle, 
+              onClick: this._onItemClick, 
+              onTouchTap: this._onItemTap}), 
+              menuItem.text
+            )
+          );
+      }
+      children.push(itemComponent);
+    }
+
+    return children;
+  },
+
+  _setKeyWidth: function(el) {
+    var menuWidth = this.props.autoWidth ?
+      KeyLine.getIncrementalDim(el.offsetWidth) + 'px' :
+      '100%';
+
+    //Update the menu width
+    Dom.withoutTransition(el, function() {
+      el.style.width = menuWidth;
+    });
+  },
+
+  _renderVisibility: function() {
+    var el;
+
+    if (this.props.hideable) {
+      el = this.getDOMNode();
+      var innerContainer = this.refs.paperContainer.getInnerContainer().getDOMNode();
+      
+      if (this.props.visible) {
+
+        //Open the menu
+        el.style.height = this._initialMenuHeight + 'px';
+
+        //Set the overflow to visible after the animation is done so
+        //that other nested menus can be shown
+        CssEvent.onTransitionEnd(el, function() {
+          //Make sure the menu is open before setting the overflow.
+          //This is to accout for fast clicks
+          if (this.props.visible) innerContainer.style.overflow = 'visible';
+        }.bind(this));
+
+      } else {
+
+        //Close the menu
+        el.style.height = '0px';
+
+        //Set the overflow to hidden so that animation works properly
+        innerContainer.style.overflow = 'hidden';
+      }
+    }
+  },
+
+  _onNestedItemClick: function(e, index, menuItem) {
+    if (this.props.onItemClick) this.props.onItemClick(e, index, menuItem);
+  },
+
+  _onNestedItemTap: function(e, index, menuItem) {
+    if (this.props.onItemTap) this.props.onItemTap(e, index, menuItem);
+  },
+
+  _onItemClick: function(e, index) {
+    if (this.props.onItemClick) this.props.onItemClick(e, index, this.props.menuItems[index]);
+  },
+
+  _onItemTap: function(e, index) {
+    if (this.props.onItemTap) this.props.onItemTap(e, index, this.props.menuItems[index]);
+  },
+
+  _onItemToggle: function(e, index, toggled) {
+    if (this.props.onItemToggle) this.props.onItemToggle(e, index, this.props.menuItems[index], toggled);
+  }
+
+});
+
+module.exports = Menu;
+
+},{"./menu-item":70,"./mixins/classable":72,"./mixins/click-awayable":73,"./paper":77,"./utils/css-event":104,"./utils/dom":106,"./utils/key-line":109,"react":336}],72:[function(require,module,exports){
+var React = require('react');
+var classSet = require('react-classset');
+
+module.exports = {
+
+  propTypes: {
+    className: React.PropTypes.string
+  },
+
+  getClasses: function(initialClasses, additionalClassObj) {
+    var classString = '';
+
+    //Initialize the classString with the classNames that were passed in
+    if (this.props.className) classString += ' ' + this.props.className;
+
+    //Add in initial classes
+    if (typeof initialClasses === 'object') {
+      classString += ' ' + classSet(initialClasses);
+    } else {
+      classString += ' ' + initialClasses;
+    }
+
+    //Add in additional classes
+    if (additionalClassObj) classString += ' ' + classSet(additionalClassObj);
+
+    //Convert the class string into an object and run it through the class set
+    return classSet(this.getClassSet(classString));
+  },
+
+  getClassSet: function(classString) {
+    var classObj = {};
+
+    if (classString) {
+      classString.split(' ').forEach(function(className) {
+        if (className) classObj[className] = true;
+      });
+    }
+
+    return classObj;
+  }
+
+}
+
+},{"react":336,"react-classset":110}],73:[function(require,module,exports){
+var Events = require('../utils/events');
+var Dom = require('../utils/dom');
+
+module.exports = {
+
+  //When the component mounts, listen to click events and check if we need to
+  //Call the componentClickAway function.
+  componentDidMount: function() {
+    if (!this.manuallyBindClickAway) this._bindClickAway();
+  },
+
+  componentWillUnmount: function() {
+    this._unbindClickAway();
+  },
+
+  _checkClickAway: function(e) {
+    var el = this.getDOMNode();
+
+    // Check if the target is inside the current component
+    if (this.isMounted() && 
+      e.target != el &&
+      !Dom.isDescendant(el, e.target)) {
+      if (this.componentClickAway) this.componentClickAway();
+    }
+  },
+
+  _bindClickAway: function() {
+    Events.on(document, 'click', this._checkClickAway);
+  },
+
+  _unbindClickAway: function() {
+    Events.off(document, 'click', this._checkClickAway);
+  }
+
+};
+
+},{"../utils/dom":106,"../utils/events":107}],74:[function(require,module,exports){
+module.exports = {
+
+  getDomId: function() {
+    return 'dom_id' + this._rootNodeID.replace(/\./g, '_');
+  }
+  
+}
+},{}],75:[function(require,module,exports){
+var Events = require('../utils/events');
+
+module.exports = {
+
+  componentDidMount: function() {
+    var listeners = this.windowListeners;
+
+    for (var eventName in listeners) {
+       var callbackName = listeners[eventName];
+       Events.on(window, eventName, this[callbackName]);
+    }
+  },
+
+  componentWillUnmount: function() {
+    var listeners = this.windowListeners;
+
+    for (var eventName in listeners) {
+       var callbackName = listeners[eventName];
+       Events.off(window, eventName, this[callbackName]);
+    }
+  }
+  
+}
+},{"../utils/events":107}],76:[function(require,module,exports){
+var React = require('react'),
+  Classable = require('./mixins/classable');
+
+var Overlay = React.createClass({displayName: "Overlay",
+
+  mixins: [Classable],
+
+  propTypes: {
+    show: React.PropTypes.bool
+  },
+
+  render: function() {
+    var 
+      $__0=
+        
+        
+        this.props,className=$__0.className,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{className:1}),
+      classes = this.getClasses('mui-overlay', {
+        'mui-is-shown': this.props.show
+      });
+
+    return (
+      React.createElement("div", React.__spread({},  other, {className: classes}))
+    );
+  }
+
+});
+
+module.exports = Overlay;
+},{"./mixins/classable":72,"react":336}],77:[function(require,module,exports){
+var React = require('react'),
+  Classable = require('./mixins/classable');
+
+var Paper = React.createClass({displayName: "Paper",
+
+  mixins: [Classable],
+
+  propTypes: {
+    circle: React.PropTypes.bool,
+    innerClassName: React.PropTypes.string,
+    rounded: React.PropTypes.bool,
+    zDepth: React.PropTypes.oneOf([0,1,2,3,4,5])
+  },
+
+  getDefaultProps: function() {
+    return {
+      innerClassName: '',
+      rounded: true,
+      zDepth: 1
+    };
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      
+      
+      
+         this.props,className=$__0.className,circle=$__0.circle,innerClassName=$__0.innerClassName,rounded=$__0.rounded,zDepth=$__0.zDepth,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{className:1,circle:1,innerClassName:1,rounded:1,zDepth:1}),
+      classes = this.getClasses(
+        'mui-paper ' +
+        'mui-z-depth-' + this.props.zDepth, { 
+        'mui-rounded': this.props.rounded,
+        'mui-circle': this.props.circle
+      }),
+      insideClasses = 
+        this.props.innerClassName + ' ' +
+        'mui-paper-container ' +
+        'mui-z-depth-bottom';
+
+    return (
+      React.createElement("div", React.__spread({},  other, {className: classes}), 
+        React.createElement("div", {ref: "innerContainer", className: insideClasses}, 
+          this.props.children
+        )
+      )
+    );
+  },
+
+  getInnerContainer: function() {
+    return this.refs.innerContainer;
+  }
+
+});
+
+module.exports = Paper;
+},{"./mixins/classable":72,"react":336}],78:[function(require,module,exports){
+(function (process){
+var React = require('react');
+var Paper = require('./paper');
+var Classable = require('./mixins/classable');
+var EnhancedSwitch = require('./enhanced-switch');
+var RadioButton = require('./radio-button');
+
+var RadioButtonGroup = React.createClass({displayName: "RadioButtonGroup",
+
+	mixins: [Classable],
+
+	propTypes: {
+		name: React.PropTypes.string.isRequired,
+    valueSelected: React.PropTypes.string,
+    defaultSelected: React.PropTypes.string,
+    labelPosition: React.PropTypes.oneOf(['left', 'right']),
+		onChange: React.PropTypes.func
+	},
+
+  _hasCheckAttribute: function(radioButton) {
+    return radioButton.props.hasOwnProperty('checked') && 
+      radioButton.props.checked; 
+  },
+
+  getInitialState: function() {
+    return {
+      numberCheckedRadioButtons: 0,
+      selected: this.props.valueSelected || this.props.defaultSelected || ''
+    };
+  },
+
+  componentWillMount: function() {
+    var cnt = 0;
+    
+    this.props.children.forEach(function(option) {
+      if (this._hasCheckAttribute(option)) cnt++;
+    }, this);
+
+    this.setState({numberCheckedRadioButtons: cnt});
+  }, 
+
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.hasOwnProperty('valueSelected')) {
+      this.setState({selected: nextProps.valueSelected});
+    }
+  },
+
+	render: function() {
+
+    var options = this.props.children.map(function(option) {
+      
+      var $__0=
+        
+         
+        
+        
+        
+        option.props,name=$__0.name,value=$__0.value,label=$__0.label,onCheck=$__0.onCheck,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{name:1,value:1,label:1,onCheck:1});
+
+      return React.createElement(RadioButton, React.__spread({}, 
+        other, 
+        {ref: option.props.value, 
+        name: this.props.name, 
+        key: option.props.value, 
+        value: option.props.value, 
+        label: option.props.label, 
+        labelPosition: this.props.labelPosition, 
+        onCheck: this._onChange, 
+        checked: option.props.value == this.state.selected}))
+
+		}, this);
+
+		return (
+			React.createElement("div", null, 
+				options
+			)
+		);
+	},
+
+  _updateRadioButtons: function(newSelection) {
+    if (this.state.numberCheckedRadioButtons == 0) {
+      this.setState({selected: newSelection});
+    } else if (process.NODE_ENV !== 'production') {
+      var message = "Cannot select a different radio button while another radio button " + 
+                    "has the 'checked' property set to true.";
+      console.error(message);
+    }
+  },
+
+	_onChange: function(e, newSelection) {
+    this._updateRadioButtons(newSelection);
+
+    // Successful update
+    if (this.state.numberCheckedRadioButtons == 0) {
+      if (this.props.onChange) this.props.onChange(e, newSelection);
+    }
+	},
+
+  getSelectedValue: function() {
+    return this.state.selected;
+  },
+
+  setSelectedValue: function(newSelection) {
+    this._updateRadioButtons(newSelection);  
+  },
+
+  clearValue: function() {
+    this.setSelectedValue('');  
+  }
+
+});
+
+module.exports = RadioButtonGroup;
+
+}).call(this,require("DF1urx"))
+},{"./enhanced-switch":61,"./mixins/classable":72,"./paper":77,"./radio-button":79,"DF1urx":43,"react":336}],79:[function(require,module,exports){
+var React = require('react');
+var Classable = require('./mixins/classable');
+var EnhancedSwitch = require('./enhanced-switch');
+var RadioButtonOff = require('./svg-icons/toggle-radio-button-off');
+var RadioButtonOn = require('./svg-icons/toggle-radio-button-on');
+
+var RadioButton = React.createClass({displayName: "RadioButton",
+
+  mixins: [Classable],
+
+  propTypes: {
+    onCheck: React.PropTypes.func
+  },
+
+  render: function() {
+
+    var $__0=
+      
+      
+      this.props,onCheck=$__0.onCheck,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{onCheck:1});
+
+    var radioButtonElement = (
+      React.createElement("div", null, 
+          React.createElement(RadioButtonOff, {className: "mui-radio-button-target"}), 
+          React.createElement(RadioButtonOn, {className: "mui-radio-button-fill"})
+      )
+    );
+
+    var enhancedSwitchProps = {
+      ref: "enhancedSwitch",
+      inputType: "radio",
+      switchElement: radioButtonElement,
+      className: "mui-radio-button",
+      iconClassName: "mui-radio-button-icon",
+      onSwitch: this._handleCheck,
+      labelPosition: (this.props.labelPosition) ? this.props.labelPosition : "right"
+    };
+
+    return (
+      React.createElement(EnhancedSwitch, React.__spread({},  
+        other, 
+        enhancedSwitchProps))
+    );
+  },
+
+  // Only called when selected, not when unselected.
+  _handleCheck: function(e) {
+    if (this.props.onCheck) this.props.onCheck(e, this.props.value);
+  },
+
+  isChecked: function() {
+    return this.refs.enhancedSwitch.isSwitched();
+  },
+
+  setChecked: function(newCheckedValue) {
+    this.refs.enhancedSwitch.setSwitched(newCheckedValue);
+    this.setState({switched: newCheckedValue});
+  },
+  
+  getValue: function() {
+    return this.refs.enhancedSwitch.getValue();
+  }
+});
+
+module.exports = RadioButton;
+
+},{"./enhanced-switch":61,"./mixins/classable":72,"./svg-icons/toggle-radio-button-off":93,"./svg-icons/toggle-radio-button-on":94,"react":336}],80:[function(require,module,exports){
+var React = require('react');
+var Classable = require('./mixins/classable');
+var EnhancedButton = require('./enhanced-button');
+var Paper = require('./paper');
+
+var RaisedButton = React.createClass({displayName: "RaisedButton",
+
+  mixins: [Classable],
+
+  propTypes: {
+    className: React.PropTypes.string,
+    label: function(props, propName, componentName){
+      if (!props.children && !props.label) {
+        return new Error('Warning: Required prop `label` or `children` was not specified in `'+ componentName + '`.')
+      }
+    },
+    onMouseDown: React.PropTypes.func,
+    onMouseUp: React.PropTypes.func,
+    onMouseOut: React.PropTypes.func,
+    onTouchEnd: React.PropTypes.func,
+    onTouchStart: React.PropTypes.func,
+    primary: React.PropTypes.bool,
+    secondary: React.PropTypes.bool
+  },
+
+  getInitialState: function() {
+    var zDepth = this.props.disabled ? 0 : 1;
+    return {
+      zDepth: zDepth,
+      initialZDepth: zDepth
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    var zDepth = nextProps.disabled ? 0 : 1;
+    this.setState({
+      zDepth: zDepth,
+      initialZDepth: zDepth
+    });
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      
+         this.props,label=$__0.label,primary=$__0.primary,secondary=$__0.secondary,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{label:1,primary:1,secondary:1});
+    var classes = this.getClasses('mui-raised-button', {
+      'mui-is-primary': primary,
+      'mui-is-secondary': !primary && secondary
+    });
+    var children;
+
+    if (label) children = React.createElement("span", {className: "mui-raised-button-label"}, label);
+    else children = this.props.children;
+
+    return (
+      React.createElement(Paper, {className: classes, zDepth: this.state.zDepth}, 
+        React.createElement(EnhancedButton, React.__spread({},  other, 
+          {className: "mui-raised-button-container", 
+          onMouseUp: this._handleMouseUp, 
+          onMouseDown: this._handleMouseDown, 
+          onMouseOut: this._handleMouseOut, 
+          onTouchStart: this._handleTouchStart, 
+          onTouchEnd: this._handleTouchEnd}), 
+          children
+        )
+      )
+    );
+  },
+
+  _handleMouseDown: function(e) {
+    //only listen to left clicks
+    if (e.button === 0) {
+      this.setState({ zDepth: this.state.initialZDepth + 1 });
+    }
+    if (this.props.onMouseDown) this.props.onMouseDown(e);
+  },
+
+  _handleMouseUp: function(e) {
+    this.setState({ zDepth: this.state.initialZDepth });
+    if (this.props.onMouseUp) this.props.onMouseUp(e);
+  },
+
+  _handleMouseOut: function(e) {
+    this.setState({ zDepth: this.state.initialZDepth });
+    if (this.props.onMouseOut) this.props.onMouseOut(e);
+  },
+
+  _handleTouchStart: function(e) {
+    this.setState({ zDepth: this.state.initialZDepth + 1 });
+    if (this.props.onTouchStart) this.props.onTouchStart(e);
+  },
+
+  _handleTouchEnd: function(e) {
+    this.setState({ zDepth: this.state.initialZDepth });
+    if (this.props.onTouchEnd) this.props.onTouchEnd(e);
+  }
+
+});
+
+module.exports = RaisedButton;
+},{"./enhanced-button":60,"./mixins/classable":72,"./paper":77,"react":336}],81:[function(require,module,exports){
+var React = require('react');
+var Classable = require('../mixins/classable');
+
+var RippleCircle = React.createClass({displayName: "RippleCircle",
+
+  mixins: [Classable],
+
+  propTypes: {
+    className: React.PropTypes.string,
+    started: React.PropTypes.bool,
+    ending: React.PropTypes.bool
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      
+      
+      this.props,innerClassName=$__0.innerClassName,started=$__0.started,ending=$__0.ending,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{innerClassName:1,started:1,ending:1});
+    var classes = this.getClasses('mui-ripple-circle', {
+      'mui-is-started': this.props.started,
+      'mui-is-ending': this.props.ending
+    });
+
+    return (
+      React.createElement("div", React.__spread({},  other, {className: classes}), 
+        React.createElement("div", {className: "mui-ripple-circle-inner"})
+      )
+    );
+  }
+
+});
+
+module.exports = RippleCircle;
+},{"../mixins/classable":72,"react":336}],82:[function(require,module,exports){
+var React = require('react');
+var Classable = require('../mixins/classable');
+
+var FocusRipple = React.createClass({displayName: "FocusRipple",
+
+  mixins: [Classable],
+
+  propTypes: {
+    show: React.PropTypes.bool
+  },
+
+  componentDidMount: function() {
+    this._setRippleSize();
+  },
+
+  render: function() {
+    var classes = this.getClasses('mui-focus-ripple', {
+      'mui-is-shown': this.props.show
+    });
+
+    return (
+      React.createElement("div", {className: classes}, 
+        React.createElement("div", {className: "mui-focus-ripple-inner"})
+      )
+    );
+  },
+
+  _setRippleSize: function() {
+    var el = this.getDOMNode();
+    var height = el.offsetHeight;
+    var width = el.offsetWidth;
+    var size = Math.max(height, width);
+
+    el.style.height = size + 'px';
+    el.style.top = (size / 2 * -1) + (height / 2) + 'px';
+  }
+
+});
+
+module.exports = FocusRipple;
+},{"../mixins/classable":72,"react":336}],83:[function(require,module,exports){
+var React = require('react');
+var Classable = require('../mixins/classable');
+var Dom = require('../utils/dom');
+var RippleCircle = require('./circle');
+
+var TouchRipple = React.createClass({displayName: "TouchRipple",
+
+  mixins: [Classable],
+
+  propTypes: {
+    centerRipple: React.PropTypes.bool,
+    className: React.PropTypes.string
+  },
+
+  getInitialState: function() {
+    return {
+      ripples: [{
+        key: 0,
+        started: false,
+        ending: false
+      }]
+    };
+  },
+
+  render: function() {
+    var classes = this.getClasses('mui-touch-ripple');
+
+    return (
+      React.createElement("div", {
+        onMouseUp: this._handleMouseUp, 
+        onMouseDown: this._handleMouseDown, 
+        onMouseOut: this._handleMouseOut, 
+        onTouchStart: this._handleTouchStart, 
+        onTouchEnd: this._handleTouchEnd}, 
+        React.createElement("div", {className: classes}, 
+          this._getRippleElements()
+        ), 
+        this.props.children
+      )
+    );
+  },
+
+  start: function(e) {
+    var ripples = this.state.ripples;
+    var nextKey = ripples[ripples.length-1].key + 1;
+    var style = !this.props.centerRipple ? this._getRippleStyle(e) : {};
+    var ripple;
+
+    //Start the next unstarted ripple
+    for (var i = 0; i < ripples.length; i++) {
+      ripple = ripples[i];
+      if (!ripple.started) {
+        ripple.started = true;
+        ripple.style = style;
+        break;
+      }
+    };
+
+    //Add an unstarted ripple at the end
+    ripples.push({
+      key: nextKey,
+      started: false,
+      ending: false
+    });
+
+    //Re-render
+    this.setState({
+      ripples: ripples
+    });
+  },
+
+  end: function() {
+    var ripples = this.state.ripples;
+    var ripple;
+    var endingRipple;
+
+    //End the the next un-ended ripple
+    for (var i = 0; i < ripples.length; i++) {
+      ripple = ripples[i];
+      if (ripple.started && !ripple.ending) {
+        ripple.ending = true;
+        endingRipple = ripple;
+        break;
+      }
+    };
+
+    //Only update if a ripple was found
+    if (endingRipple) {
+      //Re-render
+      this.setState({
+        ripples: ripples
+      });
+
+      //Wait 2 seconds and remove the ripple from DOM
+      setTimeout(function() {
+        ripples.shift();
+        if (this.isMounted()) {
+          this.setState({
+            ripples: ripples
+          });
+        }
+      }.bind(this), 2000);
+    }
+  },
+
+  _handleMouseDown: function(e) {
+    //only listen to left clicks
+    if (e.button === 0) this.start(e);
+  },
+
+  _handleMouseUp: function(e) {
+    this.end();
+  },
+
+  _handleMouseOut: function(e) {
+    this.end();
+  },
+
+  _handleTouchStart: function(e) {
+    this.start(e);
+  },
+
+  _handleTouchEnd: function(e) {
+    this.end();
+  },
+
+  _getRippleStyle: function(e) {
+    var style = {};
+    var el = this.getDOMNode();
+    var elHeight = el.offsetHeight;
+    var elWidth = el.offsetWidth;
+    var offset = Dom.offset(el);
+    var pageX = e.pageX == undefined ? e.nativeEvent.pageX : e.pageX;
+    var pageY = e.pageY == undefined ? e.nativeEvent.pageY : e.pageY;
+    var pointerX = pageX - offset.left;
+    var pointerY = pageY - offset.top;
+    var topLeftDiag = this._calcDiag(pointerX, pointerY);
+    var topRightDiag = this._calcDiag(elWidth - pointerX, pointerY);
+    var botRightDiag = this._calcDiag(elWidth - pointerX, elHeight - pointerY);
+    var botLeftDiag = this._calcDiag(pointerX, elHeight - pointerY);
+    var rippleRadius = Math.max(
+      topLeftDiag, topRightDiag, botRightDiag, botLeftDiag
+    );
+    var rippleSize = rippleRadius * 2;
+    var left = pointerX - rippleRadius;
+    var top = pointerY - rippleRadius;
+
+    style.height = rippleSize + 'px';
+    style.width = rippleSize + 'px';
+    style.top = top + 'px';
+    style.left = left + 'px';
+
+    return style;
+  },
+
+  _calcDiag: function(a, b) {
+    return Math.sqrt((a * a) + (b * b));
+  },
+
+  _getRippleElements: function() {
+    return this.state.ripples.map(function(ripple) {
+      return (
+        React.createElement(RippleCircle, {
+          key: ripple.key, 
+          started: ripple.started, 
+          ending: ripple.ending, 
+          style: ripple.style})
+      );
+    }.bind(this));
+  }
+
+});
+
+module.exports = TouchRipple;
+
+},{"../mixins/classable":72,"../utils/dom":106,"./circle":81,"react":336}],84:[function(require,module,exports){
+
+var React = require('react'),
+    Paper = require('./paper'),
+    Classable = require('./mixins/classable'),
+    Draggable = require('react-draggable2');
+
+var Slider = React.createClass({displayName: "Slider",
+
+  propTypes: {
+    required: React.PropTypes.bool,
+    disabled: React.PropTypes.bool,
+    min: React.PropTypes.number,
+    max: React.PropTypes.number,
+    step: React.PropTypes.number,
+    error: React.PropTypes.string,
+    description: React.PropTypes.string,
+    name: React.PropTypes.string.isRequired,
+    onChange: React.PropTypes.func,
+    onDragStart: React.PropTypes.func,
+    onDragStop: React.PropTypes.func
+  },
+
+  mixins: [Classable],
+
+  getDefaultProps: function() {
+    return {
+      required: true,
+      disabled: false,
+      defaultValue: 0,
+      min: 0,
+      max: 1,
+      dragging: false
+    };
+  },
+
+  getInitialState: function() {
+    var value = this.props.value;
+    if (value == null) value = this.props.defaultValue;
+    var percent = (value - this.props.min) / (this.props.max - this.props.min);
+    if (isNaN(percent)) percent = 0;
+    return {
+      value: value,
+      percent: percent
+    }
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.value != null) {
+      this.setValue(nextProps.value);
+    }
+  },
+
+  render: function() {
+    var classes = this.getClasses('mui-input', {
+      'mui-error': this.props.error != null
+    });
+
+    var sliderClasses = this.getClasses('mui-slider', {
+      'mui-slider-zero': this.state.percent == 0,
+      'mui-disabled': this.props.disabled
+    });
+
+    var percent = this.state.percent;
+    if (percent > 1) percent = 1; else if (percent < 0) percent = 0;
+
+    return (
+      React.createElement("div", {className: classes, style: this.props.style}, 
+        React.createElement("span", {className: "mui-input-highlight"}), 
+        React.createElement("span", {className: "mui-input-bar"}), 
+        React.createElement("span", {className: "mui-input-description"}, this.props.description), 
+        React.createElement("span", {className: "mui-input-error"}, this.props.error), 
+        React.createElement("div", {className: sliderClasses, onClick: this._onClick}, 
+          React.createElement("div", {ref: "track", className: "mui-slider-track"}, 
+            React.createElement(Draggable, {axis: "x", bound: "point", 
+              cancel: this.props.disabled ? '*' : null, 
+              start: {x: (percent * 100) + '%'}, 
+              onStart: this._onDragStart, 
+              onStop: this._onDragStop, 
+              onDrag: this._onDragUpdate}, 
+              React.createElement("div", {className: "mui-slider-handle", tabIndex: 0})
+            ), 
+            React.createElement("div", {className: "mui-slider-selection mui-slider-selection-low", 
+              style: {width: (percent * 100) + '%'}}, 
+              React.createElement("div", {className: "mui-slider-selection-fill"})
+            ), 
+            React.createElement("div", {className: "mui-slider-selection mui-slider-selection-high", 
+              style: {width: ((1 - percent) * 100) + '%'}}, 
+              React.createElement("div", {className: "mui-slider-selection-fill"})
+            )
+          )
+        ), 
+        React.createElement("input", {ref: "input", type: "hidden", 
+          name: this.props.name, 
+          value: this.state.value, 
+          required: this.props.required, 
+          min: this.props.min, 
+          max: this.props.max, 
+          step: this.props.step})
+      )
+    );
+  },
+
+  getValue: function() {
+    return this.state.value;
+  },
+
+  setValue: function(i) {
+    // calculate percentage
+    var percent = (i - this.props.min) / (this.props.max - this.props.min);
+    if (isNaN(percent)) percent = 0;
+    // update state
+    this.setState({
+      value: i,
+      percent: percent
+    });
+  },
+
+  getPercent: function() {
+    return this.state.percent;
+  },
+
+  setPercent: function (percent) {
+    var value = this._percentToValue(percent);
+    this.setState({value: value, percent: percent});
+  },
+
+  clearValue: function() {
+    this.setValue(0);
+  },
+
+  _onClick: function (e) {
+    // let draggable handle the slider
+    if (this.state.dragging || this.props.disabled) return;
+    var value = this.state.value;
+    var node = this.refs.track.getDOMNode();
+    var boundingClientRect = node.getBoundingClientRect();
+    var offset = e.clientX - boundingClientRect.left;
+    this._updateWithChangeEvent(e, offset / node.clientWidth);
+  },
+
+  _onDragStart: function(e, ui) {
+    this.setState({
+      dragging: true
+    });
+    if (this.props.onDragStart) this.props.onDragStart(e, ui);
+  },
+
+  _onDragStop: function(e, ui) {
+    this.setState({
+      dragging: false
+    });
+    if (this.props.onDragStop) this.props.onDragStop(e, ui);
+  },
+
+  _onDragUpdate: function(e, ui) {
+    if (!this.state.dragging) return;
+    if (!this.props.disabled) this._dragX(e, ui.position.left);
+  },
+
+  _dragX: function(e, pos) {
+    var max = this.refs.track.getDOMNode().clientWidth;
+    if (pos < 0) pos = 0; else if (pos > max) pos = max;
+    this._updateWithChangeEvent(e, pos / max);
+  },
+
+  _updateWithChangeEvent: function(e, percent) {
+    if (this.state.percent === percent) return;
+    this.setPercent(percent);
+    var value = this._percentToValue(percent);
+    if (this.props.onChange) this.props.onChange(e, value);
+  },
+
+  _percentToValue: function(percent) {
+    return percent * (this.props.max - this.props.min) + this.props.min;
+  }
+
+});
+
+module.exports = Slider;
+
+},{"./mixins/classable":72,"./paper":77,"react":336,"react-draggable2":111}],85:[function(require,module,exports){
+var React = require('react');
+var CssEvent = require('./utils/css-event');
+var Classable = require('./mixins/classable');
+var ClickAwayable = require('./mixins/click-awayable');
+var FlatButton = require('./flat-button');
+
+var Snackbar = React.createClass({displayName: "Snackbar",
+
+  mixins: [Classable, ClickAwayable],
+
+  manuallyBindClickAway: true,
+
+  propTypes: {
+    action: React.PropTypes.string,
+    message: React.PropTypes.string.isRequired,
+    openOnMount: React.PropTypes.bool,
+    onActionTouchTap: React.PropTypes.func
+  },
+
+  getInitialState: function() {
+    return {
+      open: this.props.openOnMount || false
+    };
+  },
+
+  componentClickAway: function() {
+    this.dismiss();
+  },
+
+  componentDidUpdate: function(prevProps, prevState) {
+    if (prevState.open != this.state.open) {
+      if (this.state.open) {
+        //Only Bind clickaway after transition finishes
+        CssEvent.onTransitionEnd(this.getDOMNode(), function() {
+          this._bindClickAway();
+        }.bind(this));
+      } else {
+        this._unbindClickAway();
+      }
+    }
+  },
+
+  render: function() {
+    var classes = this.getClasses('mui-snackbar', {
+      'mui-is-open': this.state.open
+    }); 
+    var action;
+
+    if (this.props.action) {
+      action = (
+        React.createElement(FlatButton, {
+          className: "mui-snackbar-action", 
+          label: this.props.action, 
+          onTouchTap: this.props.onActionTouchTap})
+      );
+    }
+
+    return (
+      React.createElement("span", {className: classes}, 
+        React.createElement("span", {className: "mui-snackbar-message"}, this.props.message), 
+        action
+      )
+    );
+  },
+
+  show: function() {
+    this.setState({ open: true });
+  },
+  
+  dismiss: function() {
+    this.setState({ open: false });
+  }
+
+});
+
+module.exports = Snackbar;
+},{"./flat-button":63,"./mixins/classable":72,"./mixins/click-awayable":73,"./utils/css-event":104,"react":336}],86:[function(require,module,exports){
+var React = require('react');
+var SvgIcon = require('./svg-icon');
+
+var DropDownArrow = React.createClass({displayName: "DropDownArrow",
+
+  render: function() {
+    return (
+      React.createElement(SvgIcon, React.__spread({},  this.props), 
+        React.createElement("polygon", {points: "7,9.5 12,14.5 17,9.5 "})
+      )
+    );
+  }
+
+});
+
+module.exports = DropDownArrow;
+},{"./svg-icon":90,"react":336}],87:[function(require,module,exports){
+var React = require('react');
+var SvgIcon = require('./svg-icon');
+
+var NavigationChevronLeft = React.createClass({displayName: "NavigationChevronLeft",
+
+  render: function() {
+    return (
+      React.createElement(SvgIcon, React.__spread({},  this.props), 
+        React.createElement("path", {d: "M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"})
+      )
+    );
+  }
+
+});
+
+module.exports = NavigationChevronLeft;
+},{"./svg-icon":90,"react":336}],88:[function(require,module,exports){
+var React = require('react');
+var SvgIcon = require('./svg-icon');
+
+var NavigationChevronLeft = React.createClass({displayName: "NavigationChevronLeft",
+
+  render: function() {
+    return (
+      React.createElement(SvgIcon, React.__spread({},  this.props), 
+        React.createElement("path", {d: "M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"})
+      )
+    );
+  }
+
+});
+
+module.exports = NavigationChevronLeft;
+
+
+},{"./svg-icon":90,"react":336}],89:[function(require,module,exports){
+var React = require('react');
+var SvgIcon = require('./svg-icon');
+
+var NavigationMenu = React.createClass({displayName: "NavigationMenu",
+
+  render: function() {
+    return (
+      React.createElement(SvgIcon, React.__spread({},  this.props), 
+        React.createElement("path", {d: "M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"})
+      )
+    );
+  }
+
+});
+
+module.exports = NavigationMenu;
+},{"./svg-icon":90,"react":336}],90:[function(require,module,exports){
+var React = require('react');
+var Classable = require('../mixins/classable');
+
+var SvgIcon = React.createClass({displayName: "SvgIcon",
+
+  mixins: [Classable],
+
+  render: function() {
+    var classes = this.getClasses('mui-svg-icon');
+
+    return (
+      React.createElement("svg", React.__spread({}, 
+        this.props, 
+        {className: classes, 
+        viewBox: "0 0 24 24"}), 
+        this.props.children
+      )
+    );
+  }
+
+});
+
+module.exports = SvgIcon;
+},{"../mixins/classable":72,"react":336}],91:[function(require,module,exports){
+var React = require('react');
+var SvgIcon = require('./svg-icon');
+
+var ToggleCheckBoxChecked = React.createClass({displayName: "ToggleCheckBoxChecked",
+
+  render: function() {
+    return (
+      React.createElement(SvgIcon, React.__spread({},  this.props), 
+        React.createElement("path", {d: "M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z M10,17l-5-5l1.4-1.4 l3.6,3.6l7.6-7.6L19,8L10,17z"})
+      )
+    );
+  }
+
+});
+
+module.exports = ToggleCheckBoxChecked;
+},{"./svg-icon":90,"react":336}],92:[function(require,module,exports){
+var React = require('react');
+var SvgIcon = require('./svg-icon');
+
+var ToggleCheckBoxOutlineBlank = React.createClass({displayName: "ToggleCheckBoxOutlineBlank",
+
+  render: function() {
+    return (
+      React.createElement(SvgIcon, React.__spread({},  this.props), 
+        React.createElement("path", {d: "M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z"})
+      )
+    );
+  }
+
+});
+
+module.exports = ToggleCheckBoxOutlineBlank;
+},{"./svg-icon":90,"react":336}],93:[function(require,module,exports){
+var React = require('react');
+var SvgIcon = require('./svg-icon');
+
+var RadioButtonOff = React.createClass({displayName: "RadioButtonOff",
+
+  render: function() {
+    return (
+      React.createElement(SvgIcon, React.__spread({},  this.props), 
+        React.createElement("path", {d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"})
+      )
+    );
+  }
+
+});
+
+module.exports = RadioButtonOff;
+},{"./svg-icon":90,"react":336}],94:[function(require,module,exports){
+var React = require('react');
+var SvgIcon = require('./svg-icon');
+
+var RadioButtonOn = React.createClass({displayName: "RadioButtonOn",
+
+  render: function() {
+    return (
+      React.createElement(SvgIcon, React.__spread({},  this.props), 
+       React.createElement("path", {d: "M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"})
+      )
+    );
+  }
+
+});
+
+module.exports = RadioButtonOn;
+},{"./svg-icon":90,"react":336}],95:[function(require,module,exports){
+var React = require('react');
+var Classable = require('../mixins/classable');
+var TabTemplate = require('./tabTemplate');
+
+
+var Tab = React.createClass({displayName: "Tab",
+
+  mixins: [Classable],
+
+  propTypes: {
+    handleTouchTap: React.PropTypes.func,
+    selected: React.PropTypes.bool
+  },
+
+
+  handleTouchTap: function(){
+    this.props.handleTouchTap(this.props.tabIndex, this);
+  },
+
+  render: function(){
+    var styles = {
+      width: this.props.width
+    };
+
+    var classes = this.getClasses('mui-tab-item', {
+      'mui-tab-is-active': this.props.selected
+    });
+
+    return (
+    React.createElement("div", {className: classes, style: styles, onTouchTap: this.handleTouchTap, routeName: this.props.route}, 
+      this.props.label
+    )
+    )
+  }
+
+});
+
+module.exports = Tab;
+},{"../mixins/classable":72,"./tabTemplate":96,"react":336}],96:[function(require,module,exports){
+var React = require('react');
+
+var TabTemplate = React.createClass({displayName: "TabTemplate",
+
+  render: function(){
+
+    return (
+      React.createElement("div", {className: "mui-tab-template"}, 
+        this.props.children
+      )
+    );
+  },
+});
+
+module.exports = TabTemplate;
+},{"react":336}],97:[function(require,module,exports){
+var React = require('react/addons');
+var Tab = require('./tab');
+var TabTemplate = require('./tabTemplate');
+var InkBar = require('../ink-bar');
+
+var Tabs = React.createClass({displayName: "Tabs",
+
+  propTypes: {
+    onActive: React.PropTypes.func
+  },
+
+  getInitialState: function(){
+    return {
+      selectedIndex: 0
+    };
+  },
+
+  getEvenWidth: function(){
+    return (
+      parseInt(window
+        .getComputedStyle(this.getDOMNode())
+        .getPropertyValue('width'), 10)
+    );
+  },
+
+  componentDidMount: function(){
+    if(this.props.tabWidth) {
+      if(!(this.props.children.length * this.props.tabWidth > this.getEvenWidth())){
+        this.setState({
+          width: this.props.tabWidth,
+          fixed: false
+        });
+        return;
+      }
+    }
+    this.setState({
+      width: this.getEvenWidth(),
+      fixed: true
+    });
+  },
+
+  handleTouchTap: function(tabIndex, tab){
+    if (this.props.onChange && this.state.selectedIndex !== tabIndex) {
+      this.props.onChange(tabIndex, tab);
+    }
+
+    this.setState({selectedIndex: tabIndex});
+    //default CB is _onActive. Can be updated in tab.jsx
+    if(tab.props.onActive) tab.props.onActive(tab);
+  },
+
+  render: function(){
+    var _this = this;
+    var width = this.state.fixed ?
+      this.state.width/this.props.children.length :
+      this.props.tabWidth;
+    var left = width * this.state.selectedIndex || 0;
+    var currentTemplate;
+    var tabs = React.Children.map(this.props.children, function(tab, index){
+      if(tab.type.displayName === "Tab"){
+        if(_this.state.selectedIndex === index) currentTemplate = tab.props.children;
+         return React.addons.cloneWithProps(tab, {
+            key: index,
+            selected: _this.state.selectedIndex === index,
+            tabIndex: index,
+            width: width,
+            handleTouchTap: _this.handleTouchTap
+          })
+      } else {
+        var type = tab.type.displayName || tab.type;
+        throw "Tabs only accepts Tab Components as children. Found " + type + " as child number " + (index + 1) + " of Tabs";
+      }
+    });
+
+    return (
+      React.createElement("div", {className: "mui-tabs-container"}, 
+        React.createElement("div", {className: "mui-tab-item-container"}, 
+          tabs
+        ), 
+        React.createElement(InkBar, {left: left, width: width}), 
+        React.createElement(TabTemplate, null, 
+          currentTemplate
+        )
+      )
+    )
+  },
+
+});
+
+module.exports = Tabs;
+
+},{"../ink-bar":67,"./tab":95,"./tabTemplate":96,"react/addons":175}],98:[function(require,module,exports){
+(function (process){
+var React = require('react');
+var Classable = require('./mixins/classable');
+var DomIdable = require('./mixins/dom-idable');
+var EnhancedTextarea = require('./enhanced-textarea');
+
+var TextField = React.createClass({displayName: "TextField",
+
+  mixins: [Classable, DomIdable],
+
+  propTypes: {
+    errorText: React.PropTypes.string,
+    floatingLabelText: React.PropTypes.string,
+    hintText: React.PropTypes.string,
+    id: React.PropTypes.string,
+    multiLine: React.PropTypes.bool,
+    onBlur: React.PropTypes.func,
+    onChange: React.PropTypes.func,
+    onFocus: React.PropTypes.func,
+    onKeyDown: React.PropTypes.func,
+    onEnterKeyDown: React.PropTypes.func,
+    type: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      type: 'text'
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      errorText: this.props.errorText,
+      hasValue: this.props.value || this.props.defaultValue ||
+        (this.props.valueLink && this.props.valueLink.value)
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    var hasErrorProp = nextProps.hasOwnProperty('errorText');
+    var hasValueLinkProp = nextProps.hasOwnProperty('valueLink');
+    var hasValueProp = nextProps.hasOwnProperty('value');
+    var hasNewDefaultValue = nextProps.defaultValue !== this.props.defaultValue;
+    var newState = {};
+
+    if (hasValueProp) {
+      newState.hasValue = nextProps.value;
+    } else if (hasValueLinkProp) {
+      newState.hasValue = nextProps.valueLink.value;
+    } else if (hasNewDefaultValue) {
+      newState.hasValue = nextProps.defaultValue;
+    }
+
+    if (hasErrorProp) newState.errorText = nextProps.errorText;
+    if (newState) this.setState(newState);
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      this.props,className=$__0.className,errorText=$__0.errorText,floatingLabelText=$__0.floatingLabelText,hintText=$__0.hintText,id=$__0.id,multiLine=$__0.multiLine,onBlur=$__0.onBlur,onChange=$__0.onChange,onFocus=$__0.onFocus,type=$__0.type,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{className:1,errorText:1,floatingLabelText:1,hintText:1,id:1,multiLine:1,onBlur:1,onChange:1,onFocus:1,type:1});
+
+    var classes = this.getClasses('mui-text-field', {
+      'mui-has-error': this.props.errorText,
+      'mui-has-floating-labels': this.props.floatingLabelText,
+      'mui-has-value': this.state.hasValue,
+      'mui-is-disabled': this.props.disabled,
+      'mui-is-focused': this.state.isFocused,
+      'mui-is-multiLine': this.props.multiLine
+    });
+
+    var inputId = this.props.id || this.getDomId();
+
+    var errorTextElement = this.state.errorText ? (
+      React.createElement("div", {className: "mui-text-field-error"}, this.state.errorText)
+    ) : null;
+
+    var hintTextElement = this.props.hintText ? (
+      React.createElement("div", {className: "mui-text-field-hint"}, this.props.hintText)
+    ) : null;
+
+    var floatingLabelTextElement = this.props.floatingLabelText ? (
+      React.createElement("label", {
+        className: "mui-text-field-floating-label", 
+        htmlFor: inputId}, 
+        this.props.floatingLabelText
+      )
+    ) : null;
+
+    var inputProps;
+    var inputElement;
+
+    inputProps = {
+      ref: 'input',
+      className: 'mui-text-field-input',
+      id: inputId,
+      onBlur: this._handleInputBlur,
+      onFocus: this._handleInputFocus,
+      onKeyDown: this._handleInputKeyDown
+    };
+
+    if (!this.props.hasOwnProperty('valueLink')) {
+      inputProps.onChange = this._handleInputChange;
+    }
+
+    inputElement = this.props.multiLine ? (
+      React.createElement(EnhancedTextarea, React.__spread({}, 
+        other, 
+        inputProps, 
+        {onHeightChange: this._handleTextAreaHeightChange, 
+        textareaClassName: "mui-text-field-textarea"}))
+    ) : (
+      React.createElement("input", React.__spread({}, 
+        other, 
+        inputProps, 
+        {type: this.props.type}))
+    );
+
+    return (
+      React.createElement("div", {className: classes}, 
+
+        floatingLabelTextElement, 
+        hintTextElement, 
+        inputElement, 
+
+        React.createElement("hr", {className: "mui-text-field-underline"}), 
+        React.createElement("hr", {className: "mui-text-field-focus-underline"}), 
+
+        errorTextElement
+
+      )
+    );
+  },
+
+  blur: function() {
+    if (this.isMounted()) this._getInputNode().blur();
+  },
+
+  clearValue: function() {
+    this.setValue('');
+  },
+
+  focus: function() {
+    if (this.isMounted()) this._getInputNode().focus();
+  },
+
+  getValue: function() {
+    return this.isMounted() ? this._getInputNode().value : undefined;
+  },
+
+  setErrorText: function(newErrorText) {
+    if (process.NODE_ENV !== 'production' && this.props.hasOwnProperty('errorText')) {
+      console.error('Cannot call TextField.setErrorText when errorText is defined as a property.');
+    } else if (this.isMounted()) {
+      this.setState({errorText: newErrorText});
+    }
+  },
+
+  setValue: function(newValue) {
+    if (process.NODE_ENV !== 'production' && this._isControlled()) {
+      console.error('Cannot call TextField.setValue when value or valueLink is defined as a property.');
+    } else if (this.isMounted()) {
+      this._getInputNode().value = newValue;
+      this.setState({hasValue: newValue});
+    }
+  },
+
+  _getInputNode: function() {
+    return this.props.multiLine ? 
+      this.refs.input.getInputNode() : this.refs.input.getDOMNode();
+  },
+
+  _handleInputBlur: function(e) {
+    this.setState({isFocused: false});
+    if (this.props.onBlur) this.props.onBlur(e);
+  },
+
+  _handleInputChange: function(e) {
+    this.setState({hasValue: e.target.value});
+    if (this.props.onChange) this.props.onChange(e);
+  },
+
+  _handleInputFocus: function(e) {
+    this.setState({isFocused: true});
+    if (this.props.onFocus) this.props.onFocus(e);
+  },
+
+  _handleInputKeyDown: function(e) {
+    if (e.keyCode === 13 && this.props.onEnterKeyDown) this.props.onEnterKeyDown(e);
+    if (this.props.onKeyDown) this.props.onKeyDown(e);
+  },
+
+  _handleTextAreaHeightChange: function(e, height) {
+    var newHeight = height + 24;
+    if (this.props.floatingLabelText) newHeight += 24;
+    this.getDOMNode().style.height = newHeight + 'px';
+  },
+
+  _isControlled: function() {
+    return this.props.hasOwnProperty('value') ||
+      this.props.hasOwnProperty('valueLink');
+  }
+
+});
+
+module.exports = TextField;
+
+}).call(this,require("DF1urx"))
+},{"./enhanced-textarea":62,"./mixins/classable":72,"./mixins/dom-idable":74,"DF1urx":43,"react":336}],99:[function(require,module,exports){
+var React = require('react');
+var Classable = require('./mixins/classable');
+var Paper = require('./paper');
+var EnhancedSwitch = require('./enhanced-switch');
+
+var Toggle = React.createClass({displayName: "Toggle",
+
+  mixins: [Classable],
+
+  propTypes: {
+    onToggle: React.PropTypes.func,
+    toggled: React.PropTypes.bool,
+    defaultToggled: React.PropTypes.bool
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      this.props,onToggle=$__0.onToggle,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{onToggle:1});
+
+    var toggleElement = (
+      React.createElement("div", null, 
+        React.createElement("div", {className: "mui-toggle-track"}), 
+        React.createElement(Paper, {className: "mui-toggle-thumb", zDepth: 1})
+      )
+    );
+
+    var enhancedSwitchProps = {
+      ref: "enhancedSwitch",
+      inputType: "checkbox",
+      switchElement: toggleElement,
+      className: "mui-toggle",
+      iconClassName: "mui-toggle-icon",
+      onSwitch: this._handleToggle,
+      defaultSwitched: this.props.defaultToggled,
+      labelPosition: (this.props.labelPosition) ? this.props.labelPosition : "left"
+    };
+
+    if (this.props.hasOwnProperty('toggled')) enhancedSwitchProps.checked = this.props.toggled;
+
+    return (
+      React.createElement(EnhancedSwitch, React.__spread({},  
+        other, 
+        enhancedSwitchProps))
+    );
+  },
+
+  isToggled: function() {
+    return this.refs.enhancedSwitch.isSwitched();
+  },
+
+  setToggled: function(newToggledValue) {
+    this.refs.enhancedSwitch.setSwitched(newToggledValue);
+  },
+
+  _handleToggle: function(e, isInputChecked) {
+    if (this.props.onToggle) this.props.onToggle(e, isInputChecked);
+  }
+});
+
+module.exports = Toggle;
+
+},{"./enhanced-switch":61,"./mixins/classable":72,"./paper":77,"react":336}],100:[function(require,module,exports){
+var Classable = require('./mixins/classable');
+var React = require('react');
+
+var ToolbarGroup = React.createClass({displayName: "ToolbarGroup",
+
+  propTypes: {
+    float: React.PropTypes.string
+  },
+
+  mixins: [Classable],
+
+  render: function() {
+
+    var classes = this.getClasses('mui-toolbar-group', {
+      'mui-left': this.props.float === 'left',
+      'mui-right': this.props.float === 'right'
+    });
+
+    return (
+      React.createElement("div", {className: classes}, 
+        this.props.children
+      )
+    );
+  }
+
+});
+
+module.exports = ToolbarGroup;
+
+},{"./mixins/classable":72,"react":336}],101:[function(require,module,exports){
+var Classable = require('./mixins/classable');
+var React = require('react');
+
+var Toolbar = React.createClass({displayName: "Toolbar",
+
+  mixins: [Classable],
+
+  render: function() {
+    var classes = this.getClasses('mui-toolbar', {
+    });
+
+    return (
+      React.createElement("div", {className: classes}, 
+        this.props.children
+      )
+    );
+  }
+
+});
+
+module.exports = Toolbar;
+
+},{"./mixins/classable":72,"react":336}],102:[function(require,module,exports){
+var React = require('react');
+var Classable = require('./mixins/classable');
+
+var Tooltip = React.createClass({displayName: "Tooltip",
+
+  mixins: [Classable],
+
+  propTypes: {
+    className: React.PropTypes.string,
+    label: React.PropTypes.string.isRequired,
+    show: React.PropTypes.bool,
+    touch: React.PropTypes.bool
+  },
+
+  componentDidMount: function() {
+    this._setRippleSize();
+  },
+
+  componentDidUpdate: function(prevProps, prevState) {
+    this._setRippleSize();
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+         this.props,className=$__0.className,label=$__0.label,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{className:1,label:1});
+    var classes = this.getClasses('mui-tooltip', {
+      'mui-is-shown': this.props.show,
+      'mui-is-touch': this.props.touch
+    });
+
+    return (
+      React.createElement("div", React.__spread({},  other, {className: classes}), 
+        React.createElement("div", {ref: "ripple", className: "mui-tooltip-ripple"}), 
+        React.createElement("span", {className: "mui-tooltip-label"}, this.props.label)
+      )
+    );
+  },
+
+  _setRippleSize: function() {
+    var ripple = this.refs.ripple.getDOMNode();
+    var tooltipSize = this.getDOMNode().offsetWidth;
+    var ripplePadding = this.props.touch ? 45 : 20;
+    var rippleSize = tooltipSize + ripplePadding + 'px';
+
+    if (this.props.show) {
+      ripple.style.height = rippleSize;
+      ripple.style.width = rippleSize;
+    } else {
+      ripple.style.width = '0px';
+      ripple.style.height = '0px';
+    }
+  }
+
+});
+
+module.exports = Tooltip;
+},{"./mixins/classable":72,"react":336}],103:[function(require,module,exports){
+var React = require('react/addons');
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+var Classable = require('../mixins/classable');
+
+var SlideIn = React.createClass({displayName: "SlideIn",
+
+  mixins: [Classable],
+
+  propTypes: {
+    direction: React.PropTypes.oneOf(['left', 'right', 'up', 'down'])
+  },
+
+  getDefaultProps: function() {
+    return {
+      direction: 'left'
+    };
+  },
+
+  render: function() {
+    var $__0=
+      
+      
+      
+      this.props,className=$__0.className,direction=$__0.direction,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{className:1,direction:1});
+    var classes = this.getClasses('mui-transition-slide-in');
+
+    classes += ' mui-is-' + this.props.direction;
+
+    //Add a custom className to every child
+    React.Children.forEach(this.props.children, function(child) {
+      child.props.className = child.props.className ?
+        child.props.className + ' mui-transition-slide-in-child':
+        'mui-transition-slide-in-child';
+    });
+
+    return (
+      React.createElement(ReactCSSTransitionGroup, React.__spread({},  other, 
+        {className: classes, 
+        transitionName: "mui-transition-slide-in", 
+        component: "div"}), 
+        this.props.children
+      )
+    );
+  }
+
+});
+
+module.exports = SlideIn;
+},{"../mixins/classable":72,"react/addons":175}],104:[function(require,module,exports){
+var Events = require('./events');
+
+module.exports = {
+
+  _testSupportedProps: function(props) {
+    var i,
+      undefined,
+      el = document.createElement('div');
+
+    for (i in props) {
+      if (props.hasOwnProperty(i) && el.style[i] !== undefined) {
+        return props[i];
+      }
+    }
+  },
+
+  //Returns the correct event name to use
+  transitionEndEventName: function() {
+    return this._testSupportedProps({
+      'transition':'transitionend',
+      'OTransition':'otransitionend',  
+      'MozTransition':'transitionend',
+      'WebkitTransition':'webkitTransitionEnd'
+    });
+  },
+
+  animationEndEventName: function() {
+    return this._testSupportedProps({
+      'animation': 'animationend',
+      '-o-animation': 'oAnimationEnd',
+      '-moz-animation': 'animationend',
+      '-webkit-animation': 'webkitAnimationEnd'
+    });
+  },
+
+  onTransitionEnd: function (el, callback) {
+    var transitionEnd = this.transitionEndEventName();
+
+    Events.once(el, transitionEnd, function() {
+      return callback();
+    });
+  },
+
+  onAnimationEnd: function (el, callback) {
+    var animationEnd = this.animationEndEventName();
+
+    Events.once(el, animationEnd, function() {
+      return callback();
+    });
+  }
+
+};
+},{"./events":107}],105:[function(require,module,exports){
+module.exports = {
+
+  addDays: function(d, days) {
+    var newDate = this.clone(d);
+    newDate.setDate(d.getDate() + days);
+    return newDate;
+  },
+
+  addMonths: function(d, months) {
+    var newDate = this.clone(d);
+    newDate.setMonth(d.getMonth() + months);
+    return newDate;
+  },
+
+  clone: function(d) {
+    return new Date(d.getTime());
+  },
+
+  getDaysInMonth: function(d) {
+    var resultDate = this.getFirstDayOfMonth(d);
+
+    resultDate.setMonth(resultDate.getMonth() + 1);
+    resultDate.setDate(resultDate.getDate() - 1);
+
+    return resultDate.getDate();
+  },
+
+  getFirstDayOfMonth: function(d) {
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  },
+
+  getFullMonth: function(d) {
+    var month = d.getMonth();
+    switch (month) {
+      case 0: return 'January';
+      case 1: return 'February';
+      case 2: return 'March';
+      case 3: return 'April';
+      case 4: return 'May';
+      case 5: return 'June';
+      case 6: return 'July';
+      case 7: return 'August';
+      case 8: return 'September';
+      case 9: return 'October';
+      case 10: return 'November';
+      case 11: return 'December';
+    }
+  },
+
+  getShortMonth: function(d) {
+    var month = d.getMonth();
+    switch (month) {
+      case 0: return 'Jan';
+      case 1: return 'Feb';
+      case 2: return 'Mar';
+      case 3: return 'Apr';
+      case 4: return 'May';
+      case 5: return 'Jun';
+      case 6: return 'Jul';
+      case 7: return 'Aug';
+      case 8: return 'Sep';
+      case 9: return 'Oct';
+      case 10: return 'Nov';
+      case 11: return 'Dec';
+    }
+  },
+
+  getDayOfWeek: function(d) {
+    var dow = d.getDay();
+    switch (dow) {
+      case 0: return 'Sunday';
+      case 1: return 'Monday';
+      case 2: return 'Tuesday';
+      case 3: return 'Wednesday';
+      case 4: return 'Thursday';
+      case 5: return 'Friday';
+      case 6: return 'Saturday';
+    }
+  },
+
+  getWeekArray: function(d) {
+    var dayArray = [];
+    var daysInMonth = this.getDaysInMonth(d);
+    var daysInWeek;
+    var emptyDays;
+    var firstDayOfWeek;
+    var week;
+    var weekArray = [];
+
+    for (var i = 1; i <= daysInMonth; i++) {
+      dayArray.push(new Date(d.getFullYear(), d.getMonth(), i));
+    };
+
+    while (dayArray.length) {
+      firstDayOfWeek = dayArray[0].getDay();
+      daysInWeek = 7 - firstDayOfWeek;
+      emptyDays = 7 - daysInWeek;
+      week = dayArray.splice(0, daysInWeek);
+
+      for (var i = 0; i < emptyDays; i++) {
+        week.unshift(null);
+      };
+
+      weekArray.push(week);
+    }
+
+    return weekArray;
+  },
+
+  format: function(date) {
+    var m = date.getMonth() + 1;
+    var d = date.getDate();
+    var y = date.getFullYear();
+    return m + '/' + d + '/' + y;
+  },
+
+  isEqualDate: function(d1, d2) {
+    return d1 && d2 &&
+      (d1.getFullYear() === d2.getFullYear()) &&
+      (d1.getMonth() === d2.getMonth()) &&
+      (d1.getDate() === d2.getDate());
+  },
+
+  monthDiff: function(d1, d2) {
+    var m;
+    m = (d1.getFullYear() - d2.getFullYear()) * 12;
+    m += d1.getMonth();
+    m -= d2.getMonth();
+    return m;
+  }
+
+}
+},{}],106:[function(require,module,exports){
+module.exports = {
+
+  isDescendant: function(parent, child) {
+    var node = child.parentNode;
+
+    while (node != null) {
+      if (node == parent) return true;
+      node = node.parentNode;
+    }
+
+    return false;
+  },
+
+  offset: function(el) {
+    var rect = el.getBoundingClientRect();
+    return {
+      top: rect.top + document.body.scrollTop,
+      left: rect.left + document.body.scrollLeft
+    };
+  },
+
+  addClass: function(el, className) {
+    if (el.classList)
+      el.classList.add(className);
+    else
+      el.className += ' ' + className;
+  },
+
+  removeClass: function(el, className) {
+    if (el.classList)
+      el.classList.remove(className);
+    else
+      el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+  },
+
+  hasClass: function(el, className) {
+    if (el.classList)
+      return el.classList.contains(className);
+    else
+      return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+  },
+
+  toggleClass: function(el, className) {
+    if (this.hasClass(el, className))
+      this.removeClass(el, className);
+    else
+      this.addClass(el, className);
+  },
+
+  forceRedraw: function(el) {
+    var originalDisplay = el.style.display;
+
+    el.style.display = 'none';
+    el.offsetHeight;
+    el.style.display = originalDisplay;
+  },
+
+  withoutTransition: function(el, callback) {
+    //turn off transition
+    el.style.transition = 'none';
+    
+    callback();
+
+    //force a redraw
+    this.forceRedraw(el);
+
+    //put the transition back
+    el.style.transition = '';
+  }
+  
+}
+},{}],107:[function(require,module,exports){
+module.exports = {
+
+  once: function(el, type, callback) {
+    var typeArray = type.split(' ');
+    var recursiveFunction = function(e){
+      e.target.removeEventListener(e.type, recursiveFunction);
+      return callback(e);
+    };
+
+    for (var i = typeArray.length - 1; i >= 0; i--) {
+      this.on(el, typeArray[i], recursiveFunction);
+    }
+  },
+
+  // IE8+ Support
+  on: function(el, type, callback) {
+    if(el.addEventListener) {
+      el.addEventListener(type, callback);
+    } else {
+      el.attachEvent('on' + type, function() {
+        callback.call(el);
+      });
+    }
+  },
+
+  // IE8+ Support
+  off: function(el, type, callback) {
+    if(el.removeEventListener) {
+      el.removeEventListener(type, callback);
+    } else {
+      el.detachEvent('on' + type, callback);
+    }
+  }
+};
+},{}],108:[function(require,module,exports){
+module.exports = {
+  DOWN: 40,
+  ESC: 27,
+  ENTER: 13,
+  LEFT: 37,
+  RIGHT: 39,
+  SPACE: 32,
+  TAB: 9,
+  UP: 38
+}
+},{}],109:[function(require,module,exports){
+module.exports = {
+
+  Desktop: {
+    GUTTER: 24,
+    GUTTER_LESS: 16,
+    INCREMENT: 64,
+    MENU_ITEM_HEIGHT: 32
+  },
+
+  getIncrementalDim: function(dim) {
+    return Math.ceil(dim / this.Desktop.INCREMENT) * this.Desktop.INCREMENT;
+  }
+}
+
+},{}],110:[function(require,module,exports){
+/**
+ * Copyright 2013 Facebook, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+function cx(classNames) {
+  var names = '';
+
+  if (typeof classNames == 'object') {
+    for (var name in classNames) {
+      if (!classNames.hasOwnProperty(name) || !classNames[name]) {
+        continue;
+      }
+      names += name + ' ';
+    }
+  } else {
+    for (var i = 0; i < arguments.length; i++) {
+      // We should technically exclude 0 too, but for the sake of backward
+      // compat we'll keep it (for now)
+      if (arguments[i] == null) {
+        continue;
+      }
+      names += arguments[i] + ' ';
+    }
+  }
+
+  return names.trim();
+}
+
+module.exports = cx;
+
+},{}],111:[function(require,module,exports){
+module.exports = require('./lib/draggable');
+
+},{"./lib/draggable":112}],112:[function(require,module,exports){
+'use strict';
+
+var React = require('react/addons');
+var emptyFunction = require('react/lib/emptyFunction');
+
+// for accessing browser globals
+var root = typeof window !== 'undefined' ? window : this;
+var bodyElement;
+if (typeof document !== 'undefined' && 'body' in document) {
+	bodyElement = document.body;
+}
+
+function updateBoundState (state, bound) {
+	if (!bound) return state;
+	bound = String(bound);
+	var boundTop = !!~bound.indexOf('top');
+	var boundRight = !!~bound.indexOf('right');
+	var boundBottom = !!~bound.indexOf('bottom');
+	var boundLeft = !!~bound.indexOf('left');
+	var boundAll = !!~bound.indexOf('all') ||
+		!(boundTop || boundRight || boundBottom || boundLeft);
+	var boundBox = !~bound.indexOf('point');
+	state.boundTop = boundAll || boundTop;
+	state.boundRight = boundAll || boundRight;
+	state.boundBottom = boundAll || boundBottom;
+	state.boundLeft = boundAll || boundLeft;
+	state.boundBox = boundBox;
+	return state;
+};
+
+function createUIEvent(draggable) {
+	return {
+		position: {
+			top: draggable.state.offsetTop,
+			left: draggable.state.offsetLeft
+		}
+	};
+}
+
+function canDragY(draggable) {
+	return draggable.props.axis === 'both' ||
+			draggable.props.axis === 'y';
+}
+
+function canDragX(draggable) {
+	return draggable.props.axis === 'both' ||
+			draggable.props.axis === 'x';
+}
+
+function isFunction(func) {
+	return typeof func === 'function' || Object.prototype.toString.call(func) === '[object Function]'
+}
+
+// @credits https://gist.github.com/rogozhnikoff/a43cfed27c41e4e68cdc
+function findInArray(array, callback) {
+	for (var i = 0, length = array.length, element = null; i < length, element = array[i]; i++) {
+		if (callback.apply(callback, [element, i, array])) return element;
+	}
+}
+
+function matchesSelector(el, selector) {
+	var method = findInArray([
+		'matches',
+		'webkitMatchesSelector',
+		'mozMatchesSelector',
+		'msMatchesSelector',
+		'oMatchesSelector'
+	], function(method){
+		return isFunction(el[method]);
+	});
+
+	return el[method].call(el, selector);
+}
+
+// @credits: http://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript/4819886#4819886
+var isTouchDevice = 'ontouchstart' in root // works on most browsers
+								 || 'onmsgesturechange' in root; // works on ie10 on ms surface
+
+// look ::handleDragStart
+//function isMultiTouch(e) {
+//  return e.touches && Array.isArray(e.touches) && e.touches.length > 1
+//}
+
+/**
+ * simple abstraction for dragging events names
+ * */
+var dragEventFor = (function () {
+	var eventsFor = {
+		touch: {
+			start: 'touchstart',
+			move: 'touchmove',
+			end: 'touchend'
+		},
+		mouse: {
+			start: 'mousedown',
+			move: 'mousemove',
+			end: 'mouseup'
+		}
+	};
+	return eventsFor[isTouchDevice ? 'touch' : 'mouse'];
+})();
+
+/**
+ * get {clientX, clientY} positions of control
+ * */
+function getControlPosition(e) {
+	var position = (e.touches && e.touches[0]) || e;
+	return {
+		clientX: position.clientX,
+		clientY: position.clientY
+	}
+}
+
+function addEvent(el, event, handler) {
+	if (!el) { return; }
+	if (el.attachEvent) {
+		el.attachEvent('on' + event, handler);
+	} else if (el.addEventListener) {
+		el.addEventListener(event, handler, true);
+	} else {
+		el['on' + event] = handler;
+	}
+}
+
+function removeEvent(el, event, handler) {
+	if (!el) { return; }
+	if (el.detachEvent) {
+		el.detachEvent('on' + event, handler);
+	} else if (el.removeEventListener) {
+		el.removeEventListener(event, handler, true);
+	} else {
+		el['on' + event] = null;
+	}
+}
+
+module.exports = React.createClass({
+	displayName: 'Draggable',
+
+	propTypes: {
+		/**
+		 * `axis` determines which axis the draggable can move.
+		 *
+		 * 'both' allows movement horizontally and vertically.
+		 * 'x' limits movement to horizontal axis.
+		 * 'y' limits movement to vertical axis.
+		 *
+		 * Defaults to 'both'.
+		 */
+		axis: React.PropTypes.oneOf(['both', 'x', 'y']),
+
+		/**
+		 * `handle` specifies a selector to be used as the handle that initiates drag.
+		 *
+		 * Example:
+		 *
+		 * ```jsx
+		 * 	var App = React.createClass({
+		 * 	    render: function () {
+		 * 	    	return (
+		 * 	    	 	<Draggable handle=".handle">
+		 * 	    	 	  <div>
+		 * 	    	 	      <div className="handle">Click me to drag</div>
+		 * 	    	 	      <div>This is some other content</div>
+		 * 	    	 	  </div>
+		 * 	    		</Draggable>
+		 * 	    	);
+		 * 	    }
+		 * 	});
+		 * ```
+		 */
+		handle: React.PropTypes.string,
+
+		/**
+		 * `cancel` specifies a selector to be used to prevent drag initialization.
+		 *
+		 * Example:
+		 *
+		 * ```jsx
+		 * 	var App = React.createClass({
+		 * 	    render: function () {
+		 * 	        return(
+		 * 	            <Draggable cancel=".cancel">
+		 * 	                <div>
+		 * 	                	<div className="cancel">You can't drag from here</div>
+		 *						<div>Dragging here works fine</div>
+		 * 	                </div>
+		 * 	            </Draggable>
+		 * 	        );
+		 * 	    }
+		 * 	});
+		 * ```
+		 */
+		cancel: React.PropTypes.string,
+
+		/**
+		 * `bound` determines whether to bound the movement to the parent box.
+		 *
+		 * The property takes a list of space-separated strings. The Draggable
+		 * is bounded by the nearest DOMNode.offsetParent. To set the offset
+		 * parent, give it a position value other than 'static'.
+		 *
+		 * Optionally choose one or more bounds from:
+		 * 'top' bounds movement to the top edge of the parent box.
+		 * 'right' bounds movement to the right edge of the parent box.
+		 * 'bottom' bounds movement to the bottom edge of the parent box.
+		 * 'left' bounds movement to the left edge of the parent box.
+		 * 'all' bounds movement to all edges (default if not specified).
+		 *
+		 * Optionally choose one anchor from:
+		 * 'point' to constrain only the top-left corner.
+		 * 'box' to constrain the entire box (default if not specified).
+		 *
+		 * You may use more than one bound, e.g. 'top left point'. Set to a
+		 * falsy value to disable.
+		 *
+		 * Defaults to 'all box'.
+		 */
+		bound: React.PropTypes.string,
+
+		/**
+		 * `grid` specifies the x and y that dragging should snap to.
+		 *
+		 * Example:
+		 *
+		 * ```jsx
+		 *   var App = React.createClass({
+		 *       render: function () {
+		 *           return (
+		 * 	            <Draggable grid={[25, 25]}>
+		 *                   <div>I snap to a 25 x 25 grid</div>
+		 *               </Draggable>
+		 *           );
+		 * 	    }
+		 *   });
+		 * ```
+		 */
+		grid: React.PropTypes.arrayOf(React.PropTypes.number),
+
+		/**
+		 * `constrain` takes a function to constrain the dragging.
+		 *
+		 * Example:
+		 *
+		 * ```jsx
+		 *   function constrain (snap) {
+		 *         function constrainOffset (offset, prev) {
+		 *               var delta = offset - prev;
+		 *               if (Math.abs(delta) >= snap) {
+		 *                     return prev + (delta < 0 ? -snap : snap);
+		 *               }
+		 *               return prev;
+		 *         }
+		 *         return function (pos) {
+		 *               return {
+		 *                     top: constrainOffset(pos.top, pos.prevTop),
+		 *                     left: constrainOffset(pos.left, pos.prevLeft)
+		 *               };
+		 *         };
+		 *   }
+		 *   var App = React.createClass({
+		 *       render: function () {
+		 *           return (
+		 *               <Draggable constrain={constrain}>
+		 *                   <div>I snap to a 25 x 25 grid</div>
+		 *               </Draggable>
+		 *           );
+		 *       }
+		 *   });
+		 * ```
+		 */
+		constrain: React.PropTypes.func,
+
+		/**
+		 * `start` specifies the x and y that the dragged item should start at
+		 *
+		 * Example:
+		 *
+		 * ```jsx
+		 * 	var App = React.createClass({
+		 * 	    render: function () {
+		 * 	        return (
+		 * 	            <Draggable start={{x: 25, y: 25}}>
+		 * 	                <div>I start with left: 25px; top: 25px;</div>
+		 * 	            </Draggable>
+		 * 	        );
+		 * 	    }
+		 * 	});
+		 * ```
+		 */
+		start: React.PropTypes.object,
+
+		/**
+		 * `zIndex` specifies the zIndex to use while dragging.
+		 *
+		 * Example:
+		 *
+		 * ```jsx
+		 * 	var App = React.createClass({
+		 * 	    render: function () {
+		 * 	        return (
+		 * 	            <Draggable zIndex={100}>
+		 * 	                <div>I have a zIndex</div>
+		 * 	            </Draggable>
+		 * 	        );
+		 * 	    }
+		 * 	});
+		 * ```
+		 */
+		zIndex: React.PropTypes.number,
+
+		/**
+		 * `useChild` determines whether to use the first child as root.
+		 *
+		 * If false, a div is created. This option is required if any children
+		 * have a ref.
+		 *
+		 * Defaults to true.
+		 */
+		useChild: React.PropTypes.bool,
+
+		/**
+		 * Called when dragging starts.
+		 *
+		 * Example:
+		 *
+		 * ```js
+		 *	function (event, ui) {}
+		 * ```
+		 *
+		 * `event` is the Event that was triggered.
+		 * `ui` is an object:
+		 *
+		 * ```js
+		 *	{
+		 *		position: {top: 0, left: 0}
+		 *	}
+		 * ```
+		 */
+		onStart: React.PropTypes.func,
+
+		/**
+		 * Called while dragging.
+		 *
+		 * Example:
+		 *
+		 * ```js
+		 *	function (event, ui) {}
+		 * ```
+		 *
+		 * `event` is the Event that was triggered.
+		 * `ui` is an object:
+		 *
+		 * ```js
+		 *	{
+		 *		position: {top: 0, left: 0}
+		 *	}
+		 * ```
+		 */
+		onDrag: React.PropTypes.func,
+
+		/**
+		 * Called when dragging stops.
+		 *
+		 * Example:
+		 *
+		 * ```js
+		 *	function (event, ui) {}
+		 * ```
+		 *
+		 * `event` is the Event that was triggered.
+		 * `ui` is an object:
+		 *
+		 * ```js
+		 *	{
+		 *		position: {top: 0, left: 0}
+		 *	}
+		 * ```
+		 */
+		onStop: React.PropTypes.func,
+
+		/**
+		 * A workaround option which can be passed if onMouseDown needs to be accessed, since it'll always be blocked (due to that there's internal use of onMouseDown)
+		 *
+		 */
+		onMouseDown: React.PropTypes.func
+	},
+
+	getDefaultProps: function () {
+		return {
+			axis: 'both',
+			bound: null,
+			handle: null,
+			cancel: null,
+			grid: null,
+			start: {},
+			zIndex: NaN,
+			useChild: true,
+			onStart: emptyFunction,
+			onDrag: emptyFunction,
+			onStop: emptyFunction,
+			onMouseDown: emptyFunction
+		};
+	},
+
+	getInitialState: function () {
+		var state = {
+			// Whether or not currently dragging
+			dragging: false,
+
+			// Pointer offset on screen
+			clientX: 0, clientY: 0,
+
+			// DOMNode offset relative to parent
+			offsetLeft: this.props.start.x || 0, offsetTop: this.props.start.y || 0
+		};
+
+		updateBoundState(state, this.props.bound);
+
+		return state;
+	},
+
+	componentWillReceiveProps: function (nextProps) {
+		var state = updateBoundState({}, nextProps.bound);
+		if (nextProps.start) {
+			if (nextProps.start.x != null) {
+				state.offsetLeft = nextProps.start.x || 0;
+			}
+			if (nextProps.start.y != null) {
+				state.offsetTop = nextProps.start.y || 0;
+			}
+		}
+		this.setState(state);
+	},
+
+	componentWillUnmount: function() {
+		// Remove any leftover event handlers
+		removeEvent(root, dragEventFor['move'], this.handleDrag);
+		removeEvent(root, dragEventFor['end'], this.handleDragEnd);
+	},
+
+	handleDragStart: function (e) {
+		// todo: write right implementation to prevent multitouch drag
+		// prevent multi-touch events
+		// if (isMultiTouch(e)) {
+		//     this.handleDragEnd.apply(e, arguments);
+		//     return
+		// }
+
+		// Make it possible to attach event handlers on top of this one
+		this.props.onMouseDown(e);
+
+		// Short circuit if handle or cancel prop was provided and selector doesn't match
+		if ((this.props.handle && !matchesSelector(e.target, this.props.handle)) ||
+			(this.props.cancel && matchesSelector(e.target, this.props.cancel))) {
+			return;
+		}
+
+		var dragPoint = getControlPosition(e);
+
+		// Initiate dragging
+		this.setState({
+			dragging: true,
+			clientX: dragPoint.clientX,
+			clientY: dragPoint.clientY
+		});
+
+		// Call event handler
+		this.props.onStart(e, createUIEvent(this));
+
+		// Add event handlers
+		addEvent(root, dragEventFor['move'], this.handleDrag);
+		addEvent(root, dragEventFor['end'], this.handleDragEnd);
+
+		// Add dragging class to body element
+		if (bodyElement) bodyElement.className += ' react-draggable-dragging';
+	},
+
+	handleDragEnd: function (e) {
+		// Short circuit if not currently dragging
+		if (!this.state.dragging) {
+			return;
+		}
+
+		// Turn off dragging
+		this.setState({
+			dragging: false
+		});
+
+		// Call event handler
+		this.props.onStop(e, createUIEvent(this));
+
+		// Remove event handlers
+		removeEvent(root, dragEventFor['move'], this.handleDrag);
+		removeEvent(root, dragEventFor['end'], this.handleDragEnd);
+
+		// Remove dragging class from body element
+		if (bodyElement) {
+			var className = bodyElement.className;
+			bodyElement.className =
+				className.replace(/(?:^|\s+)react-draggable-dragging\b/, ' ');
+		}
+	},
+
+	handleDrag: function (e) {
+		var dragPoint = getControlPosition(e);
+		var offsetLeft = this._toPixels(this.state.offsetLeft);
+		var offsetTop = this._toPixels(this.state.offsetTop);
+
+		var state = {
+			offsetLeft: offsetLeft,
+			offsetTop: offsetTop
+		};
+
+		// Get parent DOM node
+		var node = this.getDOMNode();
+		var offsetParent = node.offsetParent;
+		var offset, boundingValue;
+
+		if (canDragX(this)) {
+			// Calculate updated position
+			offset = offsetLeft + dragPoint.clientX - this.state.clientX;
+
+			// Bound movement to parent box
+			if (this.state.boundLeft) {
+				boundingValue = state.offsetLeft - node.offsetLeft;
+				if (offset < boundingValue) {
+					offset = boundingValue;
+				}
+			}
+			if (this.state.boundRight) {
+				boundingValue += offsetParent.clientWidth;
+				if (this.state.boundBox) {
+					boundingValue -= node.offsetWidth;
+				}
+				if (offset > boundingValue) {
+					offset = boundingValue;
+				}
+			}
+			// Update left
+			state.offsetLeft = offset;
+		}
+
+		if (canDragY(this)) {
+			// Calculate updated position
+			offset = offsetTop + dragPoint.clientY - this.state.clientY;
+			// Bound movement to parent box
+			if (this.state.boundTop) {
+				boundingValue = state.offsetTop - node.offsetTop;
+				if (offset < boundingValue) {
+					offset = boundingValue;
+				}
+			}
+			if (this.state.boundBottom) {
+				boundingValue += offsetParent.clientHeight;
+				if (this.state.boundBox) {
+					boundingValue -= node.offsetHeight;
+				}
+				if (offset > boundingValue) {
+					offset = boundingValue;
+				}
+			}
+			// Update top
+			state.offsetTop = offset;
+		}
+
+		var constrain = this.props.constrain;
+		var grid = this.props.grid;
+
+		// Backwards-compatibility for snap to grid
+		if (!constrain && Array.isArray(grid)) {
+			var constrainOffset = function (offset, prev, snap) {
+				var delta = offset - prev;
+				if (Math.abs(delta) >= snap) {
+					return prev + parseInt(delta / snap, 10) * snap;
+				}
+				return prev;
+			};
+			constrain = function (pos) {
+				return {
+					left: constrainOffset(pos.left, pos.prevLeft, grid[0]),
+					top: constrainOffset(pos.top, pos.prevTop, grid[1])
+				};
+			};
+		}
+
+		// Constrain if function has been provided
+		var positions;
+		if (constrain) {
+			// Constrain positions
+			positions = constrain({
+				prevLeft: this.state.offsetLeft,
+				prevTop: this.state.offsetTop,
+				left: state.offsetLeft,
+				top: state.offsetTop
+			});
+			if (positions) {
+				// Update left
+				if ('left' in positions && !isNaN(positions.left)) {
+					state.offsetLeft = positions.left;
+				}
+				// Update top
+				if ('top' in positions && !isNaN(positions.top)) {
+					state.offsetTop = positions.top;
+				}
+			}
+		}
+
+		// Save new state
+		state.clientX = this.state.clientX + (state.offsetLeft - offsetLeft);
+		state.clientY = this.state.clientY + (state.offsetTop - offsetTop);
+		this.setState(state);
+
+		// Call event handler
+		this.props.onDrag(e, createUIEvent(this));
+	},
+
+	onTouchStart: function (e) {
+		e.preventDefault(); // prevent for scroll
+		return this.handleDragStart.apply(this, arguments);
+	},
+
+	render: function () {
+		var style = {
+			top: this.state.offsetTop,
+			left: this.state.offsetLeft
+		};
+
+		// Set zIndex if currently dragging and prop has been provided
+		if (this.state.dragging && !isNaN(this.props.zIndex)) {
+			style.zIndex = this.props.zIndex;
+		}
+
+		var props = {
+			style: style,
+			className: 'react-draggable',
+
+			onMouseDown: this.handleDragStart,
+			onTouchStart: this.onTouchStart,
+
+			onMouseUp: this.handleDragEnd,
+			onTouchEnd: this.handleDragEnd
+		};
+
+		// Reuse the child provided
+		// This makes it flexible to use whatever element is wanted (div, ul, etc)
+		if (this.props.useChild) {
+			return React.addons.cloneWithProps(React.Children.only(this.props.children), props);
+		}
+
+		return React.DOM.div(props, this.props.children);
+	},
+
+	_toPixels: function (value) {
+
+		// Support percentages
+		if (typeof value == 'string' && value.slice(-1) == '%') {
+			return parseInt((+value.replace('%', '') / 100) *
+				this.getDOMNode().offsetParent.clientWidth, 10) || 0;
+		}
+
+		// Invalid values become zero
+		var i = parseInt(value, 10);
+		if (isNaN(i) || !isFinite(i)) return 0;
+
+		return i;
+	}
+
+});
+
+},{"react/addons":175,"react/lib/emptyFunction":296}],113:[function(require,module,exports){
+(function (global){
+//! moment.js
+//! version : 2.9.0
+//! authors : Tim Wood, Iskren Chernev, Moment.js contributors
+//! license : MIT
+//! momentjs.com
+
+(function (undefined) {
+    /************************************
+        Constants
+    ************************************/
+
+    var moment,
+        VERSION = '2.9.0',
+        // the global-scope this is NOT the global object in Node.js
+        globalScope = (typeof global !== 'undefined' && (typeof window === 'undefined' || window === global.window)) ? global : this,
+        oldGlobalMoment,
+        round = Math.round,
+        hasOwnProperty = Object.prototype.hasOwnProperty,
+        i,
+
+        YEAR = 0,
+        MONTH = 1,
+        DATE = 2,
+        HOUR = 3,
+        MINUTE = 4,
+        SECOND = 5,
+        MILLISECOND = 6,
+
+        // internal storage for locale config files
+        locales = {},
+
+        // extra moment internal properties (plugins register props here)
+        momentProperties = [],
+
+        // check for nodeJS
+        hasModule = (typeof module !== 'undefined' && module && module.exports),
+
+        // ASP.NET json date format regex
+        aspNetJsonRegex = /^\/?Date\((\-?\d+)/i,
+        aspNetTimeSpanJsonRegex = /(\-)?(?:(\d*)\.)?(\d+)\:(\d+)(?:\:(\d+)\.?(\d{3})?)?/,
+
+        // from http://docs.closure-library.googlecode.com/git/closure_goog_date_date.js.source.html
+        // somewhat more in line with 4.4.3.2 2004 spec, but allows decimal anywhere
+        isoDurationRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/,
+
+        // format tokens
+        formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|x|X|zz?|ZZ?|.)/g,
+        localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g,
+
+        // parsing token regexes
+        parseTokenOneOrTwoDigits = /\d\d?/, // 0 - 99
+        parseTokenOneToThreeDigits = /\d{1,3}/, // 0 - 999
+        parseTokenOneToFourDigits = /\d{1,4}/, // 0 - 9999
+        parseTokenOneToSixDigits = /[+\-]?\d{1,6}/, // -999,999 - 999,999
+        parseTokenDigits = /\d+/, // nonzero number of digits
+        parseTokenWord = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i, // any word (or two) characters or numbers including two/three word month in arabic.
+        parseTokenTimezone = /Z|[\+\-]\d\d:?\d\d/gi, // +00:00 -00:00 +0000 -0000 or Z
+        parseTokenT = /T/i, // T (ISO separator)
+        parseTokenOffsetMs = /[\+\-]?\d+/, // 1234567890123
+        parseTokenTimestampMs = /[\+\-]?\d+(\.\d{1,3})?/, // 123456789 123456789.123
+
+        //strict parsing regexes
+        parseTokenOneDigit = /\d/, // 0 - 9
+        parseTokenTwoDigits = /\d\d/, // 00 - 99
+        parseTokenThreeDigits = /\d{3}/, // 000 - 999
+        parseTokenFourDigits = /\d{4}/, // 0000 - 9999
+        parseTokenSixDigits = /[+-]?\d{6}/, // -999,999 - 999,999
+        parseTokenSignedNumber = /[+-]?\d+/, // -inf - inf
+
+        // iso 8601 regex
+        // 0000-00-00 0000-W00 or 0000-W00-0 + T + 00 or 00:00 or 00:00:00 or 00:00:00.000 + +00:00 or +0000 or +00)
+        isoRegex = /^\s*(?:[+-]\d{6}|\d{4})-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,
+
+        isoFormat = 'YYYY-MM-DDTHH:mm:ssZ',
+
+        isoDates = [
+            ['YYYYYY-MM-DD', /[+-]\d{6}-\d{2}-\d{2}/],
+            ['YYYY-MM-DD', /\d{4}-\d{2}-\d{2}/],
+            ['GGGG-[W]WW-E', /\d{4}-W\d{2}-\d/],
+            ['GGGG-[W]WW', /\d{4}-W\d{2}/],
+            ['YYYY-DDD', /\d{4}-\d{3}/]
+        ],
+
+        // iso time formats and regexes
+        isoTimes = [
+            ['HH:mm:ss.SSSS', /(T| )\d\d:\d\d:\d\d\.\d+/],
+            ['HH:mm:ss', /(T| )\d\d:\d\d:\d\d/],
+            ['HH:mm', /(T| )\d\d:\d\d/],
+            ['HH', /(T| )\d\d/]
+        ],
+
+        // timezone chunker '+10:00' > ['10', '00'] or '-1530' > ['-', '15', '30']
+        parseTimezoneChunker = /([\+\-]|\d\d)/gi,
+
+        // getter and setter names
+        proxyGettersAndSetters = 'Date|Hours|Minutes|Seconds|Milliseconds'.split('|'),
+        unitMillisecondFactors = {
+            'Milliseconds' : 1,
+            'Seconds' : 1e3,
+            'Minutes' : 6e4,
+            'Hours' : 36e5,
+            'Days' : 864e5,
+            'Months' : 2592e6,
+            'Years' : 31536e6
+        },
+
+        unitAliases = {
+            ms : 'millisecond',
+            s : 'second',
+            m : 'minute',
+            h : 'hour',
+            d : 'day',
+            D : 'date',
+            w : 'week',
+            W : 'isoWeek',
+            M : 'month',
+            Q : 'quarter',
+            y : 'year',
+            DDD : 'dayOfYear',
+            e : 'weekday',
+            E : 'isoWeekday',
+            gg: 'weekYear',
+            GG: 'isoWeekYear'
+        },
+
+        camelFunctions = {
+            dayofyear : 'dayOfYear',
+            isoweekday : 'isoWeekday',
+            isoweek : 'isoWeek',
+            weekyear : 'weekYear',
+            isoweekyear : 'isoWeekYear'
+        },
+
+        // format function strings
+        formatFunctions = {},
+
+        // default relative time thresholds
+        relativeTimeThresholds = {
+            s: 45,  // seconds to minute
+            m: 45,  // minutes to hour
+            h: 22,  // hours to day
+            d: 26,  // days to month
+            M: 11   // months to year
+        },
+
+        // tokens to ordinalize and pad
+        ordinalizeTokens = 'DDD w W M D d'.split(' '),
+        paddedTokens = 'M D H h m s w W'.split(' '),
+
+        formatTokenFunctions = {
+            M    : function () {
+                return this.month() + 1;
+            },
+            MMM  : function (format) {
+                return this.localeData().monthsShort(this, format);
+            },
+            MMMM : function (format) {
+                return this.localeData().months(this, format);
+            },
+            D    : function () {
+                return this.date();
+            },
+            DDD  : function () {
+                return this.dayOfYear();
+            },
+            d    : function () {
+                return this.day();
+            },
+            dd   : function (format) {
+                return this.localeData().weekdaysMin(this, format);
+            },
+            ddd  : function (format) {
+                return this.localeData().weekdaysShort(this, format);
+            },
+            dddd : function (format) {
+                return this.localeData().weekdays(this, format);
+            },
+            w    : function () {
+                return this.week();
+            },
+            W    : function () {
+                return this.isoWeek();
+            },
+            YY   : function () {
+                return leftZeroFill(this.year() % 100, 2);
+            },
+            YYYY : function () {
+                return leftZeroFill(this.year(), 4);
+            },
+            YYYYY : function () {
+                return leftZeroFill(this.year(), 5);
+            },
+            YYYYYY : function () {
+                var y = this.year(), sign = y >= 0 ? '+' : '-';
+                return sign + leftZeroFill(Math.abs(y), 6);
+            },
+            gg   : function () {
+                return leftZeroFill(this.weekYear() % 100, 2);
+            },
+            gggg : function () {
+                return leftZeroFill(this.weekYear(), 4);
+            },
+            ggggg : function () {
+                return leftZeroFill(this.weekYear(), 5);
+            },
+            GG   : function () {
+                return leftZeroFill(this.isoWeekYear() % 100, 2);
+            },
+            GGGG : function () {
+                return leftZeroFill(this.isoWeekYear(), 4);
+            },
+            GGGGG : function () {
+                return leftZeroFill(this.isoWeekYear(), 5);
+            },
+            e : function () {
+                return this.weekday();
+            },
+            E : function () {
+                return this.isoWeekday();
+            },
+            a    : function () {
+                return this.localeData().meridiem(this.hours(), this.minutes(), true);
+            },
+            A    : function () {
+                return this.localeData().meridiem(this.hours(), this.minutes(), false);
+            },
+            H    : function () {
+                return this.hours();
+            },
+            h    : function () {
+                return this.hours() % 12 || 12;
+            },
+            m    : function () {
+                return this.minutes();
+            },
+            s    : function () {
+                return this.seconds();
+            },
+            S    : function () {
+                return toInt(this.milliseconds() / 100);
+            },
+            SS   : function () {
+                return leftZeroFill(toInt(this.milliseconds() / 10), 2);
+            },
+            SSS  : function () {
+                return leftZeroFill(this.milliseconds(), 3);
+            },
+            SSSS : function () {
+                return leftZeroFill(this.milliseconds(), 3);
+            },
+            Z    : function () {
+                var a = this.utcOffset(),
+                    b = '+';
+                if (a < 0) {
+                    a = -a;
+                    b = '-';
+                }
+                return b + leftZeroFill(toInt(a / 60), 2) + ':' + leftZeroFill(toInt(a) % 60, 2);
+            },
+            ZZ   : function () {
+                var a = this.utcOffset(),
+                    b = '+';
+                if (a < 0) {
+                    a = -a;
+                    b = '-';
+                }
+                return b + leftZeroFill(toInt(a / 60), 2) + leftZeroFill(toInt(a) % 60, 2);
+            },
+            z : function () {
+                return this.zoneAbbr();
+            },
+            zz : function () {
+                return this.zoneName();
+            },
+            x    : function () {
+                return this.valueOf();
+            },
+            X    : function () {
+                return this.unix();
+            },
+            Q : function () {
+                return this.quarter();
+            }
+        },
+
+        deprecations = {},
+
+        lists = ['months', 'monthsShort', 'weekdays', 'weekdaysShort', 'weekdaysMin'],
+
+        updateInProgress = false;
+
+    // Pick the first defined of two or three arguments. dfl comes from
+    // default.
+    function dfl(a, b, c) {
+        switch (arguments.length) {
+            case 2: return a != null ? a : b;
+            case 3: return a != null ? a : b != null ? b : c;
+            default: throw new Error('Implement me');
+        }
+    }
+
+    function hasOwnProp(a, b) {
+        return hasOwnProperty.call(a, b);
+    }
+
+    function defaultParsingFlags() {
+        // We need to deep clone this object, and es5 standard is not very
+        // helpful.
+        return {
+            empty : false,
+            unusedTokens : [],
+            unusedInput : [],
+            overflow : -2,
+            charsLeftOver : 0,
+            nullInput : false,
+            invalidMonth : null,
+            invalidFormat : false,
+            userInvalidated : false,
+            iso: false
+        };
+    }
+
+    function printMsg(msg) {
+        if (moment.suppressDeprecationWarnings === false &&
+                typeof console !== 'undefined' && console.warn) {
+            console.warn('Deprecation warning: ' + msg);
+        }
+    }
+
+    function deprecate(msg, fn) {
+        var firstTime = true;
+        return extend(function () {
+            if (firstTime) {
+                printMsg(msg);
+                firstTime = false;
+            }
+            return fn.apply(this, arguments);
+        }, fn);
+    }
+
+    function deprecateSimple(name, msg) {
+        if (!deprecations[name]) {
+            printMsg(msg);
+            deprecations[name] = true;
+        }
+    }
+
+    function padToken(func, count) {
+        return function (a) {
+            return leftZeroFill(func.call(this, a), count);
+        };
+    }
+    function ordinalizeToken(func, period) {
+        return function (a) {
+            return this.localeData().ordinal(func.call(this, a), period);
+        };
+    }
+
+    function monthDiff(a, b) {
+        // difference in months
+        var wholeMonthDiff = ((b.year() - a.year()) * 12) + (b.month() - a.month()),
+            // b is in (anchor - 1 month, anchor + 1 month)
+            anchor = a.clone().add(wholeMonthDiff, 'months'),
+            anchor2, adjust;
+
+        if (b - anchor < 0) {
+            anchor2 = a.clone().add(wholeMonthDiff - 1, 'months');
+            // linear across the month
+            adjust = (b - anchor) / (anchor - anchor2);
+        } else {
+            anchor2 = a.clone().add(wholeMonthDiff + 1, 'months');
+            // linear across the month
+            adjust = (b - anchor) / (anchor2 - anchor);
+        }
+
+        return -(wholeMonthDiff + adjust);
+    }
+
+    while (ordinalizeTokens.length) {
+        i = ordinalizeTokens.pop();
+        formatTokenFunctions[i + 'o'] = ordinalizeToken(formatTokenFunctions[i], i);
+    }
+    while (paddedTokens.length) {
+        i = paddedTokens.pop();
+        formatTokenFunctions[i + i] = padToken(formatTokenFunctions[i], 2);
+    }
+    formatTokenFunctions.DDDD = padToken(formatTokenFunctions.DDD, 3);
+
+
+    function meridiemFixWrap(locale, hour, meridiem) {
+        var isPm;
+
+        if (meridiem == null) {
+            // nothing to do
+            return hour;
+        }
+        if (locale.meridiemHour != null) {
+            return locale.meridiemHour(hour, meridiem);
+        } else if (locale.isPM != null) {
+            // Fallback
+            isPm = locale.isPM(meridiem);
+            if (isPm && hour < 12) {
+                hour += 12;
+            }
+            if (!isPm && hour === 12) {
+                hour = 0;
+            }
+            return hour;
+        } else {
+            // thie is not supposed to happen
+            return hour;
+        }
+    }
+
+    /************************************
+        Constructors
+    ************************************/
+
+    function Locale() {
+    }
+
+    // Moment prototype object
+    function Moment(config, skipOverflow) {
+        if (skipOverflow !== false) {
+            checkOverflow(config);
+        }
+        copyConfig(this, config);
+        this._d = new Date(+config._d);
+        // Prevent infinite loop in case updateOffset creates new moment
+        // objects.
+        if (updateInProgress === false) {
+            updateInProgress = true;
+            moment.updateOffset(this);
+            updateInProgress = false;
+        }
+    }
+
+    // Duration Constructor
+    function Duration(duration) {
+        var normalizedInput = normalizeObjectUnits(duration),
+            years = normalizedInput.year || 0,
+            quarters = normalizedInput.quarter || 0,
+            months = normalizedInput.month || 0,
+            weeks = normalizedInput.week || 0,
+            days = normalizedInput.day || 0,
+            hours = normalizedInput.hour || 0,
+            minutes = normalizedInput.minute || 0,
+            seconds = normalizedInput.second || 0,
+            milliseconds = normalizedInput.millisecond || 0;
+
+        // representation for dateAddRemove
+        this._milliseconds = +milliseconds +
+            seconds * 1e3 + // 1000
+            minutes * 6e4 + // 1000 * 60
+            hours * 36e5; // 1000 * 60 * 60
+        // Because of dateAddRemove treats 24 hours as different from a
+        // day when working around DST, we need to store them separately
+        this._days = +days +
+            weeks * 7;
+        // It is impossible translate months into days without knowing
+        // which months you are are talking about, so we have to store
+        // it separately.
+        this._months = +months +
+            quarters * 3 +
+            years * 12;
+
+        this._data = {};
+
+        this._locale = moment.localeData();
+
+        this._bubble();
+    }
+
+    /************************************
+        Helpers
+    ************************************/
+
+
+    function extend(a, b) {
+        for (var i in b) {
+            if (hasOwnProp(b, i)) {
+                a[i] = b[i];
+            }
+        }
+
+        if (hasOwnProp(b, 'toString')) {
+            a.toString = b.toString;
+        }
+
+        if (hasOwnProp(b, 'valueOf')) {
+            a.valueOf = b.valueOf;
+        }
+
+        return a;
+    }
+
+    function copyConfig(to, from) {
+        var i, prop, val;
+
+        if (typeof from._isAMomentObject !== 'undefined') {
+            to._isAMomentObject = from._isAMomentObject;
+        }
+        if (typeof from._i !== 'undefined') {
+            to._i = from._i;
+        }
+        if (typeof from._f !== 'undefined') {
+            to._f = from._f;
+        }
+        if (typeof from._l !== 'undefined') {
+            to._l = from._l;
+        }
+        if (typeof from._strict !== 'undefined') {
+            to._strict = from._strict;
+        }
+        if (typeof from._tzm !== 'undefined') {
+            to._tzm = from._tzm;
+        }
+        if (typeof from._isUTC !== 'undefined') {
+            to._isUTC = from._isUTC;
+        }
+        if (typeof from._offset !== 'undefined') {
+            to._offset = from._offset;
+        }
+        if (typeof from._pf !== 'undefined') {
+            to._pf = from._pf;
+        }
+        if (typeof from._locale !== 'undefined') {
+            to._locale = from._locale;
+        }
+
+        if (momentProperties.length > 0) {
+            for (i in momentProperties) {
+                prop = momentProperties[i];
+                val = from[prop];
+                if (typeof val !== 'undefined') {
+                    to[prop] = val;
+                }
+            }
+        }
+
+        return to;
+    }
+
+    function absRound(number) {
+        if (number < 0) {
+            return Math.ceil(number);
+        } else {
+            return Math.floor(number);
+        }
+    }
+
+    // left zero fill a number
+    // see http://jsperf.com/left-zero-filling for performance comparison
+    function leftZeroFill(number, targetLength, forceSign) {
+        var output = '' + Math.abs(number),
+            sign = number >= 0;
+
+        while (output.length < targetLength) {
+            output = '0' + output;
+        }
+        return (sign ? (forceSign ? '+' : '') : '-') + output;
+    }
+
+    function positiveMomentsDifference(base, other) {
+        var res = {milliseconds: 0, months: 0};
+
+        res.months = other.month() - base.month() +
+            (other.year() - base.year()) * 12;
+        if (base.clone().add(res.months, 'M').isAfter(other)) {
+            --res.months;
+        }
+
+        res.milliseconds = +other - +(base.clone().add(res.months, 'M'));
+
+        return res;
+    }
+
+    function momentsDifference(base, other) {
+        var res;
+        other = makeAs(other, base);
+        if (base.isBefore(other)) {
+            res = positiveMomentsDifference(base, other);
+        } else {
+            res = positiveMomentsDifference(other, base);
+            res.milliseconds = -res.milliseconds;
+            res.months = -res.months;
+        }
+
+        return res;
+    }
+
+    // TODO: remove 'name' arg after deprecation is removed
+    function createAdder(direction, name) {
+        return function (val, period) {
+            var dur, tmp;
+            //invert the arguments, but complain about it
+            if (period !== null && !isNaN(+period)) {
+                deprecateSimple(name, 'moment().' + name  + '(period, number) is deprecated. Please use moment().' + name + '(number, period).');
+                tmp = val; val = period; period = tmp;
+            }
+
+            val = typeof val === 'string' ? +val : val;
+            dur = moment.duration(val, period);
+            addOrSubtractDurationFromMoment(this, dur, direction);
+            return this;
+        };
+    }
+
+    function addOrSubtractDurationFromMoment(mom, duration, isAdding, updateOffset) {
+        var milliseconds = duration._milliseconds,
+            days = duration._days,
+            months = duration._months;
+        updateOffset = updateOffset == null ? true : updateOffset;
+
+        if (milliseconds) {
+            mom._d.setTime(+mom._d + milliseconds * isAdding);
+        }
+        if (days) {
+            rawSetter(mom, 'Date', rawGetter(mom, 'Date') + days * isAdding);
+        }
+        if (months) {
+            rawMonthSetter(mom, rawGetter(mom, 'Month') + months * isAdding);
+        }
+        if (updateOffset) {
+            moment.updateOffset(mom, days || months);
+        }
+    }
+
+    // check if is an array
+    function isArray(input) {
+        return Object.prototype.toString.call(input) === '[object Array]';
+    }
+
+    function isDate(input) {
+        return Object.prototype.toString.call(input) === '[object Date]' ||
+            input instanceof Date;
+    }
+
+    // compare two arrays, return the number of differences
+    function compareArrays(array1, array2, dontConvert) {
+        var len = Math.min(array1.length, array2.length),
+            lengthDiff = Math.abs(array1.length - array2.length),
+            diffs = 0,
+            i;
+        for (i = 0; i < len; i++) {
+            if ((dontConvert && array1[i] !== array2[i]) ||
+                (!dontConvert && toInt(array1[i]) !== toInt(array2[i]))) {
+                diffs++;
+            }
+        }
+        return diffs + lengthDiff;
+    }
+
+    function normalizeUnits(units) {
+        if (units) {
+            var lowered = units.toLowerCase().replace(/(.)s$/, '$1');
+            units = unitAliases[units] || camelFunctions[lowered] || lowered;
+        }
+        return units;
+    }
+
+    function normalizeObjectUnits(inputObject) {
+        var normalizedInput = {},
+            normalizedProp,
+            prop;
+
+        for (prop in inputObject) {
+            if (hasOwnProp(inputObject, prop)) {
+                normalizedProp = normalizeUnits(prop);
+                if (normalizedProp) {
+                    normalizedInput[normalizedProp] = inputObject[prop];
+                }
+            }
+        }
+
+        return normalizedInput;
+    }
+
+    function makeList(field) {
+        var count, setter;
+
+        if (field.indexOf('week') === 0) {
+            count = 7;
+            setter = 'day';
+        }
+        else if (field.indexOf('month') === 0) {
+            count = 12;
+            setter = 'month';
+        }
+        else {
+            return;
+        }
+
+        moment[field] = function (format, index) {
+            var i, getter,
+                method = moment._locale[field],
+                results = [];
+
+            if (typeof format === 'number') {
+                index = format;
+                format = undefined;
+            }
+
+            getter = function (i) {
+                var m = moment().utc().set(setter, i);
+                return method.call(moment._locale, m, format || '');
+            };
+
+            if (index != null) {
+                return getter(index);
+            }
+            else {
+                for (i = 0; i < count; i++) {
+                    results.push(getter(i));
+                }
+                return results;
+            }
+        };
+    }
+
+    function toInt(argumentForCoercion) {
+        var coercedNumber = +argumentForCoercion,
+            value = 0;
+
+        if (coercedNumber !== 0 && isFinite(coercedNumber)) {
+            if (coercedNumber >= 0) {
+                value = Math.floor(coercedNumber);
+            } else {
+                value = Math.ceil(coercedNumber);
+            }
+        }
+
+        return value;
+    }
+
+    function daysInMonth(year, month) {
+        return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    }
+
+    function weeksInYear(year, dow, doy) {
+        return weekOfYear(moment([year, 11, 31 + dow - doy]), dow, doy).week;
+    }
+
+    function daysInYear(year) {
+        return isLeapYear(year) ? 366 : 365;
+    }
+
+    function isLeapYear(year) {
+        return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+    }
+
+    function checkOverflow(m) {
+        var overflow;
+        if (m._a && m._pf.overflow === -2) {
+            overflow =
+                m._a[MONTH] < 0 || m._a[MONTH] > 11 ? MONTH :
+                m._a[DATE] < 1 || m._a[DATE] > daysInMonth(m._a[YEAR], m._a[MONTH]) ? DATE :
+                m._a[HOUR] < 0 || m._a[HOUR] > 24 ||
+                    (m._a[HOUR] === 24 && (m._a[MINUTE] !== 0 ||
+                                           m._a[SECOND] !== 0 ||
+                                           m._a[MILLISECOND] !== 0)) ? HOUR :
+                m._a[MINUTE] < 0 || m._a[MINUTE] > 59 ? MINUTE :
+                m._a[SECOND] < 0 || m._a[SECOND] > 59 ? SECOND :
+                m._a[MILLISECOND] < 0 || m._a[MILLISECOND] > 999 ? MILLISECOND :
+                -1;
+
+            if (m._pf._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
+                overflow = DATE;
+            }
+
+            m._pf.overflow = overflow;
+        }
+    }
+
+    function isValid(m) {
+        if (m._isValid == null) {
+            m._isValid = !isNaN(m._d.getTime()) &&
+                m._pf.overflow < 0 &&
+                !m._pf.empty &&
+                !m._pf.invalidMonth &&
+                !m._pf.nullInput &&
+                !m._pf.invalidFormat &&
+                !m._pf.userInvalidated;
+
+            if (m._strict) {
+                m._isValid = m._isValid &&
+                    m._pf.charsLeftOver === 0 &&
+                    m._pf.unusedTokens.length === 0 &&
+                    m._pf.bigHour === undefined;
+            }
+        }
+        return m._isValid;
+    }
+
+    function normalizeLocale(key) {
+        return key ? key.toLowerCase().replace('_', '-') : key;
+    }
+
+    // pick the locale from the array
+    // try ['en-au', 'en-gb'] as 'en-au', 'en-gb', 'en', as in move through the list trying each
+    // substring from most specific to least, but move to the next array item if it's a more specific variant than the current root
+    function chooseLocale(names) {
+        var i = 0, j, next, locale, split;
+
+        while (i < names.length) {
+            split = normalizeLocale(names[i]).split('-');
+            j = split.length;
+            next = normalizeLocale(names[i + 1]);
+            next = next ? next.split('-') : null;
+            while (j > 0) {
+                locale = loadLocale(split.slice(0, j).join('-'));
+                if (locale) {
+                    return locale;
+                }
+                if (next && next.length >= j && compareArrays(split, next, true) >= j - 1) {
+                    //the next array item is better than a shallower substring of this one
+                    break;
+                }
+                j--;
+            }
+            i++;
+        }
+        return null;
+    }
+
+    function loadLocale(name) {
+        var oldLocale = null;
+        if (!locales[name] && hasModule) {
+            try {
+                oldLocale = moment.locale();
+                require('./locale/' + name);
+                // because defineLocale currently also sets the global locale, we want to undo that for lazy loaded locales
+                moment.locale(oldLocale);
+            } catch (e) { }
+        }
+        return locales[name];
+    }
+
+    // Return a moment from input, that is local/utc/utcOffset equivalent to
+    // model.
+    function makeAs(input, model) {
+        var res, diff;
+        if (model._isUTC) {
+            res = model.clone();
+            diff = (moment.isMoment(input) || isDate(input) ?
+                    +input : +moment(input)) - (+res);
+            // Use low-level api, because this fn is low-level api.
+            res._d.setTime(+res._d + diff);
+            moment.updateOffset(res, false);
+            return res;
+        } else {
+            return moment(input).local();
+        }
+    }
+
+    /************************************
+        Locale
+    ************************************/
+
+
+    extend(Locale.prototype, {
+
+        set : function (config) {
+            var prop, i;
+            for (i in config) {
+                prop = config[i];
+                if (typeof prop === 'function') {
+                    this[i] = prop;
+                } else {
+                    this['_' + i] = prop;
+                }
+            }
+            // Lenient ordinal parsing accepts just a number in addition to
+            // number + (possibly) stuff coming from _ordinalParseLenient.
+            this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + /\d{1,2}/.source);
+        },
+
+        _months : 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_'),
+        months : function (m) {
+            return this._months[m.month()];
+        },
+
+        _monthsShort : 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_'),
+        monthsShort : function (m) {
+            return this._monthsShort[m.month()];
+        },
+
+        monthsParse : function (monthName, format, strict) {
+            var i, mom, regex;
+
+            if (!this._monthsParse) {
+                this._monthsParse = [];
+                this._longMonthsParse = [];
+                this._shortMonthsParse = [];
+            }
+
+            for (i = 0; i < 12; i++) {
+                // make the regex if we don't have it already
+                mom = moment.utc([2000, i]);
+                if (strict && !this._longMonthsParse[i]) {
+                    this._longMonthsParse[i] = new RegExp('^' + this.months(mom, '').replace('.', '') + '$', 'i');
+                    this._shortMonthsParse[i] = new RegExp('^' + this.monthsShort(mom, '').replace('.', '') + '$', 'i');
+                }
+                if (!strict && !this._monthsParse[i]) {
+                    regex = '^' + this.months(mom, '') + '|^' + this.monthsShort(mom, '');
+                    this._monthsParse[i] = new RegExp(regex.replace('.', ''), 'i');
+                }
+                // test the regex
+                if (strict && format === 'MMMM' && this._longMonthsParse[i].test(monthName)) {
+                    return i;
+                } else if (strict && format === 'MMM' && this._shortMonthsParse[i].test(monthName)) {
+                    return i;
+                } else if (!strict && this._monthsParse[i].test(monthName)) {
+                    return i;
+                }
+            }
+        },
+
+        _weekdays : 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_'),
+        weekdays : function (m) {
+            return this._weekdays[m.day()];
+        },
+
+        _weekdaysShort : 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_'),
+        weekdaysShort : function (m) {
+            return this._weekdaysShort[m.day()];
+        },
+
+        _weekdaysMin : 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_'),
+        weekdaysMin : function (m) {
+            return this._weekdaysMin[m.day()];
+        },
+
+        weekdaysParse : function (weekdayName) {
+            var i, mom, regex;
+
+            if (!this._weekdaysParse) {
+                this._weekdaysParse = [];
+            }
+
+            for (i = 0; i < 7; i++) {
+                // make the regex if we don't have it already
+                if (!this._weekdaysParse[i]) {
+                    mom = moment([2000, 1]).day(i);
+                    regex = '^' + this.weekdays(mom, '') + '|^' + this.weekdaysShort(mom, '') + '|^' + this.weekdaysMin(mom, '');
+                    this._weekdaysParse[i] = new RegExp(regex.replace('.', ''), 'i');
+                }
+                // test the regex
+                if (this._weekdaysParse[i].test(weekdayName)) {
+                    return i;
+                }
+            }
+        },
+
+        _longDateFormat : {
+            LTS : 'h:mm:ss A',
+            LT : 'h:mm A',
+            L : 'MM/DD/YYYY',
+            LL : 'MMMM D, YYYY',
+            LLL : 'MMMM D, YYYY LT',
+            LLLL : 'dddd, MMMM D, YYYY LT'
+        },
+        longDateFormat : function (key) {
+            var output = this._longDateFormat[key];
+            if (!output && this._longDateFormat[key.toUpperCase()]) {
+                output = this._longDateFormat[key.toUpperCase()].replace(/MMMM|MM|DD|dddd/g, function (val) {
+                    return val.slice(1);
+                });
+                this._longDateFormat[key] = output;
+            }
+            return output;
+        },
+
+        isPM : function (input) {
+            // IE8 Quirks Mode & IE7 Standards Mode do not allow accessing strings like arrays
+            // Using charAt should be more compatible.
+            return ((input + '').toLowerCase().charAt(0) === 'p');
+        },
+
+        _meridiemParse : /[ap]\.?m?\.?/i,
+        meridiem : function (hours, minutes, isLower) {
+            if (hours > 11) {
+                return isLower ? 'pm' : 'PM';
+            } else {
+                return isLower ? 'am' : 'AM';
+            }
+        },
+
+
+        _calendar : {
+            sameDay : '[Today at] LT',
+            nextDay : '[Tomorrow at] LT',
+            nextWeek : 'dddd [at] LT',
+            lastDay : '[Yesterday at] LT',
+            lastWeek : '[Last] dddd [at] LT',
+            sameElse : 'L'
+        },
+        calendar : function (key, mom, now) {
+            var output = this._calendar[key];
+            return typeof output === 'function' ? output.apply(mom, [now]) : output;
+        },
+
+        _relativeTime : {
+            future : 'in %s',
+            past : '%s ago',
+            s : 'a few seconds',
+            m : 'a minute',
+            mm : '%d minutes',
+            h : 'an hour',
+            hh : '%d hours',
+            d : 'a day',
+            dd : '%d days',
+            M : 'a month',
+            MM : '%d months',
+            y : 'a year',
+            yy : '%d years'
+        },
+
+        relativeTime : function (number, withoutSuffix, string, isFuture) {
+            var output = this._relativeTime[string];
+            return (typeof output === 'function') ?
+                output(number, withoutSuffix, string, isFuture) :
+                output.replace(/%d/i, number);
+        },
+
+        pastFuture : function (diff, output) {
+            var format = this._relativeTime[diff > 0 ? 'future' : 'past'];
+            return typeof format === 'function' ? format(output) : format.replace(/%s/i, output);
+        },
+
+        ordinal : function (number) {
+            return this._ordinal.replace('%d', number);
+        },
+        _ordinal : '%d',
+        _ordinalParse : /\d{1,2}/,
+
+        preparse : function (string) {
+            return string;
+        },
+
+        postformat : function (string) {
+            return string;
+        },
+
+        week : function (mom) {
+            return weekOfYear(mom, this._week.dow, this._week.doy).week;
+        },
+
+        _week : {
+            dow : 0, // Sunday is the first day of the week.
+            doy : 6  // The week that contains Jan 1st is the first week of the year.
+        },
+
+        firstDayOfWeek : function () {
+            return this._week.dow;
+        },
+
+        firstDayOfYear : function () {
+            return this._week.doy;
+        },
+
+        _invalidDate: 'Invalid date',
+        invalidDate: function () {
+            return this._invalidDate;
+        }
+    });
+
+    /************************************
+        Formatting
+    ************************************/
+
+
+    function removeFormattingTokens(input) {
+        if (input.match(/\[[\s\S]/)) {
+            return input.replace(/^\[|\]$/g, '');
+        }
+        return input.replace(/\\/g, '');
+    }
+
+    function makeFormatFunction(format) {
+        var array = format.match(formattingTokens), i, length;
+
+        for (i = 0, length = array.length; i < length; i++) {
+            if (formatTokenFunctions[array[i]]) {
+                array[i] = formatTokenFunctions[array[i]];
+            } else {
+                array[i] = removeFormattingTokens(array[i]);
+            }
+        }
+
+        return function (mom) {
+            var output = '';
+            for (i = 0; i < length; i++) {
+                output += array[i] instanceof Function ? array[i].call(mom, format) : array[i];
+            }
+            return output;
+        };
+    }
+
+    // format date using native date object
+    function formatMoment(m, format) {
+        if (!m.isValid()) {
+            return m.localeData().invalidDate();
+        }
+
+        format = expandFormat(format, m.localeData());
+
+        if (!formatFunctions[format]) {
+            formatFunctions[format] = makeFormatFunction(format);
+        }
+
+        return formatFunctions[format](m);
+    }
+
+    function expandFormat(format, locale) {
+        var i = 5;
+
+        function replaceLongDateFormatTokens(input) {
+            return locale.longDateFormat(input) || input;
+        }
+
+        localFormattingTokens.lastIndex = 0;
+        while (i >= 0 && localFormattingTokens.test(format)) {
+            format = format.replace(localFormattingTokens, replaceLongDateFormatTokens);
+            localFormattingTokens.lastIndex = 0;
+            i -= 1;
+        }
+
+        return format;
+    }
+
+
+    /************************************
+        Parsing
+    ************************************/
+
+
+    // get the regex to find the next token
+    function getParseRegexForToken(token, config) {
+        var a, strict = config._strict;
+        switch (token) {
+        case 'Q':
+            return parseTokenOneDigit;
+        case 'DDDD':
+            return parseTokenThreeDigits;
+        case 'YYYY':
+        case 'GGGG':
+        case 'gggg':
+            return strict ? parseTokenFourDigits : parseTokenOneToFourDigits;
+        case 'Y':
+        case 'G':
+        case 'g':
+            return parseTokenSignedNumber;
+        case 'YYYYYY':
+        case 'YYYYY':
+        case 'GGGGG':
+        case 'ggggg':
+            return strict ? parseTokenSixDigits : parseTokenOneToSixDigits;
+        case 'S':
+            if (strict) {
+                return parseTokenOneDigit;
+            }
+            /* falls through */
+        case 'SS':
+            if (strict) {
+                return parseTokenTwoDigits;
+            }
+            /* falls through */
+        case 'SSS':
+            if (strict) {
+                return parseTokenThreeDigits;
+            }
+            /* falls through */
+        case 'DDD':
+            return parseTokenOneToThreeDigits;
+        case 'MMM':
+        case 'MMMM':
+        case 'dd':
+        case 'ddd':
+        case 'dddd':
+            return parseTokenWord;
+        case 'a':
+        case 'A':
+            return config._locale._meridiemParse;
+        case 'x':
+            return parseTokenOffsetMs;
+        case 'X':
+            return parseTokenTimestampMs;
+        case 'Z':
+        case 'ZZ':
+            return parseTokenTimezone;
+        case 'T':
+            return parseTokenT;
+        case 'SSSS':
+            return parseTokenDigits;
+        case 'MM':
+        case 'DD':
+        case 'YY':
+        case 'GG':
+        case 'gg':
+        case 'HH':
+        case 'hh':
+        case 'mm':
+        case 'ss':
+        case 'ww':
+        case 'WW':
+            return strict ? parseTokenTwoDigits : parseTokenOneOrTwoDigits;
+        case 'M':
+        case 'D':
+        case 'd':
+        case 'H':
+        case 'h':
+        case 'm':
+        case 's':
+        case 'w':
+        case 'W':
+        case 'e':
+        case 'E':
+            return parseTokenOneOrTwoDigits;
+        case 'Do':
+            return strict ? config._locale._ordinalParse : config._locale._ordinalParseLenient;
+        default :
+            a = new RegExp(regexpEscape(unescapeFormat(token.replace('\\', '')), 'i'));
+            return a;
+        }
+    }
+
+    function utcOffsetFromString(string) {
+        string = string || '';
+        var possibleTzMatches = (string.match(parseTokenTimezone) || []),
+            tzChunk = possibleTzMatches[possibleTzMatches.length - 1] || [],
+            parts = (tzChunk + '').match(parseTimezoneChunker) || ['-', 0, 0],
+            minutes = +(parts[1] * 60) + toInt(parts[2]);
+
+        return parts[0] === '+' ? minutes : -minutes;
+    }
+
+    // function to convert string input to date
+    function addTimeToArrayFromToken(token, input, config) {
+        var a, datePartArray = config._a;
+
+        switch (token) {
+        // QUARTER
+        case 'Q':
+            if (input != null) {
+                datePartArray[MONTH] = (toInt(input) - 1) * 3;
+            }
+            break;
+        // MONTH
+        case 'M' : // fall through to MM
+        case 'MM' :
+            if (input != null) {
+                datePartArray[MONTH] = toInt(input) - 1;
+            }
+            break;
+        case 'MMM' : // fall through to MMMM
+        case 'MMMM' :
+            a = config._locale.monthsParse(input, token, config._strict);
+            // if we didn't find a month name, mark the date as invalid.
+            if (a != null) {
+                datePartArray[MONTH] = a;
+            } else {
+                config._pf.invalidMonth = input;
+            }
+            break;
+        // DAY OF MONTH
+        case 'D' : // fall through to DD
+        case 'DD' :
+            if (input != null) {
+                datePartArray[DATE] = toInt(input);
+            }
+            break;
+        case 'Do' :
+            if (input != null) {
+                datePartArray[DATE] = toInt(parseInt(
+                            input.match(/\d{1,2}/)[0], 10));
+            }
+            break;
+        // DAY OF YEAR
+        case 'DDD' : // fall through to DDDD
+        case 'DDDD' :
+            if (input != null) {
+                config._dayOfYear = toInt(input);
+            }
+
+            break;
+        // YEAR
+        case 'YY' :
+            datePartArray[YEAR] = moment.parseTwoDigitYear(input);
+            break;
+        case 'YYYY' :
+        case 'YYYYY' :
+        case 'YYYYYY' :
+            datePartArray[YEAR] = toInt(input);
+            break;
+        // AM / PM
+        case 'a' : // fall through to A
+        case 'A' :
+            config._meridiem = input;
+            // config._isPm = config._locale.isPM(input);
+            break;
+        // HOUR
+        case 'h' : // fall through to hh
+        case 'hh' :
+            config._pf.bigHour = true;
+            /* falls through */
+        case 'H' : // fall through to HH
+        case 'HH' :
+            datePartArray[HOUR] = toInt(input);
+            break;
+        // MINUTE
+        case 'm' : // fall through to mm
+        case 'mm' :
+            datePartArray[MINUTE] = toInt(input);
+            break;
+        // SECOND
+        case 's' : // fall through to ss
+        case 'ss' :
+            datePartArray[SECOND] = toInt(input);
+            break;
+        // MILLISECOND
+        case 'S' :
+        case 'SS' :
+        case 'SSS' :
+        case 'SSSS' :
+            datePartArray[MILLISECOND] = toInt(('0.' + input) * 1000);
+            break;
+        // UNIX OFFSET (MILLISECONDS)
+        case 'x':
+            config._d = new Date(toInt(input));
+            break;
+        // UNIX TIMESTAMP WITH MS
+        case 'X':
+            config._d = new Date(parseFloat(input) * 1000);
+            break;
+        // TIMEZONE
+        case 'Z' : // fall through to ZZ
+        case 'ZZ' :
+            config._useUTC = true;
+            config._tzm = utcOffsetFromString(input);
+            break;
+        // WEEKDAY - human
+        case 'dd':
+        case 'ddd':
+        case 'dddd':
+            a = config._locale.weekdaysParse(input);
+            // if we didn't get a weekday name, mark the date as invalid
+            if (a != null) {
+                config._w = config._w || {};
+                config._w['d'] = a;
+            } else {
+                config._pf.invalidWeekday = input;
+            }
+            break;
+        // WEEK, WEEK DAY - numeric
+        case 'w':
+        case 'ww':
+        case 'W':
+        case 'WW':
+        case 'd':
+        case 'e':
+        case 'E':
+            token = token.substr(0, 1);
+            /* falls through */
+        case 'gggg':
+        case 'GGGG':
+        case 'GGGGG':
+            token = token.substr(0, 2);
+            if (input) {
+                config._w = config._w || {};
+                config._w[token] = toInt(input);
+            }
+            break;
+        case 'gg':
+        case 'GG':
+            config._w = config._w || {};
+            config._w[token] = moment.parseTwoDigitYear(input);
+        }
+    }
+
+    function dayOfYearFromWeekInfo(config) {
+        var w, weekYear, week, weekday, dow, doy, temp;
+
+        w = config._w;
+        if (w.GG != null || w.W != null || w.E != null) {
+            dow = 1;
+            doy = 4;
+
+            // TODO: We need to take the current isoWeekYear, but that depends on
+            // how we interpret now (local, utc, fixed offset). So create
+            // a now version of current config (take local/utc/offset flags, and
+            // create now).
+            weekYear = dfl(w.GG, config._a[YEAR], weekOfYear(moment(), 1, 4).year);
+            week = dfl(w.W, 1);
+            weekday = dfl(w.E, 1);
+        } else {
+            dow = config._locale._week.dow;
+            doy = config._locale._week.doy;
+
+            weekYear = dfl(w.gg, config._a[YEAR], weekOfYear(moment(), dow, doy).year);
+            week = dfl(w.w, 1);
+
+            if (w.d != null) {
+                // weekday -- low day numbers are considered next week
+                weekday = w.d;
+                if (weekday < dow) {
+                    ++week;
+                }
+            } else if (w.e != null) {
+                // local weekday -- counting starts from begining of week
+                weekday = w.e + dow;
+            } else {
+                // default to begining of week
+                weekday = dow;
+            }
+        }
+        temp = dayOfYearFromWeeks(weekYear, week, weekday, doy, dow);
+
+        config._a[YEAR] = temp.year;
+        config._dayOfYear = temp.dayOfYear;
+    }
+
+    // convert an array to a date.
+    // the array should mirror the parameters below
+    // note: all values past the year are optional and will default to the lowest possible value.
+    // [year, month, day , hour, minute, second, millisecond]
+    function dateFromConfig(config) {
+        var i, date, input = [], currentDate, yearToUse;
+
+        if (config._d) {
+            return;
+        }
+
+        currentDate = currentDateArray(config);
+
+        //compute day of the year from weeks and weekdays
+        if (config._w && config._a[DATE] == null && config._a[MONTH] == null) {
+            dayOfYearFromWeekInfo(config);
+        }
+
+        //if the day of the year is set, figure out what it is
+        if (config._dayOfYear) {
+            yearToUse = dfl(config._a[YEAR], currentDate[YEAR]);
+
+            if (config._dayOfYear > daysInYear(yearToUse)) {
+                config._pf._overflowDayOfYear = true;
+            }
+
+            date = makeUTCDate(yearToUse, 0, config._dayOfYear);
+            config._a[MONTH] = date.getUTCMonth();
+            config._a[DATE] = date.getUTCDate();
+        }
+
+        // Default to current date.
+        // * if no year, month, day of month are given, default to today
+        // * if day of month is given, default month and year
+        // * if month is given, default only year
+        // * if year is given, don't default anything
+        for (i = 0; i < 3 && config._a[i] == null; ++i) {
+            config._a[i] = input[i] = currentDate[i];
+        }
+
+        // Zero out whatever was not defaulted, including time
+        for (; i < 7; i++) {
+            config._a[i] = input[i] = (config._a[i] == null) ? (i === 2 ? 1 : 0) : config._a[i];
+        }
+
+        // Check for 24:00:00.000
+        if (config._a[HOUR] === 24 &&
+                config._a[MINUTE] === 0 &&
+                config._a[SECOND] === 0 &&
+                config._a[MILLISECOND] === 0) {
+            config._nextDay = true;
+            config._a[HOUR] = 0;
+        }
+
+        config._d = (config._useUTC ? makeUTCDate : makeDate).apply(null, input);
+        // Apply timezone offset from input. The actual utcOffset can be changed
+        // with parseZone.
+        if (config._tzm != null) {
+            config._d.setUTCMinutes(config._d.getUTCMinutes() - config._tzm);
+        }
+
+        if (config._nextDay) {
+            config._a[HOUR] = 24;
+        }
+    }
+
+    function dateFromObject(config) {
+        var normalizedInput;
+
+        if (config._d) {
+            return;
+        }
+
+        normalizedInput = normalizeObjectUnits(config._i);
+        config._a = [
+            normalizedInput.year,
+            normalizedInput.month,
+            normalizedInput.day || normalizedInput.date,
+            normalizedInput.hour,
+            normalizedInput.minute,
+            normalizedInput.second,
+            normalizedInput.millisecond
+        ];
+
+        dateFromConfig(config);
+    }
+
+    function currentDateArray(config) {
+        var now = new Date();
+        if (config._useUTC) {
+            return [
+                now.getUTCFullYear(),
+                now.getUTCMonth(),
+                now.getUTCDate()
+            ];
+        } else {
+            return [now.getFullYear(), now.getMonth(), now.getDate()];
+        }
+    }
+
+    // date from string and format string
+    function makeDateFromStringAndFormat(config) {
+        if (config._f === moment.ISO_8601) {
+            parseISO(config);
+            return;
+        }
+
+        config._a = [];
+        config._pf.empty = true;
+
+        // This array is used to make a Date, either with `new Date` or `Date.UTC`
+        var string = '' + config._i,
+            i, parsedInput, tokens, token, skipped,
+            stringLength = string.length,
+            totalParsedInputLength = 0;
+
+        tokens = expandFormat(config._f, config._locale).match(formattingTokens) || [];
+
+        for (i = 0; i < tokens.length; i++) {
+            token = tokens[i];
+            parsedInput = (string.match(getParseRegexForToken(token, config)) || [])[0];
+            if (parsedInput) {
+                skipped = string.substr(0, string.indexOf(parsedInput));
+                if (skipped.length > 0) {
+                    config._pf.unusedInput.push(skipped);
+                }
+                string = string.slice(string.indexOf(parsedInput) + parsedInput.length);
+                totalParsedInputLength += parsedInput.length;
+            }
+            // don't parse if it's not a known token
+            if (formatTokenFunctions[token]) {
+                if (parsedInput) {
+                    config._pf.empty = false;
+                }
+                else {
+                    config._pf.unusedTokens.push(token);
+                }
+                addTimeToArrayFromToken(token, parsedInput, config);
+            }
+            else if (config._strict && !parsedInput) {
+                config._pf.unusedTokens.push(token);
+            }
+        }
+
+        // add remaining unparsed input length to the string
+        config._pf.charsLeftOver = stringLength - totalParsedInputLength;
+        if (string.length > 0) {
+            config._pf.unusedInput.push(string);
+        }
+
+        // clear _12h flag if hour is <= 12
+        if (config._pf.bigHour === true && config._a[HOUR] <= 12) {
+            config._pf.bigHour = undefined;
+        }
+        // handle meridiem
+        config._a[HOUR] = meridiemFixWrap(config._locale, config._a[HOUR],
+                config._meridiem);
+        dateFromConfig(config);
+        checkOverflow(config);
+    }
+
+    function unescapeFormat(s) {
+        return s.replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
+            return p1 || p2 || p3 || p4;
+        });
+    }
+
+    // Code from http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
+    function regexpEscape(s) {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
+
+    // date from string and array of format strings
+    function makeDateFromStringAndArray(config) {
+        var tempConfig,
+            bestMoment,
+
+            scoreToBeat,
+            i,
+            currentScore;
+
+        if (config._f.length === 0) {
+            config._pf.invalidFormat = true;
+            config._d = new Date(NaN);
+            return;
+        }
+
+        for (i = 0; i < config._f.length; i++) {
+            currentScore = 0;
+            tempConfig = copyConfig({}, config);
+            if (config._useUTC != null) {
+                tempConfig._useUTC = config._useUTC;
+            }
+            tempConfig._pf = defaultParsingFlags();
+            tempConfig._f = config._f[i];
+            makeDateFromStringAndFormat(tempConfig);
+
+            if (!isValid(tempConfig)) {
+                continue;
+            }
+
+            // if there is any input that was not parsed add a penalty for that format
+            currentScore += tempConfig._pf.charsLeftOver;
+
+            //or tokens
+            currentScore += tempConfig._pf.unusedTokens.length * 10;
+
+            tempConfig._pf.score = currentScore;
+
+            if (scoreToBeat == null || currentScore < scoreToBeat) {
+                scoreToBeat = currentScore;
+                bestMoment = tempConfig;
+            }
+        }
+
+        extend(config, bestMoment || tempConfig);
+    }
+
+    // date from iso format
+    function parseISO(config) {
+        var i, l,
+            string = config._i,
+            match = isoRegex.exec(string);
+
+        if (match) {
+            config._pf.iso = true;
+            for (i = 0, l = isoDates.length; i < l; i++) {
+                if (isoDates[i][1].exec(string)) {
+                    // match[5] should be 'T' or undefined
+                    config._f = isoDates[i][0] + (match[6] || ' ');
+                    break;
+                }
+            }
+            for (i = 0, l = isoTimes.length; i < l; i++) {
+                if (isoTimes[i][1].exec(string)) {
+                    config._f += isoTimes[i][0];
+                    break;
+                }
+            }
+            if (string.match(parseTokenTimezone)) {
+                config._f += 'Z';
+            }
+            makeDateFromStringAndFormat(config);
+        } else {
+            config._isValid = false;
+        }
+    }
+
+    // date from iso format or fallback
+    function makeDateFromString(config) {
+        parseISO(config);
+        if (config._isValid === false) {
+            delete config._isValid;
+            moment.createFromInputFallback(config);
+        }
+    }
+
+    function map(arr, fn) {
+        var res = [], i;
+        for (i = 0; i < arr.length; ++i) {
+            res.push(fn(arr[i], i));
+        }
+        return res;
+    }
+
+    function makeDateFromInput(config) {
+        var input = config._i, matched;
+        if (input === undefined) {
+            config._d = new Date();
+        } else if (isDate(input)) {
+            config._d = new Date(+input);
+        } else if ((matched = aspNetJsonRegex.exec(input)) !== null) {
+            config._d = new Date(+matched[1]);
+        } else if (typeof input === 'string') {
+            makeDateFromString(config);
+        } else if (isArray(input)) {
+            config._a = map(input.slice(0), function (obj) {
+                return parseInt(obj, 10);
+            });
+            dateFromConfig(config);
+        } else if (typeof(input) === 'object') {
+            dateFromObject(config);
+        } else if (typeof(input) === 'number') {
+            // from milliseconds
+            config._d = new Date(input);
+        } else {
+            moment.createFromInputFallback(config);
+        }
+    }
+
+    function makeDate(y, m, d, h, M, s, ms) {
+        //can't just apply() to create a date:
+        //http://stackoverflow.com/questions/181348/instantiating-a-javascript-object-by-calling-prototype-constructor-apply
+        var date = new Date(y, m, d, h, M, s, ms);
+
+        //the date constructor doesn't accept years < 1970
+        if (y < 1970) {
+            date.setFullYear(y);
+        }
+        return date;
+    }
+
+    function makeUTCDate(y) {
+        var date = new Date(Date.UTC.apply(null, arguments));
+        if (y < 1970) {
+            date.setUTCFullYear(y);
+        }
+        return date;
+    }
+
+    function parseWeekday(input, locale) {
+        if (typeof input === 'string') {
+            if (!isNaN(input)) {
+                input = parseInt(input, 10);
+            }
+            else {
+                input = locale.weekdaysParse(input);
+                if (typeof input !== 'number') {
+                    return null;
+                }
+            }
+        }
+        return input;
+    }
+
+    /************************************
+        Relative Time
+    ************************************/
+
+
+    // helper function for moment.fn.from, moment.fn.fromNow, and moment.duration.fn.humanize
+    function substituteTimeAgo(string, number, withoutSuffix, isFuture, locale) {
+        return locale.relativeTime(number || 1, !!withoutSuffix, string, isFuture);
+    }
+
+    function relativeTime(posNegDuration, withoutSuffix, locale) {
+        var duration = moment.duration(posNegDuration).abs(),
+            seconds = round(duration.as('s')),
+            minutes = round(duration.as('m')),
+            hours = round(duration.as('h')),
+            days = round(duration.as('d')),
+            months = round(duration.as('M')),
+            years = round(duration.as('y')),
+
+            args = seconds < relativeTimeThresholds.s && ['s', seconds] ||
+                minutes === 1 && ['m'] ||
+                minutes < relativeTimeThresholds.m && ['mm', minutes] ||
+                hours === 1 && ['h'] ||
+                hours < relativeTimeThresholds.h && ['hh', hours] ||
+                days === 1 && ['d'] ||
+                days < relativeTimeThresholds.d && ['dd', days] ||
+                months === 1 && ['M'] ||
+                months < relativeTimeThresholds.M && ['MM', months] ||
+                years === 1 && ['y'] || ['yy', years];
+
+        args[2] = withoutSuffix;
+        args[3] = +posNegDuration > 0;
+        args[4] = locale;
+        return substituteTimeAgo.apply({}, args);
+    }
+
+
+    /************************************
+        Week of Year
+    ************************************/
+
+
+    // firstDayOfWeek       0 = sun, 6 = sat
+    //                      the day of the week that starts the week
+    //                      (usually sunday or monday)
+    // firstDayOfWeekOfYear 0 = sun, 6 = sat
+    //                      the first week is the week that contains the first
+    //                      of this day of the week
+    //                      (eg. ISO weeks use thursday (4))
+    function weekOfYear(mom, firstDayOfWeek, firstDayOfWeekOfYear) {
+        var end = firstDayOfWeekOfYear - firstDayOfWeek,
+            daysToDayOfWeek = firstDayOfWeekOfYear - mom.day(),
+            adjustedMoment;
+
+
+        if (daysToDayOfWeek > end) {
+            daysToDayOfWeek -= 7;
+        }
+
+        if (daysToDayOfWeek < end - 7) {
+            daysToDayOfWeek += 7;
+        }
+
+        adjustedMoment = moment(mom).add(daysToDayOfWeek, 'd');
+        return {
+            week: Math.ceil(adjustedMoment.dayOfYear() / 7),
+            year: adjustedMoment.year()
+        };
+    }
+
+    //http://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
+    function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
+        var d = makeUTCDate(year, 0, 1).getUTCDay(), daysToAdd, dayOfYear;
+
+        d = d === 0 ? 7 : d;
+        weekday = weekday != null ? weekday : firstDayOfWeek;
+        daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (d < firstDayOfWeek ? 7 : 0);
+        dayOfYear = 7 * (week - 1) + (weekday - firstDayOfWeek) + daysToAdd + 1;
+
+        return {
+            year: dayOfYear > 0 ? year : year - 1,
+            dayOfYear: dayOfYear > 0 ?  dayOfYear : daysInYear(year - 1) + dayOfYear
+        };
+    }
+
+    /************************************
+        Top Level Functions
+    ************************************/
+
+    function makeMoment(config) {
+        var input = config._i,
+            format = config._f,
+            res;
+
+        config._locale = config._locale || moment.localeData(config._l);
+
+        if (input === null || (format === undefined && input === '')) {
+            return moment.invalid({nullInput: true});
+        }
+
+        if (typeof input === 'string') {
+            config._i = input = config._locale.preparse(input);
+        }
+
+        if (moment.isMoment(input)) {
+            return new Moment(input, true);
+        } else if (format) {
+            if (isArray(format)) {
+                makeDateFromStringAndArray(config);
+            } else {
+                makeDateFromStringAndFormat(config);
+            }
+        } else {
+            makeDateFromInput(config);
+        }
+
+        res = new Moment(config);
+        if (res._nextDay) {
+            // Adding is smart enough around DST
+            res.add(1, 'd');
+            res._nextDay = undefined;
+        }
+
+        return res;
+    }
+
+    moment = function (input, format, locale, strict) {
+        var c;
+
+        if (typeof(locale) === 'boolean') {
+            strict = locale;
+            locale = undefined;
+        }
+        // object construction must be done this way.
+        // https://github.com/moment/moment/issues/1423
+        c = {};
+        c._isAMomentObject = true;
+        c._i = input;
+        c._f = format;
+        c._l = locale;
+        c._strict = strict;
+        c._isUTC = false;
+        c._pf = defaultParsingFlags();
+
+        return makeMoment(c);
+    };
+
+    moment.suppressDeprecationWarnings = false;
+
+    moment.createFromInputFallback = deprecate(
+        'moment construction falls back to js Date. This is ' +
+        'discouraged and will be removed in upcoming major ' +
+        'release. Please refer to ' +
+        'https://github.com/moment/moment/issues/1407 for more info.',
+        function (config) {
+            config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
+        }
+    );
+
+    // Pick a moment m from moments so that m[fn](other) is true for all
+    // other. This relies on the function fn to be transitive.
+    //
+    // moments should either be an array of moment objects or an array, whose
+    // first element is an array of moment objects.
+    function pickBy(fn, moments) {
+        var res, i;
+        if (moments.length === 1 && isArray(moments[0])) {
+            moments = moments[0];
+        }
+        if (!moments.length) {
+            return moment();
+        }
+        res = moments[0];
+        for (i = 1; i < moments.length; ++i) {
+            if (moments[i][fn](res)) {
+                res = moments[i];
+            }
+        }
+        return res;
+    }
+
+    moment.min = function () {
+        var args = [].slice.call(arguments, 0);
+
+        return pickBy('isBefore', args);
+    };
+
+    moment.max = function () {
+        var args = [].slice.call(arguments, 0);
+
+        return pickBy('isAfter', args);
+    };
+
+    // creating with utc
+    moment.utc = function (input, format, locale, strict) {
+        var c;
+
+        if (typeof(locale) === 'boolean') {
+            strict = locale;
+            locale = undefined;
+        }
+        // object construction must be done this way.
+        // https://github.com/moment/moment/issues/1423
+        c = {};
+        c._isAMomentObject = true;
+        c._useUTC = true;
+        c._isUTC = true;
+        c._l = locale;
+        c._i = input;
+        c._f = format;
+        c._strict = strict;
+        c._pf = defaultParsingFlags();
+
+        return makeMoment(c).utc();
+    };
+
+    // creating with unix timestamp (in seconds)
+    moment.unix = function (input) {
+        return moment(input * 1000);
+    };
+
+    // duration
+    moment.duration = function (input, key) {
+        var duration = input,
+            // matching against regexp is expensive, do it on demand
+            match = null,
+            sign,
+            ret,
+            parseIso,
+            diffRes;
+
+        if (moment.isDuration(input)) {
+            duration = {
+                ms: input._milliseconds,
+                d: input._days,
+                M: input._months
+            };
+        } else if (typeof input === 'number') {
+            duration = {};
+            if (key) {
+                duration[key] = input;
+            } else {
+                duration.milliseconds = input;
+            }
+        } else if (!!(match = aspNetTimeSpanJsonRegex.exec(input))) {
+            sign = (match[1] === '-') ? -1 : 1;
+            duration = {
+                y: 0,
+                d: toInt(match[DATE]) * sign,
+                h: toInt(match[HOUR]) * sign,
+                m: toInt(match[MINUTE]) * sign,
+                s: toInt(match[SECOND]) * sign,
+                ms: toInt(match[MILLISECOND]) * sign
+            };
+        } else if (!!(match = isoDurationRegex.exec(input))) {
+            sign = (match[1] === '-') ? -1 : 1;
+            parseIso = function (inp) {
+                // We'd normally use ~~inp for this, but unfortunately it also
+                // converts floats to ints.
+                // inp may be undefined, so careful calling replace on it.
+                var res = inp && parseFloat(inp.replace(',', '.'));
+                // apply sign while we're at it
+                return (isNaN(res) ? 0 : res) * sign;
+            };
+            duration = {
+                y: parseIso(match[2]),
+                M: parseIso(match[3]),
+                d: parseIso(match[4]),
+                h: parseIso(match[5]),
+                m: parseIso(match[6]),
+                s: parseIso(match[7]),
+                w: parseIso(match[8])
+            };
+        } else if (duration == null) {// checks for null or undefined
+            duration = {};
+        } else if (typeof duration === 'object' &&
+                ('from' in duration || 'to' in duration)) {
+            diffRes = momentsDifference(moment(duration.from), moment(duration.to));
+
+            duration = {};
+            duration.ms = diffRes.milliseconds;
+            duration.M = diffRes.months;
+        }
+
+        ret = new Duration(duration);
+
+        if (moment.isDuration(input) && hasOwnProp(input, '_locale')) {
+            ret._locale = input._locale;
+        }
+
+        return ret;
+    };
+
+    // version number
+    moment.version = VERSION;
+
+    // default format
+    moment.defaultFormat = isoFormat;
+
+    // constant that refers to the ISO standard
+    moment.ISO_8601 = function () {};
+
+    // Plugins that add properties should also add the key here (null value),
+    // so we can properly clone ourselves.
+    moment.momentProperties = momentProperties;
+
+    // This function will be called whenever a moment is mutated.
+    // It is intended to keep the offset in sync with the timezone.
+    moment.updateOffset = function () {};
+
+    // This function allows you to set a threshold for relative time strings
+    moment.relativeTimeThreshold = function (threshold, limit) {
+        if (relativeTimeThresholds[threshold] === undefined) {
+            return false;
+        }
+        if (limit === undefined) {
+            return relativeTimeThresholds[threshold];
+        }
+        relativeTimeThresholds[threshold] = limit;
+        return true;
+    };
+
+    moment.lang = deprecate(
+        'moment.lang is deprecated. Use moment.locale instead.',
+        function (key, value) {
+            return moment.locale(key, value);
+        }
+    );
+
+    // This function will load locale and then set the global locale.  If
+    // no arguments are passed in, it will simply return the current global
+    // locale key.
+    moment.locale = function (key, values) {
+        var data;
+        if (key) {
+            if (typeof(values) !== 'undefined') {
+                data = moment.defineLocale(key, values);
+            }
+            else {
+                data = moment.localeData(key);
+            }
+
+            if (data) {
+                moment.duration._locale = moment._locale = data;
+            }
+        }
+
+        return moment._locale._abbr;
+    };
+
+    moment.defineLocale = function (name, values) {
+        if (values !== null) {
+            values.abbr = name;
+            if (!locales[name]) {
+                locales[name] = new Locale();
+            }
+            locales[name].set(values);
+
+            // backwards compat for now: also set the locale
+            moment.locale(name);
+
+            return locales[name];
+        } else {
+            // useful for testing
+            delete locales[name];
+            return null;
+        }
+    };
+
+    moment.langData = deprecate(
+        'moment.langData is deprecated. Use moment.localeData instead.',
+        function (key) {
+            return moment.localeData(key);
+        }
+    );
+
+    // returns locale data
+    moment.localeData = function (key) {
+        var locale;
+
+        if (key && key._locale && key._locale._abbr) {
+            key = key._locale._abbr;
+        }
+
+        if (!key) {
+            return moment._locale;
+        }
+
+        if (!isArray(key)) {
+            //short-circuit everything else
+            locale = loadLocale(key);
+            if (locale) {
+                return locale;
+            }
+            key = [key];
+        }
+
+        return chooseLocale(key);
+    };
+
+    // compare moment object
+    moment.isMoment = function (obj) {
+        return obj instanceof Moment ||
+            (obj != null && hasOwnProp(obj, '_isAMomentObject'));
+    };
+
+    // for typechecking Duration objects
+    moment.isDuration = function (obj) {
+        return obj instanceof Duration;
+    };
+
+    for (i = lists.length - 1; i >= 0; --i) {
+        makeList(lists[i]);
+    }
+
+    moment.normalizeUnits = function (units) {
+        return normalizeUnits(units);
+    };
+
+    moment.invalid = function (flags) {
+        var m = moment.utc(NaN);
+        if (flags != null) {
+            extend(m._pf, flags);
+        }
+        else {
+            m._pf.userInvalidated = true;
+        }
+
+        return m;
+    };
+
+    moment.parseZone = function () {
+        return moment.apply(null, arguments).parseZone();
+    };
+
+    moment.parseTwoDigitYear = function (input) {
+        return toInt(input) + (toInt(input) > 68 ? 1900 : 2000);
+    };
+
+    moment.isDate = isDate;
+
+    /************************************
+        Moment Prototype
+    ************************************/
+
+
+    extend(moment.fn = Moment.prototype, {
+
+        clone : function () {
+            return moment(this);
+        },
+
+        valueOf : function () {
+            return +this._d - ((this._offset || 0) * 60000);
+        },
+
+        unix : function () {
+            return Math.floor(+this / 1000);
+        },
+
+        toString : function () {
+            return this.clone().locale('en').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
+        },
+
+        toDate : function () {
+            return this._offset ? new Date(+this) : this._d;
+        },
+
+        toISOString : function () {
+            var m = moment(this).utc();
+            if (0 < m.year() && m.year() <= 9999) {
+                if ('function' === typeof Date.prototype.toISOString) {
+                    // native implementation is ~50x faster, use it when we can
+                    return this.toDate().toISOString();
+                } else {
+                    return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+                }
+            } else {
+                return formatMoment(m, 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+            }
+        },
+
+        toArray : function () {
+            var m = this;
+            return [
+                m.year(),
+                m.month(),
+                m.date(),
+                m.hours(),
+                m.minutes(),
+                m.seconds(),
+                m.milliseconds()
+            ];
+        },
+
+        isValid : function () {
+            return isValid(this);
+        },
+
+        isDSTShifted : function () {
+            if (this._a) {
+                return this.isValid() && compareArrays(this._a, (this._isUTC ? moment.utc(this._a) : moment(this._a)).toArray()) > 0;
+            }
+
+            return false;
+        },
+
+        parsingFlags : function () {
+            return extend({}, this._pf);
+        },
+
+        invalidAt: function () {
+            return this._pf.overflow;
+        },
+
+        utc : function (keepLocalTime) {
+            return this.utcOffset(0, keepLocalTime);
+        },
+
+        local : function (keepLocalTime) {
+            if (this._isUTC) {
+                this.utcOffset(0, keepLocalTime);
+                this._isUTC = false;
+
+                if (keepLocalTime) {
+                    this.subtract(this._dateUtcOffset(), 'm');
+                }
+            }
+            return this;
+        },
+
+        format : function (inputString) {
+            var output = formatMoment(this, inputString || moment.defaultFormat);
+            return this.localeData().postformat(output);
+        },
+
+        add : createAdder(1, 'add'),
+
+        subtract : createAdder(-1, 'subtract'),
+
+        diff : function (input, units, asFloat) {
+            var that = makeAs(input, this),
+                zoneDiff = (that.utcOffset() - this.utcOffset()) * 6e4,
+                anchor, diff, output, daysAdjust;
+
+            units = normalizeUnits(units);
+
+            if (units === 'year' || units === 'month' || units === 'quarter') {
+                output = monthDiff(this, that);
+                if (units === 'quarter') {
+                    output = output / 3;
+                } else if (units === 'year') {
+                    output = output / 12;
+                }
+            } else {
+                diff = this - that;
+                output = units === 'second' ? diff / 1e3 : // 1000
+                    units === 'minute' ? diff / 6e4 : // 1000 * 60
+                    units === 'hour' ? diff / 36e5 : // 1000 * 60 * 60
+                    units === 'day' ? (diff - zoneDiff) / 864e5 : // 1000 * 60 * 60 * 24, negate dst
+                    units === 'week' ? (diff - zoneDiff) / 6048e5 : // 1000 * 60 * 60 * 24 * 7, negate dst
+                    diff;
+            }
+            return asFloat ? output : absRound(output);
+        },
+
+        from : function (time, withoutSuffix) {
+            return moment.duration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
+        },
+
+        fromNow : function (withoutSuffix) {
+            return this.from(moment(), withoutSuffix);
+        },
+
+        calendar : function (time) {
+            // We want to compare the start of today, vs this.
+            // Getting start-of-today depends on whether we're locat/utc/offset
+            // or not.
+            var now = time || moment(),
+                sod = makeAs(now, this).startOf('day'),
+                diff = this.diff(sod, 'days', true),
+                format = diff < -6 ? 'sameElse' :
+                    diff < -1 ? 'lastWeek' :
+                    diff < 0 ? 'lastDay' :
+                    diff < 1 ? 'sameDay' :
+                    diff < 2 ? 'nextDay' :
+                    diff < 7 ? 'nextWeek' : 'sameElse';
+            return this.format(this.localeData().calendar(format, this, moment(now)));
+        },
+
+        isLeapYear : function () {
+            return isLeapYear(this.year());
+        },
+
+        isDST : function () {
+            return (this.utcOffset() > this.clone().month(0).utcOffset() ||
+                this.utcOffset() > this.clone().month(5).utcOffset());
+        },
+
+        day : function (input) {
+            var day = this._isUTC ? this._d.getUTCDay() : this._d.getDay();
+            if (input != null) {
+                input = parseWeekday(input, this.localeData());
+                return this.add(input - day, 'd');
+            } else {
+                return day;
+            }
+        },
+
+        month : makeAccessor('Month', true),
+
+        startOf : function (units) {
+            units = normalizeUnits(units);
+            // the following switch intentionally omits break keywords
+            // to utilize falling through the cases.
+            switch (units) {
+            case 'year':
+                this.month(0);
+                /* falls through */
+            case 'quarter':
+            case 'month':
+                this.date(1);
+                /* falls through */
+            case 'week':
+            case 'isoWeek':
+            case 'day':
+                this.hours(0);
+                /* falls through */
+            case 'hour':
+                this.minutes(0);
+                /* falls through */
+            case 'minute':
+                this.seconds(0);
+                /* falls through */
+            case 'second':
+                this.milliseconds(0);
+                /* falls through */
+            }
+
+            // weeks are a special case
+            if (units === 'week') {
+                this.weekday(0);
+            } else if (units === 'isoWeek') {
+                this.isoWeekday(1);
+            }
+
+            // quarters are also special
+            if (units === 'quarter') {
+                this.month(Math.floor(this.month() / 3) * 3);
+            }
+
+            return this;
+        },
+
+        endOf: function (units) {
+            units = normalizeUnits(units);
+            if (units === undefined || units === 'millisecond') {
+                return this;
+            }
+            return this.startOf(units).add(1, (units === 'isoWeek' ? 'week' : units)).subtract(1, 'ms');
+        },
+
+        isAfter: function (input, units) {
+            var inputMs;
+            units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
+            if (units === 'millisecond') {
+                input = moment.isMoment(input) ? input : moment(input);
+                return +this > +input;
+            } else {
+                inputMs = moment.isMoment(input) ? +input : +moment(input);
+                return inputMs < +this.clone().startOf(units);
+            }
+        },
+
+        isBefore: function (input, units) {
+            var inputMs;
+            units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
+            if (units === 'millisecond') {
+                input = moment.isMoment(input) ? input : moment(input);
+                return +this < +input;
+            } else {
+                inputMs = moment.isMoment(input) ? +input : +moment(input);
+                return +this.clone().endOf(units) < inputMs;
+            }
+        },
+
+        isBetween: function (from, to, units) {
+            return this.isAfter(from, units) && this.isBefore(to, units);
+        },
+
+        isSame: function (input, units) {
+            var inputMs;
+            units = normalizeUnits(units || 'millisecond');
+            if (units === 'millisecond') {
+                input = moment.isMoment(input) ? input : moment(input);
+                return +this === +input;
+            } else {
+                inputMs = +moment(input);
+                return +(this.clone().startOf(units)) <= inputMs && inputMs <= +(this.clone().endOf(units));
+            }
+        },
+
+        min: deprecate(
+                 'moment().min is deprecated, use moment.min instead. https://github.com/moment/moment/issues/1548',
+                 function (other) {
+                     other = moment.apply(null, arguments);
+                     return other < this ? this : other;
+                 }
+         ),
+
+        max: deprecate(
+                'moment().max is deprecated, use moment.max instead. https://github.com/moment/moment/issues/1548',
+                function (other) {
+                    other = moment.apply(null, arguments);
+                    return other > this ? this : other;
+                }
+        ),
+
+        zone : deprecate(
+                'moment().zone is deprecated, use moment().utcOffset instead. ' +
+                'https://github.com/moment/moment/issues/1779',
+                function (input, keepLocalTime) {
+                    if (input != null) {
+                        if (typeof input !== 'string') {
+                            input = -input;
+                        }
+
+                        this.utcOffset(input, keepLocalTime);
+
+                        return this;
+                    } else {
+                        return -this.utcOffset();
+                    }
+                }
+        ),
+
+        // keepLocalTime = true means only change the timezone, without
+        // affecting the local hour. So 5:31:26 +0300 --[utcOffset(2, true)]-->
+        // 5:31:26 +0200 It is possible that 5:31:26 doesn't exist with offset
+        // +0200, so we adjust the time as needed, to be valid.
+        //
+        // Keeping the time actually adds/subtracts (one hour)
+        // from the actual represented time. That is why we call updateOffset
+        // a second time. In case it wants us to change the offset again
+        // _changeInProgress == true case, then we have to adjust, because
+        // there is no such time in the given timezone.
+        utcOffset : function (input, keepLocalTime) {
+            var offset = this._offset || 0,
+                localAdjust;
+            if (input != null) {
+                if (typeof input === 'string') {
+                    input = utcOffsetFromString(input);
+                }
+                if (Math.abs(input) < 16) {
+                    input = input * 60;
+                }
+                if (!this._isUTC && keepLocalTime) {
+                    localAdjust = this._dateUtcOffset();
+                }
+                this._offset = input;
+                this._isUTC = true;
+                if (localAdjust != null) {
+                    this.add(localAdjust, 'm');
+                }
+                if (offset !== input) {
+                    if (!keepLocalTime || this._changeInProgress) {
+                        addOrSubtractDurationFromMoment(this,
+                                moment.duration(input - offset, 'm'), 1, false);
+                    } else if (!this._changeInProgress) {
+                        this._changeInProgress = true;
+                        moment.updateOffset(this, true);
+                        this._changeInProgress = null;
+                    }
+                }
+
+                return this;
+            } else {
+                return this._isUTC ? offset : this._dateUtcOffset();
+            }
+        },
+
+        isLocal : function () {
+            return !this._isUTC;
+        },
+
+        isUtcOffset : function () {
+            return this._isUTC;
+        },
+
+        isUtc : function () {
+            return this._isUTC && this._offset === 0;
+        },
+
+        zoneAbbr : function () {
+            return this._isUTC ? 'UTC' : '';
+        },
+
+        zoneName : function () {
+            return this._isUTC ? 'Coordinated Universal Time' : '';
+        },
+
+        parseZone : function () {
+            if (this._tzm) {
+                this.utcOffset(this._tzm);
+            } else if (typeof this._i === 'string') {
+                this.utcOffset(utcOffsetFromString(this._i));
+            }
+            return this;
+        },
+
+        hasAlignedHourOffset : function (input) {
+            if (!input) {
+                input = 0;
+            }
+            else {
+                input = moment(input).utcOffset();
+            }
+
+            return (this.utcOffset() - input) % 60 === 0;
+        },
+
+        daysInMonth : function () {
+            return daysInMonth(this.year(), this.month());
+        },
+
+        dayOfYear : function (input) {
+            var dayOfYear = round((moment(this).startOf('day') - moment(this).startOf('year')) / 864e5) + 1;
+            return input == null ? dayOfYear : this.add((input - dayOfYear), 'd');
+        },
+
+        quarter : function (input) {
+            return input == null ? Math.ceil((this.month() + 1) / 3) : this.month((input - 1) * 3 + this.month() % 3);
+        },
+
+        weekYear : function (input) {
+            var year = weekOfYear(this, this.localeData()._week.dow, this.localeData()._week.doy).year;
+            return input == null ? year : this.add((input - year), 'y');
+        },
+
+        isoWeekYear : function (input) {
+            var year = weekOfYear(this, 1, 4).year;
+            return input == null ? year : this.add((input - year), 'y');
+        },
+
+        week : function (input) {
+            var week = this.localeData().week(this);
+            return input == null ? week : this.add((input - week) * 7, 'd');
+        },
+
+        isoWeek : function (input) {
+            var week = weekOfYear(this, 1, 4).week;
+            return input == null ? week : this.add((input - week) * 7, 'd');
+        },
+
+        weekday : function (input) {
+            var weekday = (this.day() + 7 - this.localeData()._week.dow) % 7;
+            return input == null ? weekday : this.add(input - weekday, 'd');
+        },
+
+        isoWeekday : function (input) {
+            // behaves the same as moment#day except
+            // as a getter, returns 7 instead of 0 (1-7 range instead of 0-6)
+            // as a setter, sunday should belong to the previous week.
+            return input == null ? this.day() || 7 : this.day(this.day() % 7 ? input : input - 7);
+        },
+
+        isoWeeksInYear : function () {
+            return weeksInYear(this.year(), 1, 4);
+        },
+
+        weeksInYear : function () {
+            var weekInfo = this.localeData()._week;
+            return weeksInYear(this.year(), weekInfo.dow, weekInfo.doy);
+        },
+
+        get : function (units) {
+            units = normalizeUnits(units);
+            return this[units]();
+        },
+
+        set : function (units, value) {
+            var unit;
+            if (typeof units === 'object') {
+                for (unit in units) {
+                    this.set(unit, units[unit]);
+                }
+            }
+            else {
+                units = normalizeUnits(units);
+                if (typeof this[units] === 'function') {
+                    this[units](value);
+                }
+            }
+            return this;
+        },
+
+        // If passed a locale key, it will set the locale for this
+        // instance.  Otherwise, it will return the locale configuration
+        // variables for this instance.
+        locale : function (key) {
+            var newLocaleData;
+
+            if (key === undefined) {
+                return this._locale._abbr;
+            } else {
+                newLocaleData = moment.localeData(key);
+                if (newLocaleData != null) {
+                    this._locale = newLocaleData;
+                }
+                return this;
+            }
+        },
+
+        lang : deprecate(
+            'moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.',
+            function (key) {
+                if (key === undefined) {
+                    return this.localeData();
+                } else {
+                    return this.locale(key);
+                }
+            }
+        ),
+
+        localeData : function () {
+            return this._locale;
+        },
+
+        _dateUtcOffset : function () {
+            // On Firefox.24 Date#getTimezoneOffset returns a floating point.
+            // https://github.com/moment/moment/pull/1871
+            return -Math.round(this._d.getTimezoneOffset() / 15) * 15;
+        }
+
+    });
+
+    function rawMonthSetter(mom, value) {
+        var dayOfMonth;
+
+        // TODO: Move this out of here!
+        if (typeof value === 'string') {
+            value = mom.localeData().monthsParse(value);
+            // TODO: Another silent failure?
+            if (typeof value !== 'number') {
+                return mom;
+            }
+        }
+
+        dayOfMonth = Math.min(mom.date(),
+                daysInMonth(mom.year(), value));
+        mom._d['set' + (mom._isUTC ? 'UTC' : '') + 'Month'](value, dayOfMonth);
+        return mom;
+    }
+
+    function rawGetter(mom, unit) {
+        return mom._d['get' + (mom._isUTC ? 'UTC' : '') + unit]();
+    }
+
+    function rawSetter(mom, unit, value) {
+        if (unit === 'Month') {
+            return rawMonthSetter(mom, value);
+        } else {
+            return mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value);
+        }
+    }
+
+    function makeAccessor(unit, keepTime) {
+        return function (value) {
+            if (value != null) {
+                rawSetter(this, unit, value);
+                moment.updateOffset(this, keepTime);
+                return this;
+            } else {
+                return rawGetter(this, unit);
+            }
+        };
+    }
+
+    moment.fn.millisecond = moment.fn.milliseconds = makeAccessor('Milliseconds', false);
+    moment.fn.second = moment.fn.seconds = makeAccessor('Seconds', false);
+    moment.fn.minute = moment.fn.minutes = makeAccessor('Minutes', false);
+    // Setting the hour should keep the time, because the user explicitly
+    // specified which hour he wants. So trying to maintain the same hour (in
+    // a new timezone) makes sense. Adding/subtracting hours does not follow
+    // this rule.
+    moment.fn.hour = moment.fn.hours = makeAccessor('Hours', true);
+    // moment.fn.month is defined separately
+    moment.fn.date = makeAccessor('Date', true);
+    moment.fn.dates = deprecate('dates accessor is deprecated. Use date instead.', makeAccessor('Date', true));
+    moment.fn.year = makeAccessor('FullYear', true);
+    moment.fn.years = deprecate('years accessor is deprecated. Use year instead.', makeAccessor('FullYear', true));
+
+    // add plural methods
+    moment.fn.days = moment.fn.day;
+    moment.fn.months = moment.fn.month;
+    moment.fn.weeks = moment.fn.week;
+    moment.fn.isoWeeks = moment.fn.isoWeek;
+    moment.fn.quarters = moment.fn.quarter;
+
+    // add aliased format methods
+    moment.fn.toJSON = moment.fn.toISOString;
+
+    // alias isUtc for dev-friendliness
+    moment.fn.isUTC = moment.fn.isUtc;
+
+    /************************************
+        Duration Prototype
+    ************************************/
+
+
+    function daysToYears (days) {
+        // 400 years have 146097 days (taking into account leap year rules)
+        return days * 400 / 146097;
+    }
+
+    function yearsToDays (years) {
+        // years * 365 + absRound(years / 4) -
+        //     absRound(years / 100) + absRound(years / 400);
+        return years * 146097 / 400;
+    }
+
+    extend(moment.duration.fn = Duration.prototype, {
+
+        _bubble : function () {
+            var milliseconds = this._milliseconds,
+                days = this._days,
+                months = this._months,
+                data = this._data,
+                seconds, minutes, hours, years = 0;
+
+            // The following code bubbles up values, see the tests for
+            // examples of what that means.
+            data.milliseconds = milliseconds % 1000;
+
+            seconds = absRound(milliseconds / 1000);
+            data.seconds = seconds % 60;
+
+            minutes = absRound(seconds / 60);
+            data.minutes = minutes % 60;
+
+            hours = absRound(minutes / 60);
+            data.hours = hours % 24;
+
+            days += absRound(hours / 24);
+
+            // Accurately convert days to years, assume start from year 0.
+            years = absRound(daysToYears(days));
+            days -= absRound(yearsToDays(years));
+
+            // 30 days to a month
+            // TODO (iskren): Use anchor date (like 1st Jan) to compute this.
+            months += absRound(days / 30);
+            days %= 30;
+
+            // 12 months -> 1 year
+            years += absRound(months / 12);
+            months %= 12;
+
+            data.days = days;
+            data.months = months;
+            data.years = years;
+        },
+
+        abs : function () {
+            this._milliseconds = Math.abs(this._milliseconds);
+            this._days = Math.abs(this._days);
+            this._months = Math.abs(this._months);
+
+            this._data.milliseconds = Math.abs(this._data.milliseconds);
+            this._data.seconds = Math.abs(this._data.seconds);
+            this._data.minutes = Math.abs(this._data.minutes);
+            this._data.hours = Math.abs(this._data.hours);
+            this._data.months = Math.abs(this._data.months);
+            this._data.years = Math.abs(this._data.years);
+
+            return this;
+        },
+
+        weeks : function () {
+            return absRound(this.days() / 7);
+        },
+
+        valueOf : function () {
+            return this._milliseconds +
+              this._days * 864e5 +
+              (this._months % 12) * 2592e6 +
+              toInt(this._months / 12) * 31536e6;
+        },
+
+        humanize : function (withSuffix) {
+            var output = relativeTime(this, !withSuffix, this.localeData());
+
+            if (withSuffix) {
+                output = this.localeData().pastFuture(+this, output);
+            }
+
+            return this.localeData().postformat(output);
+        },
+
+        add : function (input, val) {
+            // supports only 2.0-style add(1, 's') or add(moment)
+            var dur = moment.duration(input, val);
+
+            this._milliseconds += dur._milliseconds;
+            this._days += dur._days;
+            this._months += dur._months;
+
+            this._bubble();
+
+            return this;
+        },
+
+        subtract : function (input, val) {
+            var dur = moment.duration(input, val);
+
+            this._milliseconds -= dur._milliseconds;
+            this._days -= dur._days;
+            this._months -= dur._months;
+
+            this._bubble();
+
+            return this;
+        },
+
+        get : function (units) {
+            units = normalizeUnits(units);
+            return this[units.toLowerCase() + 's']();
+        },
+
+        as : function (units) {
+            var days, months;
+            units = normalizeUnits(units);
+
+            if (units === 'month' || units === 'year') {
+                days = this._days + this._milliseconds / 864e5;
+                months = this._months + daysToYears(days) * 12;
+                return units === 'month' ? months : months / 12;
+            } else {
+                // handle milliseconds separately because of floating point math errors (issue #1867)
+                days = this._days + Math.round(yearsToDays(this._months / 12));
+                switch (units) {
+                    case 'week': return days / 7 + this._milliseconds / 6048e5;
+                    case 'day': return days + this._milliseconds / 864e5;
+                    case 'hour': return days * 24 + this._milliseconds / 36e5;
+                    case 'minute': return days * 24 * 60 + this._milliseconds / 6e4;
+                    case 'second': return days * 24 * 60 * 60 + this._milliseconds / 1000;
+                    // Math.floor prevents floating point math errors here
+                    case 'millisecond': return Math.floor(days * 24 * 60 * 60 * 1000) + this._milliseconds;
+                    default: throw new Error('Unknown unit ' + units);
+                }
+            }
+        },
+
+        lang : moment.fn.lang,
+        locale : moment.fn.locale,
+
+        toIsoString : deprecate(
+            'toIsoString() is deprecated. Please use toISOString() instead ' +
+            '(notice the capitals)',
+            function () {
+                return this.toISOString();
+            }
+        ),
+
+        toISOString : function () {
+            // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
+            var years = Math.abs(this.years()),
+                months = Math.abs(this.months()),
+                days = Math.abs(this.days()),
+                hours = Math.abs(this.hours()),
+                minutes = Math.abs(this.minutes()),
+                seconds = Math.abs(this.seconds() + this.milliseconds() / 1000);
+
+            if (!this.asSeconds()) {
+                // this is the same as C#'s (Noda) and python (isodate)...
+                // but not other JS (goog.date)
+                return 'P0D';
+            }
+
+            return (this.asSeconds() < 0 ? '-' : '') +
+                'P' +
+                (years ? years + 'Y' : '') +
+                (months ? months + 'M' : '') +
+                (days ? days + 'D' : '') +
+                ((hours || minutes || seconds) ? 'T' : '') +
+                (hours ? hours + 'H' : '') +
+                (minutes ? minutes + 'M' : '') +
+                (seconds ? seconds + 'S' : '');
+        },
+
+        localeData : function () {
+            return this._locale;
+        },
+
+        toJSON : function () {
+            return this.toISOString();
+        }
+    });
+
+    moment.duration.fn.toString = moment.duration.fn.toISOString;
+
+    function makeDurationGetter(name) {
+        moment.duration.fn[name] = function () {
+            return this._data[name];
+        };
+    }
+
+    for (i in unitMillisecondFactors) {
+        if (hasOwnProp(unitMillisecondFactors, i)) {
+            makeDurationGetter(i.toLowerCase());
+        }
+    }
+
+    moment.duration.fn.asMilliseconds = function () {
+        return this.as('ms');
+    };
+    moment.duration.fn.asSeconds = function () {
+        return this.as('s');
+    };
+    moment.duration.fn.asMinutes = function () {
+        return this.as('m');
+    };
+    moment.duration.fn.asHours = function () {
+        return this.as('h');
+    };
+    moment.duration.fn.asDays = function () {
+        return this.as('d');
+    };
+    moment.duration.fn.asWeeks = function () {
+        return this.as('weeks');
+    };
+    moment.duration.fn.asMonths = function () {
+        return this.as('M');
+    };
+    moment.duration.fn.asYears = function () {
+        return this.as('y');
+    };
+
+    /************************************
+        Default Locale
+    ************************************/
+
+
+    // Set default locale, other locale will inherit from English.
+    moment.locale('en', {
+        ordinalParse: /\d{1,2}(th|st|nd|rd)/,
+        ordinal : function (number) {
+            var b = number % 10,
+                output = (toInt(number % 100 / 10) === 1) ? 'th' :
+                (b === 1) ? 'st' :
+                (b === 2) ? 'nd' :
+                (b === 3) ? 'rd' : 'th';
+            return number + output;
+        }
+    });
+
+    /* EMBED_LOCALES */
+
+    /************************************
+        Exposing Moment
+    ************************************/
+
+    function makeGlobal(shouldDeprecate) {
+        /*global ender:false */
+        if (typeof ender !== 'undefined') {
+            return;
+        }
+        oldGlobalMoment = globalScope.moment;
+        if (shouldDeprecate) {
+            globalScope.moment = deprecate(
+                    'Accessing Moment through the global scope is ' +
+                    'deprecated, and will be removed in an upcoming ' +
+                    'release.',
+                    moment);
+        } else {
+            globalScope.moment = moment;
+        }
+    }
+
+    // CommonJS module is defined
+    if (hasModule) {
+        module.exports = moment;
+    } else if (typeof define === 'function' && define.amd) {
+        define(function (require, exports, module) {
+            if (module.config && module.config() && module.config().noGlobal === true) {
+                // release the global variable
+                globalScope.moment = oldGlobalMoment;
+            }
+
+            return moment;
+        });
+        makeGlobal(true);
+    } else {
+        makeGlobal();
+    }
+}).call(this);
+
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],114:[function(require,module,exports){
 'use strict';
 
 function ToObject(val) {
@@ -20113,7 +29210,7 @@ module.exports = Object.assign || function (target, source) {
 	return to;
 };
 
-},{}],44:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 (function (process){
 // vim:ts=4:sts=4:sw=4:
 /*!
@@ -22054,591 +31151,6427 @@ return Q;
 });
 
 }).call(this,require("DF1urx"))
-},{"DF1urx":41}],45:[function(require,module,exports){
-'use strict';
+},{"DF1urx":43}],116:[function(require,module,exports){
+//  Ramda v0.10.0
+//  https://github.com/ramda/ramda
+//  (c) 2013-2015 Scott Sauyet and Michael Hurley
+//  Ramda may be freely distributed under the MIT license.
 
-var React = require('react');
-var d3 = require('d3');
-var common = require('./common');
-var Chart = common.Chart;
-var XAxis = common.XAxis;
-var YAxis = common.YAxis;
+;(function() {
 
-var Bar = React.createClass({displayName: "Bar",
+    'use strict';
 
-  propTypes: {
-    fill: React.PropTypes.string,
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
-    offset: React.PropTypes.number
-  },
+    var __ = { ramda: 'placeholder' };
 
-  getDefaultProps: function() {
-    return {
-      offset: 0
+    var _add = function _add(a, b) {
+        return a + b;
     };
-  },
 
-  render: function() {
-    return (
-      React.createElement("rect", {
-        fill: this.props.fill, 
-        width: this.props.width, 
-        height: this.props.height, 
-        x: this.props.offset, 
-        y: this.props.availableHeight  - this.props.height}
-      )
-    );
-  }
-});
-
-var DataSeries = exports.DataSeries = React.createClass({displayName: "DataSeries",
-
-  propTypes: {
-    fill: React.PropTypes.string,
-    title: React.PropTypes.string,
-    padding: React.PropTypes.number,
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
-    offset: React.PropTypes.number
-  },
-
-  getDefaultProps: function() {
-    return {
-      padding: 0.1,
-      data: []
+    var _all = function _all(fn, list) {
+        var idx = -1;
+        while (++idx < list.length) {
+            if (!fn(list[idx])) {
+                return false;
+            }
+        }
+        return true;
     };
-  },
 
-  render: function() {
+    var _any = function _any(fn, list) {
+        var idx = -1;
+        while (++idx < list.length) {
+            if (fn(list[idx])) {
+                return true;
+            }
+        }
+        return false;
+    };
 
-    var props = this.props;
+    /**
+     * Basic, right-associative composition function. Accepts two functions and returns the
+     * composite function; this composite function represents the operation `var h = f(g(x))`,
+     * where `f` is the first argument, `g` is the second argument, and `x` is whatever
+     * argument(s) are passed to `h`.
+     *
+     * This function's main use is to build the more general `compose` function, which accepts
+     * any number of functions.
+     *
+     * @private
+     * @category Function
+     * @param {Function} f A function.
+     * @param {Function} g A function.
+     * @return {Function} A new function that is the equivalent of `f(g(x))`.
+     * @example
+     *
+     *      var double = function(x) { return x * 2; };
+     *      var square = function(x) { return x * x; };
+     *      var squareThenDouble = _compose(double, square);
+     *
+     *      squareThenDouble(5); //≅ double(square(5)) => 50
+     */
+    var _compose = function _compose(f, g) {
+        return function () {
+            return f.call(this, g.apply(this, arguments));
+        };
+    };
 
-    var xScale = d3.scale.ordinal()
-      .domain(d3.range(props.values.length))
-      .rangeRoundBands([0, props.width], props.padding);
+    /**
+     * Private `concat` function to merge two array-like objects.
+     *
+     * @private
+     * @param {Array|Arguments} [set1=[]] An array-like object.
+     * @param {Array|Arguments} [set2=[]] An array-like object.
+     * @return {Array} A new, merged array.
+     * @example
+     *
+     *      _concat([4, 5, 6], [1, 2, 3]); //=> [4, 5, 6, 1, 2, 3]
+     */
+    var _concat = function _concat(set1, set2) {
+        set1 = set1 || [];
+        set2 = set2 || [];
+        var idx;
+        var len1 = set1.length;
+        var len2 = set2.length;
+        var result = new Array(len1 + len2);
+        idx = -1;
+        while (++idx < len1) {
+            result[idx] = set1[idx];
+        }
+        idx = -1;
+        while (++idx < len2) {
+            result[len1 + idx] = set2[idx];
+        }
+        return result;
+    };
 
-    var bars = props.values.map(function(point, i) {
-      return (
-        React.createElement(Bar, {height: props.yScale(0) - props.yScale(point), width: xScale.rangeBand(), offset: xScale(i), availableHeight: props.height, fill: props.fill, key: i})
-      );
+    var _containsWith = function _containsWith(pred, x, list) {
+        var idx = -1, len = list.length;
+        while (++idx < len) {
+            if (pred(x, list[idx])) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    /**
+     * Create a function which takes a comparator function and a list
+     * and determines the winning value by a compatator. Used internally
+     * by `R.maxBy` and `R.minBy`
+     *
+     * @private
+     * @param {Function} compatator a function to compare two items
+     * @category Math
+     * @return {Function}
+     */
+    var _createMaxMinBy = function _createMaxMinBy(comparator) {
+        return function (valueComputer, list) {
+            if (!(list && list.length > 0)) {
+                return;
+            }
+            var idx = 0, winner = list[idx], computedWinner = valueComputer(winner), computedCurrent;
+            while (++idx < list.length) {
+                computedCurrent = valueComputer(list[idx]);
+                if (comparator(computedCurrent, computedWinner)) {
+                    computedWinner = computedCurrent;
+                    winner = list[idx];
+                }
+            }
+            return winner;
+        };
+    };
+
+    var _filter = function _filter(fn, list) {
+        var idx = -1, len = list.length, result = [];
+        while (++idx < len) {
+            if (fn(list[idx])) {
+                result[result.length] = list[idx];
+            }
+        }
+        return result;
+    };
+
+    var _filterIndexed = function _filterIndexed(fn, list) {
+        var idx = -1, len = list.length, result = [];
+        while (++idx < len) {
+            if (fn(list[idx], idx, list)) {
+                result[result.length] = list[idx];
+            }
+        }
+        return result;
+    };
+
+    // i can't bear not to return *something*
+    var _forEach = function _forEach(fn, list) {
+        var idx = -1, len = list.length;
+        while (++idx < len) {
+            fn(list[idx]);
+        }
+        // i can't bear not to return *something*
+        return list;
+    };
+
+    /**
+     * @private
+     * @param {Function} fn The strategy for extracting function names from an object
+     * @return {Function} A function that takes an object and returns an array of function names.
+     *
+     */
+    var _functionsWith = function _functionsWith(fn) {
+        return function (obj) {
+            return _filter(function (key) {
+                return typeof obj[key] === 'function';
+            }, fn(obj));
+        };
+    };
+
+    var _gt = function _gt(a, b) {
+        return a > b;
+    };
+
+    /**
+     * Internal implementation of `indexOf`.
+     * Returns the position of the first occurrence of an item in an array
+     * (by strict equality),
+     * or -1 if the item is not included in the array.
+     *
+     * @private
+     * @param {Array} list The array to search
+     * @param {*} item the item to find in the Array
+     * @param {Number} from (optional) the index to start searching the Array
+     * @return {Number} The index of the found item, or -1.
+     *
+     */
+    var _indexOf = function _indexOf(list, item, from) {
+        var idx = 0, len = list.length;
+        if (typeof from == 'number') {
+            idx = from < 0 ? Math.max(0, len + from) : from;
+        }
+        while (idx < len) {
+            if (list[idx] === item) {
+                return idx;
+            }
+            ++idx;
+        }
+        return -1;
+    };
+
+    /**
+     * Tests whether or not an object is an array.
+     *
+     * @private
+     * @param {*} val The object to test.
+     * @return {Boolean} `true` if `val` is an array, `false` otherwise.
+     * @example
+     *
+     *      _isArray([]); //=> true
+     *      _isArray(null); //=> false
+     *      _isArray({}); //=> false
+     */
+    var _isArray = Array.isArray || function _isArray(val) {
+        return val != null && val.length >= 0 && Object.prototype.toString.call(val) === '[object Array]';
+    };
+
+    /**
+     * Determine if the passed argument is an integer.
+     *
+     * @private
+     * @param {*} n
+     * @category Type
+     * @return {Boolean}
+     */
+    var _isInteger = Number.isInteger || function _isInteger(n) {
+        return n << 0 === n;
+    };
+
+    /**
+     * Tests if a value is a thenable (promise).
+     */
+    var _isThenable = function _isThenable(value) {
+        return value != null && value === Object(value) && typeof value.then === 'function';
+    };
+
+    /**
+     * Internal implementation of `lastIndexOf`.
+     * Returns the position of the last occurrence of an item in an array
+     * (by strict equality),
+     * or -1 if the item is not included in the array.
+     *
+     * @private
+     * @param {Array} list The array to search
+     * @param {*} item the item to find in the Array
+     * @param {Number} from (optional) the index to start searching the Array
+     * @return {Number} The index of the found item, or -1.
+     *
+     */
+    var _lastIndexOf = function _lastIndexOf(list, item, from) {
+        var idx = list.length;
+        if (typeof from == 'number') {
+            idx = from < 0 ? idx + from + 1 : Math.min(idx, from + 1);
+        }
+        while (--idx >= 0) {
+            if (list[idx] === item) {
+                return idx;
+            }
+        }
+        return -1;
+    };
+
+    var _lt = function _lt(a, b) {
+        return a < b;
+    };
+
+    var _map = function _map(fn, list) {
+        var idx = -1, len = list.length, result = new Array(len);
+        while (++idx < len) {
+            result[idx] = fn(list[idx]);
+        }
+        return result;
+    };
+
+    var _multiply = function _multiply(a, b) {
+        return a * b;
+    };
+
+    /**
+     * Creates an exception about calling a function with no arguments.
+     *
+     * @private
+     * @return {TypeError} A no arguments exception.
+     */
+    var _noArgsException = function _noArgsException() {
+        return new TypeError('Function called with no arguments');
+    };
+
+    var _nth = function _nth(n, list) {
+        return n < 0 ? list[list.length + n] : list[n];
+    };
+
+    /**
+     * @private
+     * @param {Function} fn The strategy for extracting keys from an object
+     * @return {Function} A function that takes an object and returns an array of
+     *         key-value arrays.
+     */
+    var _pairWith = function _pairWith(fn) {
+        return function (obj) {
+            return _map(function (key) {
+                return [
+                    key,
+                    obj[key]
+                ];
+            }, fn(obj));
+        };
+    };
+
+    /**
+     * internal path function
+     * Takes an array, paths, indicating the deep set of keys
+     * to find.
+     *
+     * @private
+     * @memberOf R
+     * @category Object
+     * @param {Array} paths An array of strings to map to object properties
+     * @param {Object} obj The object to find the path in
+     * @return {Array} The value at the end of the path or `undefined`.
+     * @example
+     *
+     *      _path(['a', 'b'], {a: {b: 2}}); //=> 2
+     */
+    var _path = function _path(paths, obj) {
+        var idx = -1, length = paths.length, val;
+        if (obj == null) {
+            return;
+        }
+        val = obj;
+        while (val != null && ++idx < length) {
+            val = val[paths[idx]];
+        }
+        return val;
+    };
+
+    /**
+     * Internal implementation of `pickAll`
+     *
+     * @private
+     * @see R.pickAll
+     */
+    var _pickAll = function _pickAll(names, obj) {
+        var copy = {};
+        _forEach(function (name) {
+            copy[name] = obj[name];
+        }, names);
+        return copy;
+    };
+
+    var _prepend = function _prepend(el, list) {
+        return _concat([el], list);
+    };
+
+    var _reduce = function _reduce(fn, acc, list) {
+        var idx = -1, len = list.length;
+        while (++idx < len) {
+            acc = fn(acc, list[idx]);
+        }
+        return acc;
+    };
+
+    /**
+     * internal helper for `where`
+     *
+     * @private
+     * @see R.where
+     */
+    var _satisfiesSpec = function _satisfiesSpec(spec, parsedSpec, testObj) {
+        if (spec === testObj) {
+            return true;
+        }
+        if (testObj == null) {
+            return false;
+        }
+        parsedSpec.fn = parsedSpec.fn || [];
+        parsedSpec.obj = parsedSpec.obj || [];
+        var key, val, idx = -1, fnLen = parsedSpec.fn.length, j = -1, objLen = parsedSpec.obj.length;
+        while (++idx < fnLen) {
+            key = parsedSpec.fn[idx];
+            val = spec[key];
+            if (!(key in testObj)) {
+                return false;
+            }
+            if (!val(testObj[key], testObj)) {
+                return false;
+            }
+        }
+        while (++j < objLen) {
+            key = parsedSpec.obj[j];
+            if (spec[key] !== testObj[key]) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    /**
+     * An optimized, private array `slice` implementation.
+     *
+     * @private
+     * @param {Arguments|Array} args The array or arguments object to consider.
+     * @param {Number} [from=0] The array index to slice from, inclusive.
+     * @param {Number} [to=args.length] The array index to slice to, exclusive.
+     * @return {Array} A new, sliced array.
+     * @example
+     *
+     *      _slice([1, 2, 3, 4, 5], 1, 3); //=> [2, 3]
+     *
+     *      var firstThreeArgs = function(a, b, c, d) {
+     *        return _slice(arguments, 0, 3);
+     *      };
+     *      firstThreeArgs(1, 2, 3, 4); //=> [1, 2, 3]
+     */
+    var _slice = function _slice(args, from, to) {
+        switch (arguments.length) {
+        case 0:
+            throw _noArgsException();
+        case 1:
+            return _slice(args, 0, args.length);
+        case 2:
+            return _slice(args, from, args.length);
+        default:
+            var length = Math.max(0, to - from), list = new Array(length), idx = -1;
+            while (++idx < length) {
+                list[idx] = args[from + idx];
+            }
+            return list;
+        }
+    };
+
+    /**
+     * Returns a function that always returns the given value.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig a -> (* -> a)
+     * @param {*} val The value to wrap in a function
+     * @return {Function} A Function :: * -> val.
+     * @example
+     *
+     *      var t = R.always('Tee');
+     *      t(); //=> 'Tee'
+     */
+    var always = function always(val) {
+        return function () {
+            return val;
+        };
+    };
+
+    /**
+     * Wraps a function of any arity (including nullary) in a function that accepts exactly `n`
+     * parameters. Unlike `nAry`, which passes only `n` arguments to the wrapped function,
+     * functions produced by `arity` will pass all provided arguments to the wrapped function.
+     *
+     * @func
+     * @memberOf R
+     * @sig (Number, (* -> *)) -> (* -> *)
+     * @category Function
+     * @param {Number} n The desired arity of the returned function.
+     * @param {Function} fn The function to wrap.
+     * @return {Function} A new function wrapping `fn`. The new function is
+     *         guaranteed to be of arity `n`.
+     * @example
+     *
+     *      var takesTwoArgs = function(a, b) {
+     *        return [a, b];
+     *      };
+     *      takesTwoArgs.length; //=> 2
+     *      takesTwoArgs(1, 2); //=> [1, 2]
+     *
+     *      var takesOneArg = R.arity(1, takesTwoArgs);
+     *      takesOneArg.length; //=> 1
+     *      // All arguments are passed through to the wrapped function
+     *      takesOneArg(1, 2); //=> [1, 2]
+     */
+    var arity = function (n, fn) {
+        switch (n) {
+        case 0:
+            return function () {
+                return fn.apply(this, arguments);
+            };
+        case 1:
+            return function (a0) {
+                void a0;
+                return fn.apply(this, arguments);
+            };
+        case 2:
+            return function (a0, a1) {
+                void a1;
+                return fn.apply(this, arguments);
+            };
+        case 3:
+            return function (a0, a1, a2) {
+                void a2;
+                return fn.apply(this, arguments);
+            };
+        case 4:
+            return function (a0, a1, a2, a3) {
+                void a3;
+                return fn.apply(this, arguments);
+            };
+        case 5:
+            return function (a0, a1, a2, a3, a4) {
+                void a4;
+                return fn.apply(this, arguments);
+            };
+        case 6:
+            return function (a0, a1, a2, a3, a4, a5) {
+                void a5;
+                return fn.apply(this, arguments);
+            };
+        case 7:
+            return function (a0, a1, a2, a3, a4, a5, a6) {
+                void a6;
+                return fn.apply(this, arguments);
+            };
+        case 8:
+            return function (a0, a1, a2, a3, a4, a5, a6, a7) {
+                void a7;
+                return fn.apply(this, arguments);
+            };
+        case 9:
+            return function (a0, a1, a2, a3, a4, a5, a6, a7, a8) {
+                void a8;
+                return fn.apply(this, arguments);
+            };
+        case 10:
+            return function (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) {
+                void a9;
+                return fn.apply(this, arguments);
+            };
+        default:
+            throw new Error('First argument to arity must be a non-negative integer no greater than ten');
+        }
+    };
+
+    /**
+     * Returns the result of calling its first argument with the remaining
+     * arguments. This is occasionally useful as a converging function for
+     * `R.converge`: the left branch can produce a function while the right
+     * branch produces a value to be passed to that function as an argument.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (*... -> a),*... -> a
+     * @param {Function} fn The function to apply to the remaining arguments.
+     * @param {...*} args Any number of positional arguments.
+     * @return {*}
+     * @example
+     *
+     *      var indentN = R.pipe(R.times(R.always(' ')),
+     *                           R.join(''),
+     *                           R.replace(/^(?!$)/gm));
+     *
+     *      var format = R.converge(R.call,
+     *                              R.pipe(R.prop('indent'), indentN),
+     *                              R.prop('value'));
+     *
+     *      format({indent: 2, value: 'foo\nbar\nbaz\n'}); //=> '  foo\n  bar\n  baz\n'
+     */
+    var call = function call(fn) {
+        return fn.apply(this, _slice(arguments, 1));
+    };
+
+    /**
+     * Makes a comparator function out of a function that reports whether the first element is less than the second.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (a, b -> Boolean) -> (a, b -> Number)
+     * @param {Function} pred A predicate function of arity two.
+     * @return {Function} A Function :: a -> b -> Int that returns `-1` if a < b, `1` if b < a, otherwise `0`.
+     * @example
+     *
+     *      var cmp = R.comparator(function(a, b) {
+     *        return a.age < b.age;
+     *      });
+     *      var people = [
+     *        // ...
+     *      ];
+     *      R.sort(cmp, people);
+     */
+    var comparator = function comparator(pred) {
+        return function (a, b) {
+            return pred(a, b) ? -1 : pred(b, a) ? 1 : 0;
+        };
+    };
+
+    /**
+     * Returns a function, `fn`, which encapsulates if/else-if/else logic.
+     * Each argument to `R.cond` is a [predicate, transform] pair. All of
+     * the arguments to `fn` are applied to each of the predicates in turn
+     * until one returns a "truthy" value, at which point `fn` returns the
+     * result of applying its arguments to the corresponding transformer.
+     * If none of the predicates matches, `fn` returns undefined.
+     *
+     * @func
+     * @memberOf R
+     * @category Logic
+     * @sig [(*... -> Boolean),(*... -> *)]... -> (*... -> *)
+     * @param {...Function} functions
+     * @return {Function}
+     * @example
+     *
+     *      var fn = R.cond(
+     *          [R.eq(0),   R.always('water freezes at 0°C')],
+     *          [R.eq(100), R.always('water boils at 100°C')],
+     *          [R.T,       function(temp) { return 'nothing special happens at ' + temp + '°C'; }]
+     *      );
+     *      fn(0); //=> 'water freezes at 0°C'
+     *      fn(50); //=> 'nothing special happens at 50°C'
+     *      fn(100); //=> 'water boils at 100°C'
+     */
+    var cond = function cond() {
+        var pairs = arguments;
+        return function () {
+            var idx = -1;
+            while (++idx < pairs.length) {
+                if (pairs[idx][0].apply(this, arguments)) {
+                    return pairs[idx][1].apply(this, arguments);
+                }
+            }
+        };
+    };
+
+    /**
+     * Accepts at least three functions and returns a new function. When invoked, this new
+     * function will invoke the first function, `after`, passing as its arguments the
+     * results of invoking the subsequent functions with whatever arguments are passed to
+     * the new function.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig ((*... -> c) -> (((* -> a), (* -> b), ...) -> c)
+     * @param {Function} after A function. `after` will be invoked with the return values of
+     *        `fn1` and `fn2` as its arguments.
+     * @param {...Function} functions A variable number of functions.
+     * @return {Function} A new function.
+     * @example
+     *
+     *      var add = function(a, b) { return a + b; };
+     *      var multiply = function(a, b) { return a * b; };
+     *      var subtract = function(a, b) { return a - b; };
+     *
+     *      //≅ multiply( add(1, 2), subtract(1, 2) );
+     *      R.converge(multiply, add, subtract)(1, 2); //=> -3
+     *
+     *      var add3 = function(a, b, c) { return a + b + c; };
+     *      R.converge(add3, multiply, add, subtract)(1, 2); //=> 4
+     */
+    var converge = function (after) {
+        var fns = _slice(arguments, 1);
+        return function () {
+            var args = arguments;
+            return after.apply(this, _map(function (fn) {
+                return fn.apply(this, args);
+            }, fns));
+        };
+    };
+
+    /**
+     * Returns a new function much like the supplied one, except that the first two arguments'
+     * order is reversed.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (a -> b -> c -> ... -> z) -> (b -> a -> c -> ... -> z)
+     * @param {Function} fn The function to invoke with its first two parameters reversed.
+     * @return {*} The result of invoking `fn` with its first two parameters' order reversed.
+     * @example
+     *
+     *      var mergeThree = function(a, b, c) {
+     *        return ([]).concat(a, b, c);
+     *      };
+     *
+     *      mergeThree(1, 2, 3); //=> [1, 2, 3]
+     *
+     *      R.flip(mergeThree)(1, 2, 3); //=> [2, 1, 3]
+     */
+    var flip = function flip(fn) {
+        return function (a, b) {
+            switch (arguments.length) {
+            case 0:
+                throw _noArgsException();
+            case 1:
+                return function (b) {
+                    return fn.apply(this, [
+                        b,
+                        a
+                    ].concat(_slice(arguments, 1)));
+                };
+            default:
+                return fn.apply(this, _concat([
+                    b,
+                    a
+                ], _slice(arguments, 2)));
+            }
+        };
+    };
+
+    /**
+     * Creates a new object out of a list key-value pairs.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [[k,v]] -> {k: v}
+     * @param {Array} pairs An array of two-element arrays that will be the keys and values of the output object.
+     * @return {Object} The object made by pairing up `keys` and `values`.
+     * @example
+     *
+     *      R.fromPairs([['a', 1], ['b', 2],  ['c', 3]]); //=> {a: 1, b: 2, c: 3}
+     */
+    var fromPairs = function fromPairs(pairs) {
+        var idx = -1, len = pairs.length, out = {};
+        while (++idx < len) {
+            if (_isArray(pairs[idx]) && pairs[idx].length) {
+                out[pairs[idx][0]] = pairs[idx][1];
+            }
+        }
+        return out;
+    };
+
+    /**
+     * Calls the specified function on the supplied object. Any additional arguments
+     * after `fn` and `obj` are passed in to `fn`. If no additional arguments are passed to `func`,
+     * `fn` is invoked with no arguments.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig k -> {k : v} -> v(*)
+     * @param {String} funcName The name of the property mapped to the function to invoke
+     * @param {Object} obj The object
+     * @return {*} The value of invoking `obj.fn`.
+     * @example
+     *
+     *      R.func('add', R, 1, 2); //=> 3
+     *
+     *      var obj = { f: function() { return 'f called'; } };
+     *      R.func('f', obj); //=> 'f called'
+     */
+    var func = function func(funcName, obj) {
+        switch (arguments.length) {
+        case 0:
+            throw _noArgsException();
+        case 1:
+            return function (obj) {
+                return obj[funcName].apply(obj, _slice(arguments, 1));
+            };
+        default:
+            return obj[funcName].apply(obj, _slice(arguments, 2));
+        }
+    };
+
+    /**
+     * A function that does nothing but return the parameter supplied to it. Good as a default
+     * or placeholder function.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig a -> a
+     * @param {*} x The value to return.
+     * @return {*} The input value, `x`.
+     * @example
+     *
+     *      R.identity(1); //=> 1
+     *
+     *      var obj = {};
+     *      R.identity(obj) === obj; //=> true
+     */
+    var identity = function identity(x) {
+        return x;
+    };
+
+    /**
+     * Tests whether or not an object is similar to an array.
+     *
+     * @func
+     * @memberOf R
+     * @category Type
+     * @category List
+     * @param {*} x The object to test.
+     * @return {Boolean} `true` if `x` has a numeric length property and extreme indices defined; `false` otherwise.
+     * @example
+     *
+     *      R.isArrayLike([]); //=> true
+     *      R.isArrayLike(true); //=> false
+     *      R.isArrayLike({}); //=> false
+     *      R.isArrayLike({length: 10}); //=> false
+     *      R.isArrayLike({0: 'zero', 9: 'nine', length: 10}); //=> true
+     */
+    var isArrayLike = function isArrayLike(x) {
+        if (_isArray(x)) {
+            return true;
+        }
+        if (!x) {
+            return false;
+        }
+        if (typeof x !== 'object') {
+            return false;
+        }
+        if (x instanceof String) {
+            return false;
+        }
+        if (x.nodeType === 1) {
+            return !!x.length;
+        }
+        if (x.length === 0) {
+            return true;
+        }
+        if (x.length > 0) {
+            return x.hasOwnProperty(0) && x.hasOwnProperty(x.length - 1);
+        }
+        return false;
+    };
+
+    /**
+     * Reports whether the list has zero elements.
+     *
+     * @func
+     * @memberOf R
+     * @category Logic
+     * @sig [a] -> Boolean
+     * @param {Array} list
+     * @return {Boolean}
+     * @example
+     *
+     *      R.isEmpty([1, 2, 3]); //=> false
+     *      R.isEmpty([]); //=> true
+     *      R.isEmpty(''); //=> true
+     *      R.isEmpty(null); //=> false
+     */
+    var isEmpty = function isEmpty(list) {
+        return Object(list).length === 0;
+    };
+
+    /**
+     * Checks if the input value is `null` or `undefined`.
+     *
+     * @func
+     * @memberOf R
+     * @category Type
+     * @sig * -> Boolean
+     * @param {*} x The value to test.
+     * @return {Boolean} `true` if `x` is `undefined` or `null`, otherwise `false`.
+     * @example
+     *
+     *     R.isNil(null); //=> true
+     *     R.isNil(undefined); //=> true
+     *     R.isNil(0); //=> false
+     *     R.isNil([]); //=> false
+     */
+    var isNil = function isNil(x) {
+        return x == null;
+    };
+
+    /**
+     * Returns `true` if all elements are unique, otherwise `false`.
+     * Uniqueness is determined using strict equality (`===`).
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> Boolean
+     * @param {Array} list The array to consider.
+     * @return {Boolean} `true` if all elements are unique, else `false`.
+     * @example
+     *
+     *      R.isSet(['1', 1]); //=> true
+     *      R.isSet([1, 1]);   //=> false
+     *      R.isSet([{}, {}]); //=> true
+     */
+    var isSet = function isSet(list) {
+        var len = list.length;
+        var idx = -1;
+        while (++idx < len) {
+            if (_indexOf(list, list[idx], idx + 1) >= 0) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    /**
+     * Returns a list containing the names of all the
+     * properties of the supplied object, including prototype properties.
+     * Note that the order of the output array is not guaranteed to be
+     * consistent across different JS platforms.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {k: v} -> [k]
+     * @param {Object} obj The object to extract properties from
+     * @return {Array} An array of the object's own and prototype properties.
+     * @example
+     *
+     *      var F = function() { this.x = 'X'; };
+     *      F.prototype.y = 'Y';
+     *      var f = new F();
+     *      R.keysIn(f); //=> ['x', 'y']
+     */
+    var keysIn = function keysIn(obj) {
+        var prop, ks = [];
+        for (prop in obj) {
+            ks[ks.length] = prop;
+        }
+        return ks;
+    };
+
+    /**
+     * Wraps a function of any arity (including nullary) in a function that accepts exactly `n`
+     * parameters. Any extraneous parameters will not be passed to the supplied function.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig Number -> (* -> a) -> (* -> a)
+     * @param {Number} n The desired arity of the new function.
+     * @param {Function} fn The function to wrap.
+     * @return {Function} A new function wrapping `fn`. The new function is guaranteed to be of
+     *         arity `n`.
+     * @example
+     *
+     *      var takesTwoArgs = function(a, b) {
+     *        return [a, b];
+     *      };
+     *      takesTwoArgs.length; //=> 2
+     *      takesTwoArgs(1, 2); //=> [1, 2]
+     *
+     *      var takesOneArg = R.nAry(1, takesTwoArgs);
+     *      takesOneArg.length; //=> 1
+     *      // Only `n` arguments are passed to the wrapped function
+     *      takesOneArg(1, 2); //=> [1, undefined]
+     */
+    var nAry = function (n, fn) {
+        switch (n) {
+        case 0:
+            return function () {
+                return fn.call(this);
+            };
+        case 1:
+            return function (a0) {
+                return fn.call(this, a0);
+            };
+        case 2:
+            return function (a0, a1) {
+                return fn.call(this, a0, a1);
+            };
+        case 3:
+            return function (a0, a1, a2) {
+                return fn.call(this, a0, a1, a2);
+            };
+        case 4:
+            return function (a0, a1, a2, a3) {
+                return fn.call(this, a0, a1, a2, a3);
+            };
+        case 5:
+            return function (a0, a1, a2, a3, a4) {
+                return fn.call(this, a0, a1, a2, a3, a4);
+            };
+        case 6:
+            return function (a0, a1, a2, a3, a4, a5) {
+                return fn.call(this, a0, a1, a2, a3, a4, a5);
+            };
+        case 7:
+            return function (a0, a1, a2, a3, a4, a5, a6) {
+                return fn.call(this, a0, a1, a2, a3, a4, a5, a6);
+            };
+        case 8:
+            return function (a0, a1, a2, a3, a4, a5, a6, a7) {
+                return fn.call(this, a0, a1, a2, a3, a4, a5, a6, a7);
+            };
+        case 9:
+            return function (a0, a1, a2, a3, a4, a5, a6, a7, a8) {
+                return fn.call(this, a0, a1, a2, a3, a4, a5, a6, a7, a8);
+            };
+        case 10:
+            return function (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) {
+                return fn.call(this, a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+            };
+        default:
+            throw new Error('First argument to nAry must be a non-negative integer no greater than ten');
+        }
+    };
+
+    /**
+     * A function wrapping a call to the given function in a `!` operation.  It will return `true` when the
+     * underlying function would return a false-y value, and `false` when it would return a truth-y one.
+     *
+     * @func
+     * @memberOf R
+     * @category Logic
+     * @sig (*... -> Boolean) -> (*... -> Boolean)
+     * @param {Function} f a predicate
+     * @return {Function} a function that applies its arguments to `f` and logically inverts its output.
+     * @example
+     *
+     *      var gt10 = function(x) { return x > 10; };
+     *      var f = R.not(gt10);
+     *      f(11); //=> false
+     *      f(9); //=> true
+     */
+    var not = function not(f) {
+        return function () {
+            return !f.apply(this, arguments);
+        };
+    };
+
+    /**
+     * Returns a function which returns its nth argument.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig Number -> *... -> *
+     * @param {Number} n
+     * @return {Function}
+     * @example
+     *
+     *      R.nthArg(1)('a', 'b', 'c'); //=> 'b'
+     *      R.nthArg(-1)('a', 'b', 'c'); //=> 'c'
+     */
+    var nthArg = function nthArg(n) {
+        return function () {
+            return _nth(n, arguments);
+        };
+    };
+
+    /**
+     * Returns a singleton array containing the value provided.
+     *
+     * Note this `of` is different from the ES6 `of`; See
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/of
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig a -> [a]
+     * @param {*} x any value
+     * @return {Array} An array wrapping `x`.
+     * @example
+     *
+     *      R.of(null); //=> [null]
+     *      R.of([42]); //=> [[42]]
+     */
+    var of = function of(x) {
+        return [x];
+    };
+
+    /**
+     * Accepts a function `fn` and returns a function that guards invocation of `fn` such that
+     * `fn` can only ever be called once, no matter how many times the returned function is
+     * invoked.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (a... -> b) -> (a... -> b)
+     * @param {Function} fn The function to wrap in a call-only-once wrapper.
+     * @return {Function} The wrapped function.
+     * @example
+     *
+     *      var addOneOnce = R.once(function(x){ return x + 1; });
+     *      addOneOnce(10); //=> 11
+     *      addOneOnce(addOneOnce(50)); //=> 11
+     */
+    var once = function once(fn) {
+        var called = false, result;
+        return function () {
+            if (called) {
+                return result;
+            }
+            called = true;
+            result = fn.apply(this, arguments);
+            return result;
+        };
+    };
+
+    /**
+     * Flipped version of R.prepend.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> a -> [a]
+     * @param {Array} list
+     * @param {*} el
+     * @return {Array}
+     * @example
+     *
+     *      R.prependTo(['fi', 'fo', 'fum'], 'fee'); //=> ['fee', 'fi', 'fo', 'fum']
+     */
+    var prependTo = flip(_prepend);
+
+    /**
+     * Returns a function that when supplied an object returns the indicated property of that object, if it exists.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig s -> {s: a} -> a
+     * @param {String} p The property name
+     * @param {Object} obj The object to query
+     * @return {*} The value at `obj.p`.
+     * @example
+     *
+     *      R.prop('x', {x: 100}); //=> 100
+     *      R.prop('x', {}); //=> undefined
+     */
+    var prop = function prop(p, obj) {
+        switch (arguments.length) {
+        case 0:
+            throw _noArgsException();
+        case 1:
+            return function _prop(obj) {
+                return obj[p];
+            };
+        }
+        return obj[p];
+    };
+
+    /**
+     * Returns the value at the specified property.
+     * The only difference from `prop` is the parameter order.
+     *
+     * @func
+     * @memberOf R
+     * @see R.prop
+     * @category Object
+     * @sig {k: v} -> k -> v
+     * @param {Object} obj The object to query
+     * @param {String} p The property name
+     * @return {*} The value at `obj.p`.
+     * @example
+     *
+     *      R.propOf({x: 100}, 'x'); //=> 100
+     */
+    var propOf = flip(prop);
+
+    /**
+     * Returns a new list with the same elements as the original list, just
+     * in the reverse order.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> [a]
+     * @param {Array} list The list to reverse.
+     * @return {Array} A copy of the list in reverse order.
+     * @example
+     *
+     *      R.reverse([1, 2, 3]);  //=> [3, 2, 1]
+     *      R.reverse([1, 2]);     //=> [2, 1]
+     *      R.reverse([1]);        //=> [1]
+     *      R.reverse([]);         //=> []
+     */
+    var reverse = function reverse(list) {
+        return _slice(list).reverse();
+    };
+
+    /**
+     * Converts an object into an array of key, value arrays.
+     * The object's own properties and prototype properties are used.
+     * Note that the order of the output array is not guaranteed to be
+     * consistent across different JS platforms.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {k: v} -> [[k,v]]
+     * @param {Object} obj The object to extract from
+     * @return {Array} An array of key, value arrays from the object's own
+     *         and prototype properties.
+     * @example
+     *
+     *      var F = function() { this.x = 'X'; };
+     *      F.prototype.y = 'Y';
+     *      var f = new F();
+     *      R.toPairsIn(f); //=> [['x','X'], ['y','Y']]
+     */
+    var toPairsIn = _pairWith(keysIn);
+
+    /**
+     * Removes (strips) whitespace from both ends of the string.
+     *
+     * @func
+     * @memberOf R
+     * @category String
+     * @sig String -> String
+     * @param {String} str The string to trim.
+     * @return {String} Trimmed version of `str`.
+     * @example
+     *
+     *      R.trim('   xyz  '); //=> 'xyz'
+     *      R.map(R.trim, R.split(',', 'x, y, z')); //=> ['x', 'y', 'z']
+     */
+    var trim = function () {
+        var ws = '\t\n\x0B\f\r \xA0\u1680\u180E\u2000\u2001\u2002\u2003' + '\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028' + '\u2029\uFEFF';
+        var zeroWidth = '\u200B';
+        var hasProtoTrim = typeof String.prototype.trim === 'function';
+        if (!hasProtoTrim || (ws.trim() || !zeroWidth.trim())) {
+            return function trim(str) {
+                var beginRx = new RegExp('^[' + ws + '][' + ws + ']*');
+                var endRx = new RegExp('[' + ws + '][' + ws + ']*$');
+                return str.replace(beginRx, '').replace(endRx, '');
+            };
+        } else {
+            return function trim(str) {
+                return str.trim();
+            };
+        }
+    }();
+
+    /**
+     * Gives a single-word string description of the (native) type of a value, returning such
+     * answers as 'Object', 'Number', 'Array', or 'Null'.  Does not attempt to distinguish user
+     * Object types any further, reporting them all as 'Object'.
+     *
+     * @func
+     * @memberOf R
+     * @category Type
+     * @sig (* -> {*}) -> String
+     * @param {*} val The value to test
+     * @return {String}
+     * @example
+     *
+     *      R.type({}); //=> "Object"
+     *      R.type(1); //=> "Number"
+     *      R.type(false); //=> "Boolean"
+     *      R.type('s'); //=> "String"
+     *      R.type(null); //=> "Null"
+     *      R.type([]); //=> "Array"
+     *      R.type(/[A-z]/); //=> "RegExp"
+     */
+    var type = function type(val) {
+        return val === null ? 'Null' : val === undefined ? 'Undefined' : Object.prototype.toString.call(val).slice(8, -1);
+    };
+
+    /**
+     * Takes a function `fn`, which takes a single array argument, and returns
+     * a function which:
+     *
+     *   - takes any number of positional arguments;
+     *   - passes these arguments to `fn` as an array; and
+     *   - returns the result.
+     *
+     * In other words, R.unapply derives a variadic function from a function
+     * which takes an array. R.unapply is the inverse of R.apply.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig ([*...] -> a) -> (*... -> a)
+     * @param {Function} fn
+     * @return {Function}
+     * @see R.apply
+     * @example
+     *
+     *      R.unapply(JSON.stringify)(1, 2, 3); //=> '[1,2,3]'
+     */
+    var unapply = function unapply(fn) {
+        if (arguments.length === 0) {
+            throw _noArgsException();
+        }
+        return function () {
+            return fn(_slice(arguments));
+        };
+    };
+
+    /**
+     * Wraps a function of any arity (including nullary) in a function that accepts exactly 1
+     * parameter. Any extraneous parameters will not be passed to the supplied function.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (* -> b) -> (a -> b)
+     * @param {Function} fn The function to wrap.
+     * @return {Function} A new function wrapping `fn`. The new function is guaranteed to be of
+     *         arity 1.
+     * @example
+     *
+     *      var takesTwoArgs = function(a, b) {
+     *        return [a, b];
+     *      };
+     *      takesTwoArgs.length; //=> 2
+     *      takesTwoArgs(1, 2); //=> [1, 2]
+     *
+     *      var takesOneArg = R.unary(takesTwoArgs);
+     *      takesOneArg.length; //=> 1
+     *      // Only 1 argument is passed to the wrapped function
+     *      takesOneArg(1, 2); //=> [1, undefined]
+     */
+    var unary = function unary(fn) {
+        return nAry(1, fn);
+    };
+
+    /**
+     * Returns a list of all the properties, including prototype properties,
+     * of the supplied object.
+     * Note that the order of the output array is not guaranteed to be
+     * consistent across different JS platforms.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {k: v} -> [v]
+     * @param {Object} obj The object to extract values from
+     * @return {Array} An array of the values of the object's own and prototype properties.
+     * @example
+     *
+     *      var F = function() { this.x = 'X'; };
+     *      F.prototype.y = 'Y';
+     *      var f = new F();
+     *      R.valuesIn(f); //=> ['X', 'Y']
+     */
+    var valuesIn = function valuesIn(obj) {
+        var prop, vs = [];
+        for (prop in obj) {
+            vs[vs.length] = obj[prop];
+        }
+        return vs;
+    };
+
+    /**
+     * A function that always returns `false`. Any passed in parameters are ignored.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig * -> false
+     * @see R.always
+     * @return {Boolean} false
+     * @example
+     *
+     *      R.F(); //=> false
+     */
+    var F = always(false);
+
+    /**
+     * @func
+     * @memberOf R
+     * @category Function
+     * @see R.identity
+     */
+    var I = identity;
+
+    /**
+     * A function that always returns `true`. Any passed in parameters are ignored.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig * -> true
+     * @see R.always
+     * @return {Boolean} `true`.
+     * @example
+     *
+     *      R.T(); //=> true
+     */
+    var T = always(true);
+
+    var _append = function _append(el, list) {
+        return _concat(list, [el]);
+    };
+
+    /**
+     * Copies an object.
+     *
+     * @private
+     * @param {*} value The value to be copied
+     * @param {Array} refFrom Array containing the source references
+     * @param {Array} refTo Array containing the copied source references
+     * @return {*} The copied value.
+     */
+    var _baseCopy = function _baseCopy(value, refFrom, refTo) {
+        var copy = function copy(copiedValue) {
+            var len = refFrom.length;
+            var idx = -1;
+            while (++idx < len) {
+                if (value === refFrom[idx]) {
+                    return refTo[idx];
+                }
+            }
+            refFrom[refFrom.length] = value;
+            refTo[refTo.length] = copiedValue;
+            for (var key in value) {
+                copiedValue[key] = _baseCopy(value[key], refFrom, refTo);
+            }
+            return copiedValue;
+        };
+        switch (type(value)) {
+        case 'Object':
+            return copy({});
+        case 'Array':
+            return copy([]);
+        case 'Date':
+            return new Date(value);
+        default:
+            return value;
+        }
+    };
+
+    /**
+     * Similar to hasMethod, this checks whether a function has a [methodname]
+     * function. If it isn't an array it will execute that function otherwise it will
+     * default to the ramda implementation.
+     *
+     * @private
+     * @param {Function} fn ramda implemtation
+     * @param {String} methodname property to check for a custom implementation
+     * @return {Object} Whatever the return value of the method is.
+     */
+    var _checkForMethod = function _checkForMethod(methodname, fn) {
+        return function (a, b, c) {
+            var length = arguments.length;
+            var obj = arguments[length - 1], callBound = obj && !_isArray(obj) && typeof obj[methodname] === 'function';
+            switch (arguments.length) {
+            case 0:
+                return fn();
+            case 1:
+                return callBound ? obj[methodname]() : fn(a);
+            case 2:
+                return callBound ? obj[methodname](a) : fn(a, b);
+            case 3:
+                return callBound ? obj[methodname](a, b) : fn(a, b, c);
+            }
+        };
+    };
+
+    /**
+     * A right-associative two-argument composition function like `_compose`
+     * but with automatic handling of promises (or, more precisely,
+     * "thenables"). This function is used to construct a more general
+     * `composeP` function, which accepts any number of arguments.
+     *
+     * @private
+     * @category Function
+     * @param {Function} f A function.
+     * @param {Function} g A function.
+     * @return {Function} A new function that is the equivalent of `f(g(x))`.
+     * @example
+     *
+     *      var Q = require('q');
+     *      var double = function(x) { return x * 2; };
+     *      var squareAsync = function(x) { return Q.when(x * x); };
+     *      var squareAsyncThenDouble = _composeP(double, squareAsync);
+     *
+     *      squareAsyncThenDouble(5)
+     *          .then(function(result) {
+     *            // the result is now 50.
+     *          });
+     */
+    var _composeP = function _composeP(f, g) {
+        return function () {
+            var context = this;
+            var value = g.apply(this, arguments);
+            if (_isThenable(value)) {
+                return value.then(function (result) {
+                    return f.call(context, result);
+                });
+            } else {
+                return f.call(this, value);
+            }
+        };
+    };
+
+    var _contains = function _contains(a, list) {
+        return _indexOf(list, a) >= 0;
+    };
+
+    /*
+     * Returns a function that makes a multi-argument version of compose from
+     * either _compose or _composeP.
+     */
+    var _createComposer = function _createComposer(composeFunction) {
+        return function () {
+            switch (arguments.length) {
+            case 0:
+                throw _noArgsException();
+            case 1:
+                return arguments[0];
+            default:
+                var idx = arguments.length - 1, fn = arguments[idx], length = fn.length;
+                while (idx--) {
+                    fn = composeFunction(arguments[idx], fn);
+                }
+                return arity(length, fn);
+            }
+        };
+    };
+
+    /**
+     * Create a function which takes a a list
+     * and determines the winning value by a compatator. Used internally
+     * by `R.max` and `R.min`
+     *
+     * @private
+     * @param {Function} compatator a function to compare two items
+     * @param {*} intialVal, default value if nothing else wins
+     * @category Math
+     * @return {Function}
+     */
+    var _createMaxMin = function _createMaxMin(comparator, initialVal) {
+        return function (list) {
+            if (arguments.length === 0) {
+                throw _noArgsException();
+            }
+            var idx = -1, winner = initialVal, computed;
+            while (++idx < list.length) {
+                computed = +list[idx];
+                if (comparator(computed, winner)) {
+                    winner = computed;
+                }
+            }
+            return winner;
+        };
+    };
+
+    var _createPartialApplicator = function _createPartialApplicator(concat) {
+        return function (fn) {
+            var args = _slice(arguments, 1);
+            return arity(Math.max(0, fn.length - args.length), function () {
+                return fn.apply(this, concat(args, arguments));
+            });
+        };
+    };
+
+    /**
+     * Optimized internal two-arity curry function.
+     *
+     * @private
+     * @category Function
+     * @param {Function} fn The function to curry.
+     * @return {Function} The curried function.
+     * @example
+     *
+     *      var addTwo = function(a, b) {
+     *        return a + b;
+     *      };
+     *
+     *      var curriedAddTwo = _curry2(addTwo);
+     */
+    var _curry2 = function _curry2(fn) {
+        return function (a, b) {
+            switch (arguments.length) {
+            case 0:
+                throw _noArgsException();
+            case 1:
+                return function (b) {
+                    return fn(a, b);
+                };
+            default:
+                return fn(a, b);
+            }
+        };
+    };
+
+    /**
+     * Optimized internal three-arity curry function.
+     *
+     * @private
+     * @category Function
+     * @param {Function} fn The function to curry.
+     * @return {Function} The curried function.
+     * @example
+     *
+     *      var addThree = function(a, b, c) {
+     *        return a + b + c;
+     *      };
+     *
+     *      var curriedAddThree = _curry3(addThree);
+     */
+    var _curry3 = function _curry3(fn) {
+        return function (a, b, c) {
+            switch (arguments.length) {
+            case 0:
+                throw _noArgsException();
+            case 1:
+                return _curry2(function (b, c) {
+                    return fn(a, b, c);
+                });
+            case 2:
+                return function (c) {
+                    return fn(a, b, c);
+                };
+            default:
+                return fn(a, b, c);
+            }
+        };
+    };
+
+    /**
+     * Private function that determines whether or not a provided object has a given method.
+     * Does not ignore methods stored on the object's prototype chain. Used for dynamically
+     * dispatching Ramda methods to non-Array objects.
+     *
+     * @private
+     * @param {String} methodName The name of the method to check for.
+     * @param {Object} obj The object to test.
+     * @return {Boolean} `true` has a given method, `false` otherwise.
+     * @example
+     *
+     *      var person = { name: 'John' };
+     *      person.shout = function() { alert(this.name); };
+     *
+     *      _hasMethod('shout', person); //=> true
+     *      _hasMethod('foo', person); //=> false
+     */
+    var _hasMethod = function _hasMethod(methodName, obj) {
+        return obj != null && !_isArray(obj) && typeof obj[methodName] === 'function';
+    };
+
+    /**
+     * `_makeFlat` is a helper function that returns a one-level or fully recursive function
+     * based on the flag passed in.
+     *
+     * @private
+     */
+    var _makeFlat = function _makeFlat(recursive) {
+        return function flatt(list) {
+            var value, result = [], idx = -1, j, ilen = list.length, jlen;
+            while (++idx < ilen) {
+                if (isArrayLike(list[idx])) {
+                    value = recursive ? flatt(list[idx]) : list[idx];
+                    j = -1;
+                    jlen = value.length;
+                    while (++j < jlen) {
+                        result[result.length] = value[j];
+                    }
+                } else {
+                    result[result.length] = list[idx];
+                }
+            }
+            return result;
+        };
+    };
+
+    /**
+     * Internal helper function for making a partial copy of an object
+     *
+     * @private
+     *
+     */
+    var _pickBy = function _pickBy(test, obj) {
+        var copy = {};
+        var prop;
+        var props = keysIn(obj);
+        var len = props.length;
+        var idx = -1;
+        while (++idx < len) {
+            prop = props[idx];
+            if (test(obj[prop], prop, obj)) {
+                copy[prop] = obj[prop];
+            }
+        }
+        return copy;
+    };
+
+    var _pluck = function _pluck(p, list) {
+        return _map(prop(p), list);
+    };
+
+    /**
+     * Adds two numbers (or strings). Equivalent to `a + b` but curried.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig Number -> Number -> Number
+     * @sig String -> String -> String
+     * @param {Number|String} a The first value.
+     * @param {Number|String} b The second value.
+     * @return {Number|String} The result of `a + b`.
+     * @example
+     *
+     *      var increment = R.add(1);
+     *      increment(10);   //=> 11
+     *      R.add(2, 3);       //=>  5
+     *      R.add(7)(10);      //=> 17
+     */
+    var add = _curry2(_add);
+
+    /**
+     * Returns `true` if all elements of the list match the predicate, `false` if there are any
+     * that don't.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> Boolean) -> [a] -> Boolean
+     * @param {Function} fn The predicate function.
+     * @param {Array} list The array to consider.
+     * @return {Boolean} `true` if the predicate is satisfied by every element, `false`
+     *         otherwise.
+     * @example
+     *
+     *      var lessThan2 = R.flip(R.lt)(2);
+     *      var lessThan3 = R.flip(R.lt)(3);
+     *      var xs = R.range(1, 3);
+     *      xs; //=> [1, 2]
+     *      R.all(lessThan2)(xs); //=> false
+     *      R.all(lessThan3)(xs); //=> true
+     */
+    var all = _curry2(_all);
+
+    /**
+     *
+     * A function wrapping calls to the two functions in an `&&` operation, returning the result of the first
+     * function if it is false-y and the result of the second function otherwise.  Note that this is
+     * short-circuited, meaning that the second function will not be invoked if the first returns a false-y
+     * value.
+     *
+     * @func
+     * @memberOf R
+     * @category Logic
+     * @sig (*... -> Boolean) -> (*... -> Boolean) -> (*... -> Boolean)
+     * @param {Function} f a predicate
+     * @param {Function} g another predicate
+     * @return {Function} a function that applies its arguments to `f` and `g` and ANDs their outputs together.
+     * @example
+     *
+     *      var gt10 = function(x) { return x > 10; };
+     *      var even = function(x) { return x % 2 === 0 };
+     *      var f = R.and(gt10, even);
+     *      f(100); //=> true
+     *      f(101); //=> false
+     */
+    var and = _curry2(function and(f, g) {
+        return function _and() {
+            return f.apply(this, arguments) && g.apply(this, arguments);
+        };
     });
 
-    return (
-      React.createElement("g", null, bars)
-    );
-  }
-});
-
-var BarChart = exports.BarChart = React.createClass({displayName: "BarChart",
-
-  propTypes: {
-    data: React.PropTypes.array,
-    yAxisTickCount: React.PropTypes.number,
-    width: React.PropTypes.number,
-    margins: React.PropTypes.object,
-    height: React.PropTypes.number,
-    fill: React.PropTypes.string,
-    title: React.PropTypes.string
-  },
-
-  getDefaultProps: function() {
-    return {
-      data: [],
-      yAxisTickCount: 4,
-      width: 500,
-      height: 200,
-      margins: {top: 20, right: 30, bottom: 30, left: 30},
-      fill: "#3182bd",
-      title: ''
-    };
-  },
-
-  render: function() {
-
-    var props = this.props;
-
-    var values = props.data.map( function(item)  {return item.value;} );
-
-    var labels = props.data.map( function(item)  {return item.label;} );
-
-    var margins = props.margins;
-
-    var sideMargins = margins.left + margins.right;
-    var topBottomMargins = margins.top + margins.bottom;
-
-    var yScale = d3.scale.linear()
-      .domain([d3.min([d3.min(values), 0]), d3.max(values)])
-      .range([props.height - topBottomMargins, 0]);
-
-    var xScale = d3.scale.ordinal()
-        .domain(labels)
-        .rangeRoundBands([0, props.width - sideMargins], 0.1);
-
-    var trans = "translate(" + margins.left + "," + margins.top + ")";
-
-    return (
-      React.createElement(Chart, {width: props.width, height: props.height, title: props.title}, 
-        React.createElement("g", {transform: trans}, 
-          React.createElement(DataSeries, {
-            values: values, 
-            yScale: yScale, 
-            xScale: yScale, 
-            margins: margins, 
-            data: props.data, 
-            width: props.width - sideMargins, 
-            height: props.height - topBottomMargins, 
-            fill: props.fill}
-          ), 
-          React.createElement(YAxis, {
-            yAxisClassName: "bar y axis", 
-            yScale: yScale, 
-            margins: margins, 
-            yAxisTickCount: props.yAxisTickCount, 
-            width: props.width - sideMargins, 
-            height: props.height - topBottomMargins}
-          ), 
-          React.createElement(XAxis, {
-            xAxisClassName: "bar x axis", 
-            xScale: xScale, 
-            data: props.data, 
-            margins: margins, 
-            width: props.width - sideMargins, 
-            height: props.height - topBottomMargins}
-          )
-        )
-      )
-    );
-  }
-
-});
-
-},{"./common":48,"d3":33,"react":270}],46:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-
-exports.XAxis = React.createClass({displayName: "XAxis",
-
-  propTypes: {
-    xAxisClassName: React.PropTypes.string.isRequired,
-    xOrient: React.PropTypes.oneOf(['top', 'bottom']),
-    xScale: React.PropTypes.func.isRequired,
-    xHideOrigin: React.PropTypes.bool,
-    height: React.PropTypes.number.isRequired,
-    fill: React.PropTypes.string,
-    stroke: React.PropTypes.string,
-    tickStroke: React.PropTypes.string,
-    strokeWidth: React.PropTypes.string
-  },
-
-  getDefaultProps: function() {
-    return {
-      xAxisClassName: 'x axis',
-      xOrient: 'bottom',
-      xHideOrigin: false,
-      fill: "none",
-      stroke: "none",
-      tickStroke: "#000",
-      strokeWidth: "none",
-      hideOrigin: false
-    };
-  },
-
-
-  componentDidMount: function() {
-    this._renderAxis(this.props);
-  },
-
-  componentWillReceiveProps: function(props) {
-    this._renderAxis(props);
-  },
-
-  _renderAxis: function(props) {
-    var xAxis = d3.svg.axis()
-      .scale(props.xScale)
-      .orient(props.xOrient);
-
-    if (props.xAxisTickInterval) {
-      xAxis.ticks(d3.time[props.xAxisTickInterval.unit], props.xAxisTickInterval.interval);
-    } else if (props.xAxisTickCount) {
-      xAxis.ticks(props.xAxisTickCount);
-    }
-
-    var xAxisClassSelect = props.xAxisClassName.replace(/ /g, '.');
-
-    if (xAxisClassSelect[0] != '.') {
-      xAxisClassSelect = '.' + xAxisClassSelect;
-    }
-
-    var node = this.refs.xaxis.getDOMNode();
-
-    d3.select(node)
-      .attr("class", props.xAxisClassName)
-      .call(xAxis);
-
-    // Style each of the tick lines
-    d3.select(xAxisClassSelect)
-      .selectAll('line')
-      .attr("shape-rendering", "crispEdges")
-      .attr("stroke", props.tickStroke);
-
-    // Style the main axis line
-    d3.select(xAxisClassSelect)
-      .select('path')
-      .attr("shape-rendering", "crispEdges")
-      .attr("fill", props.fill)
-      .attr("stroke", props.stroke)
-      .attr("stroke-width", props.strokeWidth);
-
-    if (props.xHideOrigin) {
-      // Hack to hide the x axis origin
-      var originSelect = xAxisClassSelect + ' g:first-child';
-      d3.selectAll(originSelect).style("opacity","0");
-    }
-
-  },
-
-  render: function() {
-    var props = this.props;
-    var t = "translate(0," + props.height + ")";
-    return (
-      React.createElement("g", {
-        ref: "xaxis", 
-        className: props.xAxisClassName, 
-        transform: t
-      }
-      )
-    );
-  }
-
-});
-
-
-exports.YAxis = React.createClass({displayName: "YAxis",
-
-  propTypes: {
-    yAxisClassName: React.PropTypes.string,
-    yOrient: React.PropTypes.oneOf(['left', 'right']),
-    yScale: React.PropTypes.func.isRequired,
-    yHideOrigin: React.PropTypes.bool,
-    fill: React.PropTypes.string,
-    stroke: React.PropTypes.string,
-    tickStroke: React.PropTypes.string,
-    strokeWidth: React.PropTypes.string
-  },
-
-  getDefaultProps: function() {
-    return {
-      yAxisClassName: 'y axis',
-      yOrient: 'left',
-      yHideOrigin: false,
-      fill: "none",
-      stroke: "#000",
-      tickStroke: "#000",
-      strokeWidth: "none"
-    };
-  },
-
-  componentDidMount: function() {
-    this._renderAxis(this.props);
-  },
-
-  componentWillReceiveProps: function(props) {
-    this._renderAxis(props);
-  },
-
-  _renderAxis: function(props) {
-
-    var yAxis = d3.svg.axis()
-      .ticks(props.yAxisTickCount)
-      .scale(props.yScale)
-      .orient(this.props.yOrient);
-
-    if (props.yAxisTickCount) {
-      yAxis.ticks(props.yAxisTickCount);
-    } else if (props.yAxisTickInterval) {
-      yAxis.ticks(d3.time[props.yAxisTickInterval.unit], props.yAxisTickInterval.interval);
-    }
-
-    var yAxisClassSelect = props.yAxisClassName.replace(/ /g, '.');
-
-    if (yAxisClassSelect[0] != '.') {
-      yAxisClassSelect = '.' + yAxisClassSelect;
-    }
-
-    var node = this.refs.yaxis.getDOMNode();
-
-    d3.select(node)
-      .attr("class", props.yAxisClassName)
-      .call(yAxis);
-
-    // Style each of the tick lines
-    d3.selectAll(yAxisClassSelect)
-      .selectAll('line')
-      .attr("shape-rendering", "crispEdges")
-      .attr("stroke", props.tickStroke);
-
-    // Style the main axis line
-    d3.selectAll(yAxisClassSelect)
-      .select('path')
-      .attr("shape-rendering", "crispEdges")
-      .attr("fill", props.fill)
-      .attr("stroke", props.stroke);
-
-    if (props.yHideOrigin) {
-      // Hack to hide the x axis origin
-      var originSelect = yAxisClassSelect + ' g:first-child';
-      d3.selectAll(originSelect).style("opacity","0");
-    }
-
-  },
-
-  render: function() {
-    var props = this.props;
-    return (
-      React.createElement("g", {
-        ref: "yaxis", 
-        className: props.yAxisClassName
-      }
-      )
-    );
-  }
-
-});
-
-},{"d3":33,"react":270}],47:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var Legend = require('./legend').Legend;
-
-var PlainChart = React.createClass({displayName: "PlainChart",
-  render: function() {
-    return (
-      React.createElement("div", null, 
-        React.createElement("h4", null, this.props.title), 
-        React.createElement("svg", {width: this.props.width, height: this.props.height}, this.props.children)
-      )
-    );
-  }
-});
-
-var LegendChart = React.createClass({displayName: "LegendChart",
-
-  propTypes: {
-    legend: React.PropTypes.bool,
-    legendPosition: React.PropTypes.string,
-    sideOffset: React.PropTypes.number,
-    margins: React.PropTypes.object,
-    data: React.PropTypes.object,
-  },
-
-  getDefaultProps: function() {
-    return {
-      data: {},
-      legend: false,
-      legendPosition: 'right',
-      sideOffset: 90
-    };
-  },
-
-  _renderLegend: function() {
-    if (this.props.legend) {
-      return (
-        React.createElement(Legend, {
-          legendPosition: this.props.legendPosition, 
-          margins: this.props.margins, 
-          colors: this.props.colors, 
-          data: this.props.data, 
-          width: this.props.width, 
-          height: this.props.height, 
-          sideOffset: this.props.sideOffset}
-        ) 
-      );
-    }
-  },
-
-  render: function() {
-    return (
-      React.createElement("div", {style: {'width': this.props.width, 'height': this.props.height}}, 
-        React.createElement("h4", null, this.props.title), 
-        this._renderLegend(), 
-        React.createElement("svg", {width: this.props.width - this.props.sideOffset, height: this.props.height}, this.props.children)
-      )
-    );
-  }
-});
-
-exports.LegendChart = LegendChart;
-
-exports.Chart = React.createClass({displayName: "Chart",
-
-  propTypes: {
-    legend: React.PropTypes.bool,
-  },
-
-  getDefaultProps: function() {
-    return {
-      legend: false
-    };
-  },
-
-  render: function() {
-    if (this.props.legend) {
-      return React.createElement(LegendChart, React.__spread({},  this.props));
-    }
-    return React.createElement(PlainChart, React.__spread({},  this.props));
-  }
-
-});
-
-
-},{"./legend":49,"react":270}],48:[function(require,module,exports){
-
-exports.XAxis = require('./axes').XAxis;
-exports.YAxis = require('./axes').YAxis;
-exports.Chart = require('./chart').Chart;
-exports.LegendChart = require('./chart').LegendChart;
-exports.Legend = require('./legend').Legend;
-exports.Voronoi = require('./voronoi').Voronoi;
-
-},{"./axes":46,"./chart":47,"./legend":49,"./voronoi":50}],49:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-
-exports.Legend = React.createClass({displayName: "Legend",
-
-  propTypes: {
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
-    margins: React.PropTypes.object,
-    text: React.PropTypes.string,
-    colors: React.PropTypes.func
-  },
-
-  getDefaultProps: function() {
-    return {
-      text: "#000",
-      colors: d3.scale.category20c()
-    };
-  },
-
-  render: function() {
-
-    var props = this.props;
-
-    var textStyle = {
-      'color': 'black',
-      'fontSize': '50%',
-      'verticalAlign': 'top'
+    /**
+     * Returns `true` if at least one of elements of the list match the predicate, `false`
+     * otherwise.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> Boolean) -> [a] -> Boolean
+     * @param {Function} fn The predicate function.
+     * @param {Array} list The array to consider.
+     * @return {Boolean} `true` if the predicate is satisfied by at least one element, `false`
+     *         otherwise.
+     * @example
+     *
+     *      var lessThan0 = R.flip(R.lt)(0);
+     *      var lessThan2 = R.flip(R.lt)(2);
+     *      var xs = R.range(1, 3);
+     *      xs; //=> [1, 2]
+     *      R.any(lessThan0)(xs); //=> false
+     *      R.any(lessThan2)(xs); //=> true
+     */
+    var any = _curry2(_any);
+
+    /**
+     * Returns a new list containing the contents of the given list, followed by the given
+     * element.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig a -> [a] -> [a]
+     * @param {*} el The element to add to the end of the new list.
+     * @param {Array} list The list whose contents will be added to the beginning of the output
+     *        list.
+     * @return {Array} A new list containing the contents of the old list followed by `el`.
+     * @example
+     *
+     *      R.append('tests', ['write', 'more']); //=> ['write', 'more', 'tests']
+     *      R.append('tests', []); //=> ['tests']
+     *      R.append(['tests'], ['write', 'more']); //=> ['write', 'more', ['tests']]
+     */
+    var append = _curry2(_append);
+
+    /**
+     * Flipped version of R.append.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> a -> [a]
+     * @param {Array} list
+     * @param {*} el
+     * @return {Array}
+     * @example
+     *
+     *      R.appendTo([], 1); //=> [1]
+     *      R.appendTo([1, 2, 3], 4); //=> [1, 2, 3, 4]
+     *      R.appendTo([1, 2, 3], [4, 5, 6]); //=> [1, 2, 3, [4, 5, 6]]
+     */
+    var appendTo = flip(_append);
+
+    /**
+     * Applies function `fn` to the argument list `args`. This is useful for
+     * creating a fixed-arity function from a variadic function. `fn` should
+     * be a bound function if context is significant.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (*... -> a) -> [*] -> a
+     * @param {Function} fn
+     * @param {Array} args
+     * @return {*}
+     * @example
+     *
+     *      var nums = [1, 2, 3, -99, 42, 6, 7];
+     *      R.apply(Math.max, nums); //=> 42
+     */
+    var apply = _curry2(function apply(fn, args) {
+        return fn.apply(this, args);
+    });
+
+    /**
+     * Wraps a function of any arity (including nullary) in a function that accepts exactly 2
+     * parameters. Any extraneous parameters will not be passed to the supplied function.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (* -> c) -> (a, b -> c)
+     * @param {Function} fn The function to wrap.
+     * @return {Function} A new function wrapping `fn`. The new function is guaranteed to be of
+     *         arity 2.
+     * @example
+     *
+     *      var takesThreeArgs = function(a, b, c) {
+     *        return [a, b, c];
+     *      };
+     *      takesThreeArgs.length; //=> 3
+     *      takesThreeArgs(1, 2, 3); //=> [1, 2, 3]
+     *
+     *      var takesTwoArgs = R.binary(takesThreeArgs);
+     *      takesTwoArgs.length; //=> 2
+     *      // Only 2 arguments are passed to the wrapped function
+     *      takesTwoArgs(1, 2, 3); //=> [1, 2, undefined]
+     */
+    var binary = function binary(fn) {
+        return nAry(2, fn);
     };
 
-    var legendItems = [];
-    var idx = 0;
-    for(var seriesName in props.data) {
+    /**
+     * Creates a function that is bound to a context.
+     * Note: `R.bind` does not provide the additional argument-binding capabilities of
+     * [Function.prototype.bind](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind).
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @category Object
+     * @sig (* -> *) -> {*} -> (* -> *)
+     * @param {Function} fn The function to bind to context
+     * @param {Object} thisObj The context to bind `fn` to
+     * @return {Function} A function that will execute in the context of `thisObj`.
+     */
+    var bind = _curry2(function bind(fn, thisObj) {
+        return function () {
+            return fn.apply(thisObj, arguments);
+        };
+    });
 
-      if (props.data.hasOwnProperty(seriesName)) {
-
-      var itemStyle = {
-        'color': props.colors(idx),
-        'lineHeight': '60%',
-        'fontSize': '200%'
-      };
-
-        var seriesValue = props.data[seriesName];
-        legendItems.push(
-              React.createElement("li", {style: itemStyle, key: idx}, 
-                React.createElement("span", {style: textStyle}, seriesName)
-              )
-            );
-        idx++;
-      }
-    }
-
-    // In preparation for legend positioning
-    var legendFloat = 'right';
-
-    var topMargin = props.margins.top;
-
-    var legendBlockStyle = {
-      'wordWrap': 'break-word',
-      'width': props.sideOffset,
-      'paddingLeft': '0',
-      'marginBottom': '0',
-      'marginTop': topMargin,
-      'float': legendFloat
+    /**
+     * Creates a deep copy of the value which may contain (nested) `Array`s and
+     * `Object`s, `Number`s, `String`s, `Boolean`s and `Date`s. `Function`s are
+     * not copied, but assigned by their reference.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {*} -> {*}
+     * @param {*} value The object or array to clone
+     * @return {*} A new object or array.
+     * @example
+     *
+     *      var objects = [{}, {}, {}];
+     *      var objectsClone = R.clone(objects);
+     *      objects[0] === objectsClone[0]; //=> false
+     *
+     */
+    var clone = function clone(value) {
+        return _baseCopy(value, [], []);
     };
 
-    return React.createElement("ul", {style: legendBlockStyle}, legendItems);
-  }
+    /**
+     * Creates a new function that runs each of the functions supplied as parameters in turn,
+     * passing the return value of each function invocation to the next function invocation,
+     * beginning with whatever arguments were passed to the initial invocation.
+     *
+     * Note that `compose` is a right-associative function, which means the functions provided
+     * will be invoked in order from right to left. In the example `var h = compose(f, g)`,
+     * the function `h` is equivalent to `f( g(x) )`, where `x` represents the arguments
+     * originally passed to `h`.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig ((y -> z), (x -> y), ..., (b -> c), (a... -> b)) -> (a... -> z)
+     * @param {...Function} functions A variable number of functions.
+     * @return {Function} A new function which represents the result of calling each of the
+     *         input `functions`, passing the result of each function call to the next, from
+     *         right to left.
+     * @example
+     *
+     *      var triple = function(x) { return x * 3; };
+     *      var double = function(x) { return x * 2; };
+     *      var square = function(x) { return x * x; };
+     *      var squareThenDoubleThenTriple = R.compose(triple, double, square);
+     *
+     *      //≅ triple(double(square(5)))
+     *      squareThenDoubleThenTriple(5); //=> 150
+     */
+    var compose = _createComposer(_compose);
 
-});
+    /**
+     * Similar to `compose` but with automatic handling of promises (or, more
+     * precisely, "thenables"). The behavior is identical  to that of
+     * compose() if all composed functions return something other than
+     * promises (i.e., objects with a .then() method). If one of the function
+     * returns a promise, however, then the next function in the composition
+     * is called asynchronously, in the success callback of the promise, using
+     * the resolved value as an input. Note that `composeP` is a right-
+     * associative function, just like `compose`.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig ((y -> z), (x -> y), ..., (b -> c), (a... -> b)) -> (a... -> z)
+     * @param {...Function} functions A variable number of functions.
+     * @return {Function} A new function which represents the result of calling each of the
+     *         input `functions`, passing either the returned result or the asynchronously
+     *         resolved value) of each function call to the next, from right to left.
+     * @example
+     *
+     *      var Q = require('q');
+     *      var triple = function(x) { return x * 3; };
+     *      var double = function(x) { return x * 2; };
+     *      var squareAsync = function(x) { return Q.when(x * x); };
+     *      var squareAsyncThenDoubleThenTriple = R.composeP(triple, double, squareAsync);
+     *
+     *      //≅ squareAsync(5).then(function(x) { return triple(double(x)) };
+     *      squareAsyncThenDoubleThenTriple(5)
+     *          .then(function(result) {
+     *              // result is 150
+     *          });
+     */
+    var composeP = _createComposer(_composeP);
 
+    /**
+     * Returns `true` if the `x` is found in the `list`, using `pred` as an
+     * equality predicate for `x`.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a, a -> Boolean) -> a -> [a] -> Boolean
+     * @param {Function} pred A predicate used to test whether two items are equal.
+     * @param {*} x The item to find
+     * @param {Array} list The list to iterate over
+     * @return {Boolean} `true` if `x` is in `list`, else `false`.
+     * @example
+     *
+     *     var xs = [{x: 12}, {x: 11}, {x: 10}];
+     *     R.containsWith(function(a, b) { return a.x === b.x; }, {x: 10}, xs); //=> true
+     *     R.containsWith(function(a, b) { return a.x === b.x; }, {x: 1}, xs); //=> false
+     */
+    var containsWith = _curry3(_containsWith);
 
-},{"d3":33,"react":270}],50:[function(require,module,exports){
-'use strict';
+    /**
+     * Creates an object containing a single key:value pair.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig String -> a -> {String:a}
+     * @param {String} key
+     * @param {*} val
+     * @return {Object}
+     * @example
+     *
+     *      var matchPhrases = R.compose(
+     *          R.createMapEntry('must'),
+     *          R.map(R.createMapEntry('match_phrase'))
+     *      );
+     *      matchPhrases(['foo', 'bar', 'baz']); //=> {must: [{match_phrase: 'foo'}, {match_phrase: 'bar'}, {match_phrase: 'baz'}]}
+     */
+    var createMapEntry = _curry2(function (key, val) {
+        var obj = {};
+        obj[key] = val;
+        return obj;
+    });
 
-var React = require('react');
-var d3 = require('d3');
+    /**
+     * Creates a new version of `fn` with given arity that, when invoked,
+     * will return either:
+     * - A new function ready to accept one or more of `fn`'s remaining arguments, if all of
+     * `fn`'s expected arguments have not yet been provided
+     * - `fn`'s result if all of its expected arguments have been provided
+     *
+     * This function is useful in place of `curry`, when the arity of the
+     * function to curry cannot be determined from its signature, e.g. if it's
+     * a variadic function.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig Number -> (* -> a) -> (* -> a)
+     * @param {Number} fnArity The arity for the returned function.
+     * @param {Function} fn The function to curry.
+     * @return {Function} A new, curried function.
+     * @see R.curry
+     * @example
+     *
+     *      var addFourNumbers = function() {
+     *        return R.sum([].slice.call(arguments, 0, 4));
+     *      };
+     *
+     *      var curriedAddFourNumbers = R.curryN(4, addFourNumbers);
+     *      var f = curriedAddFourNumbers(1, 2);
+     *      var g = f(3);
+     *      g(4);//=> 10
+     */
+    var curryN = _curry2(function curryN(length, fn) {
+        return function recurry(args) {
+            return arity(Math.max(length - (args && args.length || 0), 0), function () {
+                if (arguments.length === 0) {
+                    throw _noArgsException();
+                }
+                var newArgs = _concat(args, arguments);
+                if (newArgs.length >= length) {
+                    return fn.apply(this, newArgs);
+                } else {
+                    return recurry(newArgs);
+                }
+            });
+        }([]);
+    });
 
-var Polygon = React.createClass({displayName: "Polygon",
+    /**
+     * Decrements its argument.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig Number -> Number
+     * @param {Number} n
+     * @return {Number}
+     * @example
+     *
+     *      R.dec(42); //=> 41
+     */
+    var dec = add(-1);
 
-  _animateCircle: function() {
-    this.props.pubsub.emit('animate', this.props.id);
-  },
+    /**
+     * Returns the second argument if it is not null or undefined. If it is null
+     * or undefined, the first (default) argument is returned.
+     *
+     * @func
+     * @memberOf R
+     * @category Logic
+     * @sig a -> b -> a | b
+     * @param {a} val The default value.
+     * @param {b} val The value to return if it is not null or undefined
+     * @return {*} The the second value or the default value
+     * @example
+     *
+     *      var defaultTo42 = defaultTo(42);
+     *
+     *      defaultTo42(null);  //=> 42
+     *      defaultTo42(undefined);  //=> 42
+     *      defaultTo42('Ramda');  //=> 'Ramda'
+     */
+    var defaultTo = _curry2(function _defaultTo(d, v) {
+        return v == null ? d : v;
+    });
 
-  _restoreCircle: function() {
-    this.props.pubsub.emit('restore', this.props.id);
-  },
+    /**
+     * Finds the set (i.e. no duplicates) of all elements in the first list not contained in the second list.
+     *
+     * @func
+     * @memberOf R
+     * @category Relation
+     * @sig [a] -> [a] -> [a]
+     * @param {Array} list1 The first list.
+     * @param {Array} list2 The second list.
+     * @return {Array} The elements in `list1` that are not in `list2`.
+     * @see R.differenceWith
+     * @example
+     *
+     *      R.difference([1,2,3,4], [7,6,5,4,3]); //=> [1,2]
+     *      R.difference([7,6,5,4,3], [1,2,3,4]); //=> [7,6,5]
+     */
+    var difference = _curry2(function difference(first, second) {
+        var out = [];
+        var idx = -1;
+        var firstLen = first.length;
+        while (++idx < firstLen) {
+            if (!_contains(first[idx], second) && !_contains(first[idx], out)) {
+                out[out.length] = first[idx];
+            }
+        }
+        return out;
+    });
 
-  _drawPath: function(d) {
-    if(d === undefined) {
-      return; 
-    }  
-    return 'M' + d.join(',') + 'Z';
-  },
+    /**
+     * Finds the set (i.e. no duplicates) of all elements in the first list not contained in the second list.
+     * Duplication is determined according to the value returned by applying the supplied predicate to two list
+     * elements.
+     *
+     * @func
+     * @memberOf R
+     * @category Relation
+     * @sig (a,a -> Boolean) -> [a] -> [a] -> [a]
+     * @param {Function} pred A predicate used to test whether two items are equal.
+     * @param {Array} list1 The first list.
+     * @param {Array} list2 The second list.
+     * @see R.difference
+     * @return {Array} The elements in `list1` that are not in `list2`.
+     * @example
+     *
+     *      function cmp(x, y) { return x.a === y.a; }
+     *      var l1 = [{a: 1}, {a: 2}, {a: 3}];
+     *      var l2 = [{a: 3}, {a: 4}];
+     *      R.differenceWith(cmp, l1, l2); //=> [{a: 1}, {a: 2}]
+     *
+     */
+    var differenceWith = _curry3(function differenceWith(pred, first, second) {
+        var out = [];
+        var idx = -1;
+        var firstLen = first.length;
+        var containsPred = containsWith(pred);
+        while (++idx < firstLen) {
+            if (!containsPred(first[idx], second) && !containsPred(first[idx], out)) {
+                out[out.length] = first[idx];
+            }
+        }
+        return out;
+    });
 
-  render: function() {
-    return React.createElement("path", {
-      onMouseOver: this._animateCircle, 
-      onMouseOut: this._restoreCircle, 
-      fill: "white", 
-      opacity: "0", 
-      d: this._drawPath(this.props.vnode)});
-  }
+    /**
+     * Returns a new object that does not contain a `prop` property.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig String -> {k: v} -> {k: v}
+     * @param {String} prop the name of the property to dissociate
+     * @param {Object} obj the object to clone
+     * @return {Object} a new object similar to the original but without the specified property
+     * @example
+     *
+     *      R.dissoc('b', {a: 1, b: 2, c: 3}); //=> {a: 1, c: 3}
+     */
+    var dissoc = _curry2(function dissoc(prop, obj) {
+        return _pickBy(function (val, key) {
+            return key !== prop;
+        }, obj);
+    });
 
-});
+    /**
+     * Returns a new list containing all but the first `n` elements of the given `list`.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig Number -> [a] -> [a]
+     * @param {Number} n The number of elements of `list` to skip.
+     * @param {Array} list The array to consider.
+     * @return {Array} The last `n` elements of `list`.
+     * @example
+     *
+     *     R.drop(3, [1,2,3,4,5,6,7]); //=> [4,5,6,7]
+     */
+    var drop = _curry2(_checkForMethod('drop', function drop(n, list) {
+        return n < list.length ? _slice(list, n) : [];
+    }));
 
+    /**
+     * Returns a new list containing the last `n` elements of a given list, passing each value
+     * to the supplied predicate function, skipping elements while the predicate function returns
+     * `true`. The predicate function is passed one argument: *(value)*.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> Boolean) -> [a] -> [a]
+     * @param {Function} fn The function called per iteration.
+     * @param {Array} list The collection to iterate over.
+     * @return {Array} A new array.
+     * @example
+     *
+     *      var lteTwo = function(x) {
+     *        return x <= 2;
+     *      };
+     *
+     *      R.dropWhile(lteTwo, [1, 2, 3, 4]); //=> [3, 4]
+     */
+    var dropWhile = _curry2(function dropWhile(pred, list) {
+        var idx = -1, len = list.length;
+        while (++idx < len && pred(list[idx])) {
+        }
+        return _slice(list, idx);
+    });
 
-exports.Voronoi = React.createClass({displayName: "Voronoi",
+    /**
+     * `empty` wraps any object in an array. This implementation is compatible with the
+     * Fantasy-land Monoid spec, and will work with types that implement that spec.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig * -> []
+     * @return {Array} An empty array.
+     * @example
+     *
+     *      R.empty([1,2,3,4,5]); //=> []
+     */
+    var empty = function empty(x) {
+        return _hasMethod('empty', x) ? x.empty() : [];
+    };
 
-  render: function() {
-    var xScale = this.props.xScale;
-    var yScale = this.props.yScale;
+    /**
+     * Tests if two items are equal.  Equality is strict here, meaning reference equality for objects and
+     * non-coercing equality for primitives.
+     *
+     * @func
+     * @memberOf R
+     * @category Relation
+     * @sig a -> b -> Boolean
+     * @param {*} a
+     * @param {*} b
+     * @return {Boolean}
+     * @example
+     *
+     *      var o = {};
+     *      R.eq(o, o); //=> true
+     *      R.eq(o, {}); //=> false
+     *      R.eq(1, 1); //=> true
+     *      R.eq(1, '1'); //=> false
+     *      R.eq(0, -0); //=> false
+     *      R.eq(NaN, NaN); //=> true
+     */
+    var eq = _curry2(function eq(a, b) {
+        if (a === 0) {
+            return 1 / a === 1 / b;
+        } else {
+            return a === b || a !== a && b !== b;
+        }
+    });
 
-    var voronoi = d3.geom.voronoi()
-      .x(function(d){ return xScale(d.coord.x); })
-      .y(function(d){ return yScale(d.coord.y); })
-      .clipExtent([[0, 0], [ this.props.width , this.props.height]]);
+    /**
+     * Reports whether two objects have the same value for the specified property.  Useful as a curried predicate.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig k -> {k: v} -> {k: v} -> Boolean
+     * @param {String} prop The name of the property to compare
+     * @param {Object} obj1
+     * @param {Object} obj2
+     * @return {Boolean}
+     *
+     * @example
+     *
+     *      var o1 = { a: 1, b: 2, c: 3, d: 4 };
+     *      var o2 = { a: 10, b: 20, c: 3, d: 40 };
+     *      R.eqProps('a', o1, o2); //=> false
+     *      R.eqProps('c', o1, o2); //=> true
+     */
+    var eqProps = _curry3(function eqProps(prop, obj1, obj2) {
+        return obj1[prop] === obj2[prop];
+    });
 
-    var regions = voronoi(this.props.data).map(function(vnode, idx) {
-      return React.createElement(Polygon, {pubsub: this.props.pubsub, key: idx, id: vnode.point.id, vnode: vnode});
-    }.bind(this));
+    /**
+     * Returns a new list containing only those items that match a given predicate function.
+     * The predicate function is passed one argument: *(value)*.
+     *
+     * Note that `R.filter` does not skip deleted or unassigned indices, unlike the native
+     * `Array.prototype.filter` method. For more details on this behavior, see:
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter#Description
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> Boolean) -> [a] -> [a]
+     * @param {Function} fn The function called per iteration.
+     * @param {Array} list The collection to iterate over.
+     * @return {Array} The new filtered array.
+     * @example
+     *
+     *      var isEven = function(n) {
+     *        return n % 2 === 0;
+     *      };
+     *      R.filter(isEven, [1, 2, 3, 4]); //=> [2, 4]
+     */
+    var filter = _curry2(_checkForMethod('filter', _filter));
 
-    return (
-      React.createElement("g", null, 
-        regions
-      )
-    );
-  }
+    /**
+     * Like `filter`, but passes additional parameters to the predicate function. The predicate
+     * function is passed three arguments: *(value, index, list)*.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a, i, [a] -> Boolean) -> [a] -> [a]
+     * @param {Function} fn The function called per iteration.
+     * @param {Array} list The collection to iterate over.
+     * @return {Array} The new filtered array.
+     * @example
+     *
+     *      var lastTwo = function(val, idx, list) {
+     *        return list.length - idx <= 2;
+     *      };
+     *      R.filterIndexed(lastTwo, [8, 6, 7, 5, 3, 0, 9]); //=> [0, 9]
+     */
+    var filterIndexed = _curry2(_filterIndexed);
 
-});
+    /**
+     * Returns the first element of the list which matches the predicate, or `undefined` if no
+     * element matches.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> Boolean) -> [a] -> a | undefined
+     * @param {Function} fn The predicate function used to determine if the element is the
+     *        desired one.
+     * @param {Array} list The array to consider.
+     * @return {Object} The element found, or `undefined`.
+     * @example
+     *
+     *      var xs = [{a: 1}, {a: 2}, {a: 3}];
+     *      R.find(R.propEq('a', 2))(xs); //=> {a: 2}
+     *      R.find(R.propEq('a', 4))(xs); //=> undefined
+     */
+    var find = _curry2(function find(fn, list) {
+        var idx = -1;
+        var len = list.length;
+        while (++idx < len) {
+            if (fn(list[idx])) {
+                return list[idx];
+            }
+        }
+    });
 
-},{"d3":33,"react":270}],51:[function(require,module,exports){
+    /**
+     * Returns the index of the first element of the list which matches the predicate, or `-1`
+     * if no element matches.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> Boolean) -> [a] -> Number
+     * @param {Function} fn The predicate function used to determine if the element is the
+     * desired one.
+     * @param {Array} list The array to consider.
+     * @return {Number} The index of the element found, or `-1`.
+     * @example
+     *
+     *      var xs = [{a: 1}, {a: 2}, {a: 3}];
+     *      R.findIndex(R.propEq('a', 2))(xs); //=> 1
+     *      R.findIndex(R.propEq('a', 4))(xs); //=> -1
+     */
+    var findIndex = _curry2(function findIndex(fn, list) {
+        var idx = -1;
+        var len = list.length;
+        while (++idx < len) {
+            if (fn(list[idx])) {
+                return idx;
+            }
+        }
+        return -1;
+    });
+
+    /**
+     * Returns the last element of the list which matches the predicate, or `undefined` if no
+     * element matches.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> Boolean) -> [a] -> a | undefined
+     * @param {Function} fn The predicate function used to determine if the element is the
+     * desired one.
+     * @param {Array} list The array to consider.
+     * @return {Object} The element found, or `undefined`.
+     * @example
+     *
+     *      var xs = [{a: 1, b: 0}, {a:1, b: 1}];
+     *      R.findLast(R.propEq('a', 1))(xs); //=> {a: 1, b: 1}
+     *      R.findLast(R.propEq('a', 4))(xs); //=> undefined
+     */
+    var findLast = _curry2(function findLast(fn, list) {
+        var idx = list.length;
+        while (idx--) {
+            if (fn(list[idx])) {
+                return list[idx];
+            }
+        }
+    });
+
+    /**
+     * Returns the index of the last element of the list which matches the predicate, or
+     * `-1` if no element matches.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> Boolean) -> [a] -> Number
+     * @param {Function} fn The predicate function used to determine if the element is the
+     * desired one.
+     * @param {Array} list The array to consider.
+     * @return {Number} The index of the element found, or `-1`.
+     * @example
+     *
+     *      var xs = [{a: 1, b: 0}, {a:1, b: 1}];
+     *      R.findLastIndex(R.propEq('a', 1))(xs); //=> 1
+     *      R.findLastIndex(R.propEq('a', 4))(xs); //=> -1
+     */
+    var findLastIndex = _curry2(function findLastIndex(fn, list) {
+        var idx = list.length;
+        while (idx--) {
+            if (fn(list[idx])) {
+                return idx;
+            }
+        }
+        return -1;
+    });
+
+    /**
+     * Returns a new list by pulling every item out of it (and all its sub-arrays) and putting
+     * them in a new array, depth-first.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> [b]
+     * @param {Array} list The array to consider.
+     * @return {Array} The flattened list.
+     * @example
+     *
+     *      R.flatten([1, 2, [3, 4], 5, [6, [7, 8, [9, [10, 11], 12]]]]);
+     *      //=> [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+     */
+    var flatten = _makeFlat(true);
+
+    /**
+     * Iterate over an input `list`, calling a provided function `fn` for each element in the
+     * list.
+     *
+     * `fn` receives one argument: *(value)*.
+     *
+     * Note: `R.forEach` does not skip deleted or unassigned indices (sparse arrays), unlike
+     * the native `Array.prototype.forEach` method. For more details on this behavior, see:
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach#Description
+     *
+     * Also note that, unlike `Array.prototype.forEach`, Ramda's `forEach` returns the original
+     * array. In some libraries this function is named `each`.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> *) -> [a] -> [a]
+     * @param {Function} fn The function to invoke. Receives one argument, `value`.
+     * @param {Array} list The list to iterate over.
+     * @return {Array} The original list.
+     * @example
+     *
+     *      var printXPlusFive = function(x) { console.log(x + 5); };
+     *      R.forEach(printXPlusFive, [1, 2, 3]); //=> [1, 2, 3]
+     *      //-> 6
+     *      //-> 7
+     *      //-> 8
+     */
+    var forEach = _curry2(_forEach);
+
+    /**
+     * Like `forEach`, but but passes additional parameters to the predicate function.
+     *
+     * `fn` receives three arguments: *(value, index, list)*.
+     *
+     * Note: `R.forEachIndexed` does not skip deleted or unassigned indices (sparse arrays),
+     * unlike the native `Array.prototype.forEach` method. For more details on this behavior,
+     * see:
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach#Description
+     *
+     * Also note that, unlike `Array.prototype.forEach`, Ramda's `forEach` returns the original
+     * array. In some libraries this function is named `each`.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a, i, [a] -> ) -> [a] -> [a]
+     * @param {Function} fn The function to invoke. Receives three arguments:
+     *        (`value`, `index`, `list`).
+     * @param {Array} list The list to iterate over.
+     * @return {Array} The original list.
+     * @example
+     *
+     *      // Note that having access to the original `list` allows for
+     *      // mutation. While you *can* do this, it's very un-functional behavior:
+     *      var plusFive = function(num, idx, list) { list[idx] = num + 5 };
+     *      R.forEachIndexed(plusFive, [1, 2, 3]); //=> [6, 7, 8]
+     */
+    // i can't bear not to return *something*
+    var forEachIndexed = _curry2(function forEachIndexed(fn, list) {
+        var idx = -1, len = list.length;
+        while (++idx < len) {
+            fn(list[idx], idx, list);
+        }
+        // i can't bear not to return *something*
+        return list;
+    });
+
+    /**
+     * Returns a list of function names of object's own and prototype functions
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {*} -> [String]
+     * @param {Object} obj The objects with functions in it
+     * @return {Array} A list of the object's own properties and prototype
+     *         properties that map to functions.
+     * @example
+     *
+     *      R.functionsIn(R); // returns list of ramda's own and prototype function names
+     *
+     *      var F = function() { this.x = function(){}; this.y = 1; }
+     *      F.prototype.z = function() {};
+     *      F.prototype.a = 100;
+     *      R.functionsIn(new F()); //=> ["x", "z"]
+     */
+    var functionsIn = _functionsWith(keysIn);
+
+    /**
+     * @func
+     * @memberOf R
+     * @category Object
+     * @see R.prop
+     */
+    var get = prop;
+
+    /**
+     * Splits a list into sub-lists stored in an object, based on the result of calling a String-returning function
+     * on each element, and grouping the results according to values returned.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> s) -> [a] -> {s: a}
+     * @param {Function} fn Function :: a -> String
+     * @param {Array} list The array to group
+     * @return {Object} An object with the output of `fn` for keys, mapped to arrays of elements
+     *         that produced that key when passed to `fn`.
+     * @example
+     *
+     *     var byGrade = R.groupBy(function(student) {
+     *       var score = student.score;
+     *       return (score < 65) ? 'F' : (score < 70) ? 'D' :
+     *              (score < 80) ? 'C' : (score < 90) ? 'B' : 'A';
+     *     });
+     *     var students = [{name: 'Abby', score: 84},
+     *                     {name: 'Eddy', score: 58},
+     *                     // ...
+     *                     {name: 'Jack', score: 69}];
+     *     byGrade(students);
+     *     // {
+     *     //   'A': [{name: 'Dianne', score: 99}],
+     *     //   'B': [{name: 'Abby', score: 84}]
+     *     //   // ...,
+     *     //   'F': [{name: 'Eddy', score: 58}]
+     *     // }
+     */
+    var groupBy = _curry2(function groupBy(fn, list) {
+        return _reduce(function (acc, elt) {
+            var key = fn(elt);
+            acc[key] = _append(elt, acc[key] || (acc[key] = []));
+            return acc;
+        }, {}, list);
+    });
+
+    /**
+     * Returns whether or not an object has an own property with
+     * the specified name
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig s -> {s: x} -> Boolean
+     * @param {String} prop The name of the property to check for.
+     * @param {Object} obj The object to query.
+     * @return {Boolean} Whether the property exists.
+     * @example
+     *
+     *      var obj = {
+     *        foo: 1,
+     *        bar: 2,
+     *      };
+     *      R.has('foo', obj);  //=> true
+     *
+     *      var list = [{foo: 1}, {foo: 2}, {bar: 3}];
+     *      R.filter(R.has('foo'), list);  //=> [{foo: 1}, {foo: 2}]
+     */
+    var has = _curry2(function (prop, obj) {
+        return Object.prototype.hasOwnProperty.call(obj, prop);
+    });
+
+    /**
+     * Returns whether or not an object or its prototype chain has
+     * a property with the specified name
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig s -> {s: x} -> Boolean
+     * @param {String} prop The name of the property to check for.
+     * @param {Object} obj The object to query.
+     * @return {Boolean} Whether the property exists.
+     * @example
+     *
+     *      function Rectangle(width, height) {
+     *          this.width = width;
+     *          this.height = height;
+     *      }
+     *      Rectangle.prototype.area = function() {
+     *          return this.width * this.height;
+     *      };
+     *
+     *      var square = new Rectangle(2, 2);
+     *      R.hasIn('width', square);  //=> true
+     *      R.hasIn('area', square);  //=> true
+     */
+    var hasIn = _curry2(function (prop, obj) {
+        return prop in obj;
+    });
+
+    /**
+     * Creates a function that will process either the `onTrue` or the `onFalse` function depending
+     * upon the result of the `condition` predicate.
+     *
+     * @func
+     * @memberOf R
+     * @category Logic
+     * @sig (*... -> Boolean) -> (*... -> *) -> (*... -> *) -> (*... -> *)
+     * @param {Function} condition A predicate function
+     * @param {Function} onTrue A function to invoke when the `condition` evaluates to a truthy value.
+     * @param {Function} onFalse A function to invoke when the `condition` evaluates to a falsy value.
+     * @return {Function} A new unary function that will process either the `onTrue` or the `onFalse`
+     *                    function depending upon the result of the `condition` predicate.
+     * @example
+     *
+     *      // Flatten all arrays in the list but leave other values alone.
+     *      var flattenArrays = R.map(R.ifElse(Array.isArray, R.flatten, R.identity));
+     *
+     *      flattenArrays([[0], [[10], [8]], 1234, {}]); //=> [[0], [10, 8], 1234, {}]
+     *      flattenArrays([[[10], 123], [8, [10]], "hello"]); //=> [[10, 123], [8, 10], "hello"]
+     */
+    var ifElse = _curry3(function ifElse(condition, onTrue, onFalse) {
+        return function _ifElse() {
+            return condition.apply(this, arguments) ? onTrue.apply(this, arguments) : onFalse.apply(this, arguments);
+        };
+    });
+
+    /**
+     * Increments its argument.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig Number -> Number
+     * @param {Number} n
+     * @return {Number}
+     * @example
+     *
+     *      R.inc(42); //=> 43
+     */
+    var inc = add(1);
+
+    /**
+     * Returns the position of the first occurrence of an item in an array
+     * (by strict equality),
+     * or -1 if the item is not included in the array.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig a -> [a] -> Number
+     * @param {*} target The item to find.
+     * @param {Array} list The array to search in.
+     * @return {Number} the index of the target, or -1 if the target is not found.
+     *
+     * @example
+     *
+     *      R.indexOf(3, [1,2,3,4]); //=> 2
+     *      R.indexOf(10, [1,2,3,4]); //=> -1
+     */
+    var indexOf = _curry2(function indexOf(target, list) {
+        return _indexOf(list, target);
+    });
+
+    /**
+     * Inserts the supplied element into the list, at index `index`.  _Note
+     * that this is not destructive_: it returns a copy of the list with the changes.
+     * <small>No lists have been harmed in the application of this function.</small>
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig Number -> a -> [a] -> [a]
+     * @param {Number} index The position to insert the element
+     * @param {*} elt The element to insert into the Array
+     * @param {Array} list The list to insert into
+     * @return {Array} A new Array with `elt` inserted at `index`.
+     * @example
+     *
+     *      R.insert(2, 'x', [1,2,3,4]); //=> [1,2,'x',3,4]
+     */
+    var insert = _curry3(function insert(idx, elt, list) {
+        idx = idx < list.length && idx >= 0 ? idx : list.length;
+        return _concat(_append(elt, _slice(list, 0, idx)), _slice(list, idx));
+    });
+
+    /**
+     * Inserts the sub-list into the list, at index `index`.  _Note  that this
+     * is not destructive_: it returns a copy of the list with the changes.
+     * <small>No lists have been harmed in the application of this function.</small>
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig Number -> [a] -> [a] -> [a]
+     * @param {Number} index The position to insert the sub-list
+     * @param {Array} elts The sub-list to insert into the Array
+     * @param {Array} list The list to insert the sub-list into
+     * @return {Array} A new Array with `elts` inserted starting at `index`.
+     * @example
+     *
+     *      R.insertAll(2, ['x','y','z'], [1,2,3,4]); //=> [1,2,'x','y','z',3,4]
+     */
+    var insertAll = _curry3(function insertAll(idx, elts, list) {
+        idx = idx < list.length && idx >= 0 ? idx : list.length;
+        return _concat(_concat(_slice(list, 0, idx), elts), _slice(list, idx));
+    });
+
+    /**
+     * Turns a named method with a specified arity into a function
+     * that can be called directly supplied with arguments and a target object.
+     *
+     * The returned function is curried and accepts `len + 1` parameters where
+     * the final parameter is the target object.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (Number, String) -> (a... -> c -> b)
+     * @param {Number} len Number of arguments the returned function should take
+     *        before the target object.
+     * @param {Function} method Name of the method to call.
+     * @return {Function} A new curried function.
+     * @example
+     *
+     *      var sliceFrom = R.invoker(1, 'slice');
+     *      sliceFrom(6, 'abcdefghijklm'); //=> 'ghijklm'
+     *      var sliceFrom6 = R.invoker(2, 'slice', 6);
+     *      sliceFrom6(8, 'abcdefghijklm'); //=> 'gh'
+     */
+    var invoker = function invoker(arity, method) {
+        var initialArgs = _slice(arguments, 2);
+        var len = arity - initialArgs.length;
+        return curryN(len + 1, function () {
+            var target = arguments[len];
+            var args = initialArgs.concat(_slice(arguments, 0, len));
+            return target[method].apply(target, args);
+        });
+    };
+
+    /**
+     * See if an object (`val`) is an instance of the supplied constructor.
+     * This function will check up the inheritance chain, if any.
+     *
+     * @func
+     * @memberOf R
+     * @category Type
+     * @sig (* -> {*}) -> a -> Boolean
+     * @param {Object} ctor A constructor
+     * @param {*} val The value to test
+     * @return {Boolean}
+     * @example
+     *
+     *      R.is(Object, {}); //=> true
+     *      R.is(Number, 1); //=> true
+     *      R.is(Object, 1); //=> false
+     *      R.is(String, 's'); //=> true
+     *      R.is(String, new String('')); //=> true
+     *      R.is(Object, new String('')); //=> true
+     *      R.is(Object, 's'); //=> false
+     *      R.is(Number, {}); //=> false
+     */
+    var is = _curry2(function is(Ctor, val) {
+        return val != null && val.constructor === Ctor || val instanceof Ctor;
+    });
+
+    /**
+     * Returns a string made by inserting the `separator` between each
+     * element and concatenating all the elements into a single string.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig String -> [a] -> String
+     * @param {Number|String} separator The string used to separate the elements.
+     * @param {Array} xs The elements to join into a string.
+     * @return {String} str The string made by concatenating `xs` with `separator`.
+     * @example
+     *
+     *      var spacer = R.join(' ');
+     *      spacer(['a', 2, 3.4]);   //=> 'a 2 3.4'
+     *      R.join('|', [1, 2, 3]);    //=> '1|2|3'
+     */
+    var join = invoker(1, 'join');
+
+    /**
+     * Returns a list containing the names of all the enumerable own
+     * properties of the supplied object.
+     * Note that the order of the output array is not guaranteed to be
+     * consistent across different JS platforms.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {k: v} -> [k]
+     * @param {Object} obj The object to extract properties from
+     * @return {Array} An array of the object's own properties.
+     * @example
+     *
+     *      R.keys({a: 1, b: 2, c: 3}); //=> ['a', 'b', 'c']
+     */
+    // cover IE < 9 keys issues
+    var keys = function () {
+        // cover IE < 9 keys issues
+        var hasEnumBug = !{ toString: null }.propertyIsEnumerable('toString');
+        var nonEnumerableProps = [
+            'constructor',
+            'valueOf',
+            'isPrototypeOf',
+            'toString',
+            'propertyIsEnumerable',
+            'hasOwnProperty',
+            'toLocaleString'
+        ];
+        return function keys(obj) {
+            if (Object(obj) !== obj) {
+                return [];
+            }
+            if (Object.keys) {
+                return Object.keys(obj);
+            }
+            var prop, ks = [], nIdx;
+            for (prop in obj) {
+                if (has(prop, obj)) {
+                    ks[ks.length] = prop;
+                }
+            }
+            if (hasEnumBug) {
+                nIdx = nonEnumerableProps.length;
+                while (nIdx--) {
+                    prop = nonEnumerableProps[nIdx];
+                    if (has(prop, obj) && !_contains(prop, ks)) {
+                        ks[ks.length] = prop;
+                    }
+                }
+            }
+            return ks;
+        };
+    }();
+
+    /**
+     * Returns the position of the last occurrence of an item (by strict equality) in
+     * an array, or -1 if the item is not included in the array.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig a -> [a] -> Number
+     * @param {*} target The item to find.
+     * @param {Array} list The array to search in.
+     * @return {Number} the index of the target, or -1 if the target is not found.
+     *
+     * @example
+     *
+     *      R.lastIndexOf(3, [-1,3,3,0,1,2,3,4]); //=> 6
+     *      R.lastIndexOf(10, [1,2,3,4]); //=> -1
+     */
+    var lastIndexOf = _curry2(function lastIndexOf(target, list) {
+        return _lastIndexOf(list, target);
+    });
+
+    /**
+     * Returns the number of elements in the array by returning `list.length`.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> Number
+     * @param {Array} list The array to inspect.
+     * @return {Number} The length of the array.
+     * @example
+     *
+     *      R.length([]); //=> 0
+     *      R.length([1, 2, 3]); //=> 3
+     */
+    var length = function length(list) {
+        return list != null && is(Number, list.length) ? list.length : NaN;
+    };
+
+    /**
+     * Creates a lens. Supply a function to `get` values from inside an object, and a `set`
+     * function to change values on an object. (n.b.: This can, and should, be done without
+     * mutating the original object!) The lens is a function wrapped around the input `get`
+     * function, with the `set` function attached as a property on the wrapper. A `map`
+     * function is also attached to the returned function that takes a function to operate
+     * on the specified (`get`) property, which is then `set` before returning. The attached
+     * `set` and `map` functions are curried.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig (k -> v) -> (v -> a -> *) -> (a -> b)
+     * @param {Function} get A function that gets a value by property name
+     * @param {Function} set A function that gets a value by property name
+     * @return {Function} the returned function has `set` and `map` properties that are
+     *         also curried functions.
+     * @example
+     *
+     *     var headLens = R.lens(
+     *         function get(arr) { return arr[0]; },
+     *         function set(val, arr) { return [val].concat(arr.slice(1)); }
+     *     );
+     *     headLens([10, 20, 30, 40]); //=> 10
+     *     headLens.set('mu', [10, 20, 30, 40]); //=> ['mu', 20, 30, 40]
+     *     headLens.map(function(x) { return x + 1; }, [10, 20, 30, 40]); //=> [11, 20, 30, 40]
+     *
+     *     var phraseLens = R.lens(
+     *         function get(obj) { return obj.phrase; },
+     *         function set(val, obj) {
+     *             var out = R.clone(obj);
+     *             out.phrase = val;
+     *             return out;
+     *         }
+     *     );
+     *     var obj1 = { phrase: 'Absolute filth . . . and I LOVED it!'};
+     *     var obj2 = { phrase: "What's all this, then?"};
+     *     phraseLens(obj1); // => 'Absolute filth . . . and I LOVED it!'
+     *     phraseLens(obj2); // => "What's all this, then?"
+     *     phraseLens.set('Ooh Betty', obj1); //=> { phrase: 'Ooh Betty'}
+     *     phraseLens.map(R.toUpper, obj2); //=> { phrase: "WHAT'S ALL THIS, THEN?"}
+     */
+    var lens = _curry2(function lens(get, set) {
+        var lns = function (a) {
+            return get(a);
+        };
+        lns.set = _curry2(set);
+        lns.map = _curry2(function (fn, a) {
+            return set(fn(get(a)), a);
+        });
+        return lns;
+    });
+
+    /**
+     * Returns a new list, constructed by applying the supplied function to every element of the
+     * supplied list.
+     *
+     * Note: `R.map` does not skip deleted or unassigned indices (sparse arrays), unlike the
+     * native `Array.prototype.map` method. For more details on this behavior, see:
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map#Description
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> b) -> [a] -> [b]
+     * @param {Function} fn The function to be called on every element of the input `list`.
+     * @param {Array} list The list to be iterated over.
+     * @return {Array} The new list.
+     * @example
+     *
+     *      var double = function(x) {
+     *        return x * 2;
+     *      };
+     *
+     *      R.map(double, [1, 2, 3]); //=> [2, 4, 6]
+     */
+    var map = _curry2(_checkForMethod('map', _map));
+
+    /**
+     * The mapAccum function behaves like a combination of map and reduce; it applies a
+     * function to each element of a list, passing an accumulating parameter from left to
+     * right, and returning a final value of this accumulator together with the new list.
+     *
+     * The iterator function receives two values: *(acc, value)*
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (acc -> x -> (acc, y)) -> acc -> [x] -> (acc, [y])
+     * @param {Function} fn The function to be called on every element of the input `list`.
+     * @param {*} acc The accumulator value.
+     * @param {Array} list The list to iterate over.
+     * @return {*} The final, accumulated value.
+     * @example
+     *
+     *      var digits = ['1', '2', '3', '4'];
+     *      var append = function(a, b) {
+     *          return [a + b, a + b];
+     *      }
+     *
+     *      R.mapAccum(append, 0, digits); //=> ['01234', ['01', '012', '0123', '01234']]
+     */
+    var mapAccum = _curry3(function mapAccum(fn, acc, list) {
+        var idx = -1, len = list.length, result = new Array(len), tuple = [acc];
+        while (++idx < len) {
+            tuple = fn(tuple[0], list[idx]);
+            result[idx] = tuple[1];
+        }
+        return [
+            tuple[0],
+            result
+        ];
+    });
+
+    /**
+     * The mapAccumRight function behaves like a combination of map and reduce; it applies a
+     * function to each element of a list, passing an accumulating parameter from right
+     * to left, and returning a final value of this accumulator together with the new list.
+     *
+     * Similar to `mapAccum`, except moves through the input list from the right to the
+     * left.
+     *
+     * The iterator function receives two values: *(acc, value)*
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (acc -> x -> (acc, y)) -> acc -> [x] -> (acc, [y])
+     * @param {Function} fn The function to be called on every element of the input `list`.
+     * @param {*} acc The accumulator value.
+     * @param {Array} list The list to iterate over.
+     * @return {*} The final, accumulated value.
+     * @example
+     *
+     *      var digits = ['1', '2', '3', '4'];
+     *      var append = function(a, b) {
+     *          return [a + b, a + b];
+     *      }
+     *
+     *      R.mapAccumRight(append, 0, digits); //=> ['04321', ['04321', '0432', '043', '04']]
+     */
+    var mapAccumRight = _curry3(function mapAccumRight(fn, acc, list) {
+        var idx = list.length, len = list.length, result = new Array(len), tuple = [acc];
+        while (idx--) {
+            tuple = fn(tuple[0], list[idx]);
+            result[idx] = tuple[1];
+        }
+        return [
+            tuple[0],
+            result
+        ];
+    });
+
+    /**
+     * Like `map`, but but passes additional parameters to the mapping function.
+     * `fn` receives three arguments: *(value, index, list)*.
+     *
+     * Note: `R.mapIndexed` does not skip deleted or unassigned indices (sparse arrays), unlike
+     * the native `Array.prototype.map` method. For more details on this behavior, see:
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map#Description
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a,i,[b] -> b) -> [a] -> [b]
+     * @param {Function} fn The function to be called on every element of the input `list`.
+     * @param {Array} list The list to be iterated over.
+     * @return {Array} The new list.
+     * @example
+     *
+     *      var squareEnds = function(elt, idx, list) {
+     *        if (idx === 0 || idx === list.length - 1) {
+     *          return elt * elt;
+     *        }
+     *        return elt;
+     *      };
+     *
+     *      R.mapIndexed(squareEnds, [8, 5, 3, 0, 9]); //=> [64, 5, 3, 0, 81]
+     */
+    var mapIndexed = _curry2(function mapIndexed(fn, list) {
+        var idx = -1, len = list.length, result = new Array(len);
+        while (++idx < len) {
+            result[idx] = fn(list[idx], idx, list);
+        }
+        return result;
+    });
+
+    /**
+     * Map, but for objects. Creates an object with the same keys as `obj` and values
+     * generated by running each property of `obj` through `fn`. `fn` is passed one argument:
+     * *(value)*.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (v -> v) -> {k: v} -> {k: v}
+     * @param {Function} fn A function called for each property in `obj`. Its return value will
+     * become a new property on the return object.
+     * @param {Object} obj The object to iterate over.
+     * @return {Object} A new object with the same keys as `obj` and values that are the result
+     *         of running each property through `fn`.
+     * @example
+     *
+     *      var values = { x: 1, y: 2, z: 3 };
+     *      var double = function(num) {
+     *        return num * 2;
+     *      };
+     *
+     *      R.mapObj(double, values); //=> { x: 2, y: 4, z: 6 }
+     */
+    var mapObj = _curry2(function mapObject(fn, obj) {
+        return _reduce(function (acc, key) {
+            acc[key] = fn(obj[key]);
+            return acc;
+        }, {}, keys(obj));
+    });
+
+    /**
+     * Like `mapObj`, but but passes additional arguments to the predicate function. The
+     * predicate function is passed three arguments: *(value, key, obj)*.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (v, k, {k: v} -> v) -> {k: v} -> {k: v}
+     * @param {Function} fn A function called for each property in `obj`. Its return value will
+     *        become a new property on the return object.
+     * @param {Object} obj The object to iterate over.
+     * @return {Object} A new object with the same keys as `obj` and values that are the result
+     *         of running each property through `fn`.
+     * @example
+     *
+     *      var values = { x: 1, y: 2, z: 3 };
+     *      var prependKeyAndDouble = function(num, key, obj) {
+     *        return key + (num * 2);
+     *      };
+     *
+     *      R.mapObjIndexed(prependKeyAndDouble, values); //=> { x: 'x2', y: 'y4', z: 'z6' }
+     */
+    var mapObjIndexed = _curry2(function mapObjectIndexed(fn, obj) {
+        return _reduce(function (acc, key) {
+            acc[key] = fn(obj[key], key, obj);
+            return acc;
+        }, {}, keys(obj));
+    });
+
+    /**
+     * Tests a regular expression against a String
+     *
+     * @func
+     * @memberOf R
+     * @category String
+     * @sig RegExp -> String -> [String] | null
+     * @param {RegExp} rx A regular expression.
+     * @param {String} str The string to match against
+     * @return {Array} The list of matches, or null if no matches found.
+     * @see R.invoker
+     * @example
+     *
+     *      R.match(/([a-z]a)/g, 'bananas'); //=> ['ba', 'na', 'na']
+     */
+    var match = invoker(1, 'match');
+
+    /**
+     * Determines the largest of a list of numbers (or elements that can be cast to numbers)
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig [Number] -> Number
+     * @see R.maxBy
+     * @param {Array} list A list of numbers
+     * @return {Number} The greatest number in the list.
+     * @example
+     *
+     *      R.max([7, 3, 9, 2, 4, 9, 3]); //=> 9
+     */
+    var max = _createMaxMin(_gt, -Infinity);
+
+    /**
+     * Determines the largest of a list of items as determined by pairwise comparisons from the supplied comparator
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig (a -> Number) -> [a] -> a
+     * @param {Function} keyFn A comparator function for elements in the list
+     * @param {Array} list A list of comparable elements
+     * @return {*} The greatest element in the list. `undefined` if the list is empty.
+     * @see R.max
+     * @example
+     *
+     *      function cmp(obj) { return obj.x; }
+     *      var a = {x: 1}, b = {x: 2}, c = {x: 3};
+     *      R.maxBy(cmp, [a, b, c]); //=> {x: 3}
+     */
+    var maxBy = _curry2(_createMaxMinBy(_gt));
+
+    /**
+     * Creates a new function that, when invoked, caches the result of calling `fn` for a given
+     * argument set and returns the result. Subsequent calls to the memoized `fn` with the same
+     * argument set will not result in an additional call to `fn`; instead, the cached result
+     * for that set of arguments will be returned.
+     *
+     * Note that this version of `memoize` should not be applied to functions which
+     * take objects as arguments.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (*... -> a) -> (*... -> a)
+     * @param {Function} fn The function to memoize.
+     * @return {Function} Memoized version of `fn`.
+     * @example
+     *
+     *      var count = 0;
+     *      var factorial = R.memoize(function(n) {
+     *          count += 1;
+     *          return R.product(R.range(1, n + 1));
+     *      });
+     *      factorial(5); //=> 120
+     *      factorial(5); //=> 120
+     *      factorial(5); //=> 120
+     *      count; //=> 1
+     */
+    // Returns a string representation of the given value suitable for use as
+    // a property name.
+    //
+    // > repr(42)
+    // '42::[object Number]'
+    // Serializes an array-like object. The approach is similar to that taken
+    // by [CANON](https://github.com/davidchambers/CANON), though it does not
+    // differentiate between objects at all (!) and, since it is not applied
+    // recursively, does not distinguish between [[42]] and [['42']].
+    //
+    // > serialize(['foo', 42])
+    // '2:{foo::[object String],42::[object Number]}'
+    var memoize = function () {
+        // Returns a string representation of the given value suitable for use as
+        // a property name.
+        //
+        // > repr(42)
+        // '42::[object Number]'
+        var repr = function (x) {
+            return x + '::' + Object.prototype.toString.call(x);
+        };
+        // Serializes an array-like object. The approach is similar to that taken
+        // by [CANON](https://github.com/davidchambers/CANON), though it does not
+        // differentiate between objects at all (!) and, since it is not applied
+        // recursively, does not distinguish between [[42]] and [['42']].
+        //
+        // > serialize(['foo', 42])
+        // '2:{foo::[object String],42::[object Number]}'
+        var serialize = function (args) {
+            return args.length + ':{' + _map(repr, args).join(',') + '}';
+        };
+        return function memoize(fn) {
+            var cache = {};
+            return function () {
+                var key = serialize(arguments);
+                if (!has(key, cache)) {
+                    cache[key] = fn.apply(this, arguments);
+                }
+                return cache[key];
+            };
+        };
+    }();
+
+    /**
+     * Determines the smallest of a list of numbers (or elements that can be cast to numbers)
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig [Number] -> Number
+     * @param {Array} list A list of numbers
+     * @return {Number} The greatest number in the list.
+     * @see R.minBy
+     * @example
+     *
+     *      R.min([7, 3, 9, 2, 4, 9, 3]); //=> 2
+     */
+    var min = _createMaxMin(_lt, Infinity);
+
+    /**
+     * Determines the smallest of a list of items as determined by pairwise comparisons from the supplied comparator
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig (a -> Number) -> [a] -> a
+     * @param {Function} keyFn A comparator function for elements in the list
+     * @param {Array} list A list of comparable elements
+     * @see R.min
+     * @return {*} The greatest element in the list. `undefined` if the list is empty.
+     * @example
+     *
+     *      function cmp(obj) { return obj.x; }
+     *      var a = {x: 1}, b = {x: 2}, c = {x: 3};
+     *      R.minBy(cmp, [a, b, c]); //=> {x: 1}
+     */
+    var minBy = _curry2(_createMaxMinBy(_lt));
+
+    /**
+     * Multiplies two numbers. Equivalent to `a * b` but curried.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig Number -> Number -> Number
+     * @param {Number} a The first value.
+     * @param {Number} b The second value.
+     * @return {Number} The result of `a * b`.
+     * @example
+     *
+     *      var double = R.multiply(2);
+     *      var triple = R.multiply(3);
+     *      double(3);       //=>  6
+     *      triple(4);       //=> 12
+     *      R.multiply(2, 5);  //=> 10
+     */
+    var multiply = _curry2(_multiply);
+
+    /**
+     * Negates its argument.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig Number -> Number
+     * @param {Number} n
+     * @return {Number}
+     * @example
+     *
+     *      R.negate(42); //=> -42
+     */
+    var negate = multiply(-1);
+
+    /**
+     * Returns the nth element in a list.
+     * If n is negative the element at index length + n is returned.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> a
+     * @param {Number} idx
+     * @param {Array} list
+     * @return {*} The nth element of the list.
+     * @example
+     *
+     *      var list = ['foo', 'bar', 'baz', 'quux'];
+     *      R.nth(1, list); //=> 'bar'
+     *      R.nth(-1, list); //=> 'quux'
+     *      R.nth(-99, list); //=> undefined
+     */
+    var nth = _curry2(_nth);
+
+    /**
+     * Returns a partial copy of an object omitting the keys specified.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig [k] -> {k: v} -> {k: v}
+     * @param {Array} names an array of String property names to omit from the new object
+     * @param {Object} obj The object to copy from
+     * @return {Object} A new object with properties from `names` not on it.
+     * @example
+     *
+     *      R.omit(['a', 'd'], {a: 1, b: 2, c: 3, d: 4}); //=> {b: 2, c: 3}
+     */
+    var omit = _curry2(function omit(names, obj) {
+        return _pickBy(function (val, key) {
+            return !_contains(key, names);
+        }, obj);
+    });
+
+    /**
+     * A function wrapping calls to the two functions in an `||` operation, returning the result of the first
+     * function if it is truth-y and the result of the second function otherwise.  Note that this is
+     * short-circuited, meaning that the second function will not be invoked if the first returns a truth-y
+     * value.
+     *
+     * @func
+     * @memberOf R
+     * @category Logic
+     * @sig (*... -> Boolean) -> (*... -> Boolean) -> (*... -> Boolean)
+     * @param {Function} f a predicate
+     * @param {Function} g another predicate
+     * @return {Function} a function that applies its arguments to `f` and `g` and ORs their outputs together.
+     * @example
+     *
+     *      var gt10 = function(x) { return x > 10; };
+     *      var even = function(x) { return x % 2 === 0 };
+     *      var f = R.or(gt10, even);
+     *      f(101); //=> true
+     *      f(8); //=> true
+     */
+    var or = _curry2(function or(f, g) {
+        return function _or() {
+            return f.apply(this, arguments) || g.apply(this, arguments);
+        };
+    });
+
+    /**
+     * Accepts as its arguments a function and any number of values and returns a function that,
+     * when invoked, calls the original function with all of the values prepended to the
+     * original function's arguments list. In some libraries this function is named `applyLeft`.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (a -> b -> ... -> i -> j -> ... -> m -> n) -> a -> b-> ... -> i -> (j -> ... -> m -> n)
+     * @param {Function} fn The function to invoke.
+     * @param {...*} [args] Arguments to prepend to `fn` when the returned function is invoked.
+     * @return {Function} A new function wrapping `fn`. When invoked, it will call `fn`
+     *         with `args` prepended to `fn`'s arguments list.
+     * @example
+     *
+     *      var multiply = function(a, b) { return a * b; };
+     *      var double = R.partial(multiply, 2);
+     *      double(2); //=> 4
+     *
+     *      var greet = function(salutation, title, firstName, lastName) {
+     *        return salutation + ', ' + title + ' ' + firstName + ' ' + lastName + '!';
+     *      };
+     *      var sayHello = R.partial(greet, 'Hello');
+     *      var sayHelloToMs = R.partial(sayHello, 'Ms.');
+     *      sayHelloToMs('Jane', 'Jones'); //=> 'Hello, Ms. Jane Jones!'
+     */
+    var partial = _createPartialApplicator(_concat);
+
+    /**
+     * Accepts as its arguments a function and any number of values and returns a function that,
+     * when invoked, calls the original function with all of the values appended to the original
+     * function's arguments list.
+     *
+     * Note that `partialRight` is the opposite of `partial`: `partialRight` fills `fn`'s arguments
+     * from the right to the left.  In some libraries this function is named `applyRight`.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (a -> b-> ... -> i -> j -> ... -> m -> n) -> j -> ... -> m -> n -> (a -> b-> ... -> i)
+     * @param {Function} fn The function to invoke.
+     * @param {...*} [args] Arguments to append to `fn` when the returned function is invoked.
+     * @return {Function} A new function wrapping `fn`. When invoked, it will call `fn` with
+     *         `args` appended to `fn`'s arguments list.
+     * @example
+     *
+     *      var greet = function(salutation, title, firstName, lastName) {
+     *        return salutation + ', ' + title + ' ' + firstName + ' ' + lastName + '!';
+     *      };
+     *      var greetMsJaneJones = R.partialRight(greet, 'Ms.', 'Jane', 'Jones');
+     *
+     *      greetMsJaneJones('Hello'); //=> 'Hello, Ms. Jane Jones!'
+     */
+    var partialRight = _createPartialApplicator(flip(_concat));
+
+    /**
+     * Takes a predicate and a list and returns the pair of lists of
+     * elements which do and do not satisfy the predicate, respectively.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> Boolean) -> [a] -> [[a],[a]]
+     * @param {Function} pred A predicate to determine which array the element belongs to.
+     * @param {Array} list The array to partition.
+     * @return {Array} A nested array, containing first an array of elements that satisfied the predicate,
+     *         and second an array of elements that did not satisfy.
+     * @example
+     *
+     *      R.partition(R.contains('s'), ['sss', 'ttt', 'foo', 'bars']);
+     *      //=> [ [ 'sss', 'bars' ],  [ 'ttt', 'foo' ] ]
+     */
+    var partition = _curry2(function partition(pred, list) {
+        return _reduce(function (acc, elt) {
+            acc[pred(elt) ? 0 : 1].push(elt);
+            return acc;
+        }, [
+            [],
+            []
+        ], list);
+    });
+
+    /**
+     * Determines whether a nested path on an object, seperated by periods,
+     * has a specific value according to strict equality ('==='). Most
+     * likely used to filter a list:
+     *
+     * @func
+     * @memberOf R
+     * @category Relation
+     * @sig String -> v -> {k: v} -> Boolean
+     * @param {String} path The path of the nested property to use
+     * @param {*} val The value to compare the nested property with
+     * @param {Object} obj The object to check the nested property in
+     * @return {Boolean} `true` if the value equals the nested object property,
+     *         `false` otherwise.
+     * @example
+     *
+     *     var user1 = { address: { zipCode: 90210 } };
+     *     var user2 = { address: { zipCode: 55555 } };
+     *     var user3 = { name: 'Bob' };
+     *     var users = [ user1, user2, user3 ]
+     *     var isFamous = R.pathEq('address.zipCode', 90210);
+     *     R.filter(isFamous, users); //=> [ user1 ]
+     */
+    var pathEq = _curry3(function (path, val, obj) {
+        return _path(path.split('.'), obj) === val;
+    });
+
+    /**
+     * Retrieve a nested path on an object separated by the specified
+     * separator value.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig String -> String -> {*} -> *
+     * @param {String} sep The separator to use in `path`.
+     * @param {String} path The path to use.
+     * @return {*} The data at `path`.
+     * @example
+     *
+     *      R.pathOn('/', 'a/b/c', {a: {b: {c: 3}}}); //=> 3
+     */
+    var pathOn = _curry3(function pathOn(sep, str, obj) {
+        return _path(str.split(sep), obj);
+    });
+
+    /**
+     * Returns a partial copy of an object containing only the keys specified.  If the key does not exist, the
+     * property is ignored.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig [k] -> {k: v} -> {k: v}
+     * @param {Array} names an array of String property names to copy onto a new object
+     * @param {Object} obj The object to copy from
+     * @return {Object} A new object with only properties from `names` on it.
+     * @example
+     *
+     *      R.pick(['a', 'd'], {a: 1, b: 2, c: 3, d: 4}); //=> {a: 1, d: 4}
+     *      R.pick(['a', 'e', 'f'], {a: 1, b: 2, c: 3, d: 4}); //=> {a: 1}
+     */
+    var pick = _curry2(function pick(names, obj) {
+        return _pickBy(function (val, key) {
+            return _contains(key, names);
+        }, obj);
+    });
+
+    /**
+     * Similar to `pick` except that this one includes a `key: undefined` pair for properties that don't exist.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig [k] -> {k: v} -> {k: v}
+     * @param {Array} names an array of String property names to copy onto a new object
+     * @param {Object} obj The object to copy from
+     * @return {Object} A new object with only properties from `names` on it.
+     * @see R.pick
+     * @example
+     *
+     *      R.pickAll(['a', 'd'], {a: 1, b: 2, c: 3, d: 4}); //=> {a: 1, d: 4}
+     *      R.pickAll(['a', 'e', 'f'], {a: 1, b: 2, c: 3, d: 4}); //=> {a: 1, e: undefined, f: undefined}
+     */
+    var pickAll = _curry2(_pickAll);
+
+    /**
+     * Returns a partial copy of an object containing only the keys that
+     * satisfy the supplied predicate.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig (v, k -> Boolean) -> {k: v} -> {k: v}
+     * @param {Function} pred A predicate to determine whether or not a key
+     *        should be included on the output object.
+     * @param {Object} obj The object to copy from
+     * @return {Object} A new object with only properties that satisfy `pred`
+     *         on it.
+     * @see R.pick
+     * @example
+     *
+     *      var isUpperCase = function(val, key) { return key.toUpperCase() === key; }
+     *      R.pickBy(isUpperCase, {a: 1, b: 2, A: 3, B: 4}); //=> {A: 3, B: 4}
+     */
+    var pickBy = _curry2(_pickBy);
+
+    /**
+     * Creates a new function that runs each of the functions supplied as parameters in turn,
+     * passing the return value of each function invocation to the next function invocation,
+     * beginning with whatever arguments were passed to the initial invocation.
+     *
+     * `pipe` is the mirror version of `compose`. `pipe` is left-associative, which means that
+     * each of the functions provided is executed in order from left to right.
+     *
+     * In some libraries this function is named `sequence`.
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig ((a... -> b), (b -> c), ..., (x -> y), (y -> z)) -> (a... -> z)
+     * @param {...Function} functions A variable number of functions.
+     * @return {Function} A new function which represents the result of calling each of the
+     *         input `functions`, passing the result of each function call to the next, from
+     *         left to right.
+     * @example
+     *
+     *      var triple = function(x) { return x * 3; };
+     *      var double = function(x) { return x * 2; };
+     *      var square = function(x) { return x * x; };
+     *      var squareThenDoubleThenTriple = R.pipe(square, double, triple);
+     *
+     *      //≅ triple(double(square(5)))
+     *      squareThenDoubleThenTriple(5); //=> 150
+     */
+    var pipe = function pipe() {
+        return compose.apply(this, reverse(arguments));
+    };
+
+    /**
+     * Creates a new function that runs each of the functions supplied as parameters in turn,
+     * passing to the next function invocation either the value returned by the previous
+     * function or the resolved value if the returned value is a promise. In other words,
+     * if some of the functions in the sequence return promises, `pipeP` pipes the values
+     * asynchronously. If none of the functions return promises, the behavior is the same as
+     * that of `pipe`.
+     *
+     * `pipeP` is the mirror version of `composeP`. `pipeP` is left-associative, which means that
+     * each of the functions provided is executed in order from left to right.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig ((a... -> b), (b -> c), ..., (x -> y), (y -> z)) -> (a... -> z)
+     * @param {...Function} functions A variable number of functions.
+     * @return {Function} A new function which represents the result of calling each of the
+     *         input `functions`, passing either the returned result or the asynchronously
+     *         resolved value) of each function call to the next, from left to right.
+     * @example
+     *
+     *      var Q = require('q');
+     *      var triple = function(x) { return x * 3; };
+     *      var double = function(x) { return x * 2; };
+     *      var squareAsync = function(x) { return Q.when(x * x); };
+     *      var squareAsyncThenDoubleThenTriple = R.pipeP(squareAsync, double, triple);
+     *
+     *      //≅ squareAsync(5).then(function(x) { return triple(double(x)) };
+     *      squareAsyncThenDoubleThenTriple(5)
+     *          .then(function(result) {
+     *              // result is 150
+     *          });
+     */
+    var pipeP = function pipeP() {
+        return composeP.apply(this, reverse(arguments));
+    };
+
+    /**
+     * Returns a new list by plucking the same named property off all objects in the list supplied.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig String -> {*} -> [*]
+     * @param {Number|String} key The key name to pluck off of each object.
+     * @param {Array} list The array to consider.
+     * @return {Array} The list of values for the given key.
+     * @example
+     *
+     *      R.pluck('a')([{a: 1}, {a: 2}]); //=> [1, 2]
+     *      R.pluck(0)([[1, 2], [3, 4]]);   //=> [1, 3]
+     */
+    var pluck = _curry2(_pluck);
+
+    /**
+     * Returns a new list with the given element at the front, followed by the contents of the
+     * list.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig a -> [a] -> [a]
+     * @param {*} el The item to add to the head of the output list.
+     * @param {Array} list The array to add to the tail of the output list.
+     * @return {Array} A new array.
+     * @example
+     *
+     *      R.prepend('fee', ['fi', 'fo', 'fum']); //=> ['fee', 'fi', 'fo', 'fum']
+     */
+    var prepend = _curry2(_prepend);
+
+    /**
+     * Determines whether the given property of an object has a specific
+     * value according to strict equality (`===`).  Most likely used to
+     * filter a list:
+     *
+     * @func
+     * @memberOf R
+     * @category Relation
+     * @sig k -> v -> {k: v} -> Boolean
+     * @param {Number|String} name The property name (or index) to use.
+     * @param {*} val The value to compare the property with.
+     * @return {Boolean} `true` if the properties are equal, `false` otherwise.
+     * @example
+     *
+     *      var abby = {name: 'Abby', age: 7, hair: 'blond'};
+     *      var fred = {name: 'Fred', age: 12, hair: 'brown'};
+     *      var rusty = {name: 'Rusty', age: 10, hair: 'brown'};
+     *      var alois = {name: 'Alois', age: 15, disposition: 'surly'};
+     *      var kids = [abby, fred, rusty, alois];
+     *      var hasBrownHair = R.propEq('hair', 'brown');
+     *      R.filter(hasBrownHair, kids); //=> [fred, rusty]
+     */
+    var propEq = _curry3(function propEq(name, val, obj) {
+        return obj[name] === val;
+    });
+
+    /**
+     * If the given, non-null object has an own property with the specified name,
+     * returns the value of that property.
+     * Otherwise returns the provided default value.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig s -> v -> {s: x} -> x | v
+     * @param {String} p The name of the property to return.
+     * @param {*} val The default value.
+     * @param {Object} obj The object to query.
+     * @return {*} The value of given property or default value.
+     * @example
+     *
+     *      var alice = {
+     *        name: 'ALICE',
+     *        age: 101
+     *      };
+     *      var favorite = R.prop('favoriteLibrary');
+     *      var favoriteWithDefault = R.propOr('Ramda', 'favoriteLibrary');
+     *
+     *      favorite(alice);  //=> undefined
+     *      favoriteWithDefault(alice);  //=> 'Ramda'
+     */
+    var propOr = _curry3(function propOr(val, p, obj) {
+        return has(p, obj) ? obj[p] : val;
+    });
+
+    /**
+     * Acts as multiple `get`: array of keys in, array of values out. Preserves order.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig [k] -> {k: v} -> [v]
+     * @param {Array} ps The property names to fetch
+     * @param {Object} obj The object to query
+     * @return {Array} The corresponding values or partially applied function.
+     * @example
+     *
+     *      R.props(['x', 'y'], {x: 1, y: 2}); //=> [1, 2]
+     *      R.props(['c', 'a', 'b'], {b: 2, a: 1}); //=> [undefined, 1, 2]
+     *
+     *      var fullName = R.compose(R.join(' '), R.props(['first', 'last']));
+     *      fullName({last: 'Bullet-Tooth', age: 33, first: 'Tony'}); //=> 'Tony Bullet-Tooth'
+     */
+    var props = _curry2(function props(ps, obj) {
+        var len = ps.length, out = new Array(len), idx = -1;
+        while (++idx < len) {
+            out[idx] = obj[ps[idx]];
+        }
+        return out;
+    });
+
+    /**
+     * Returns a list of numbers from `from` (inclusive) to `to`
+     * (exclusive).
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig Number -> Number -> [Number]
+     * @param {Number} from The first number in the list.
+     * @param {Number} to One more than the last number in the list.
+     * @return {Array} The list of numbers in tthe set `[a, b)`.
+     * @example
+     *
+     *      R.range(1, 5);    //=> [1, 2, 3, 4]
+     *      R.range(50, 53);  //=> [50, 51, 52]
+     */
+    var range = _curry2(function range(from, to) {
+        if (from >= to) {
+            return [];
+        }
+        var idx = 0, result = new Array(Math.floor(to) - Math.ceil(from));
+        while (from < to) {
+            result[idx++] = from++;
+        }
+        return result;
+    });
+
+    /**
+     * Returns a single item by iterating through the list, successively calling the iterator
+     * function and passing it an accumulator value and the current value from the array, and
+     * then passing the result to the next call.
+     *
+     * The iterator function receives two values: *(acc, value)*
+     *
+     * Note: `R.reduce` does not skip deleted or unassigned indices (sparse arrays), unlike
+     * the native `Array.prototype.reduce` method. For more details on this behavior, see:
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce#Description
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a,b -> a) -> a -> [b] -> a
+     * @param {Function} fn The iterator function. Receives two values, the accumulator and the
+     *        current element from the array.
+     * @param {*} acc The accumulator value.
+     * @param {Array} list The list to iterate over.
+     * @return {*} The final, accumulated value.
+     * @example
+     *
+     *      var numbers = [1, 2, 3];
+     *      var add = function(a, b) {
+     *        return a + b;
+     *      };
+     *
+     *      R.reduce(add, 10, numbers); //=> 16
+     */
+    var reduce = _curry3(_reduce);
+
+    /**
+     * Like `reduce`, but passes additional parameters to the predicate function.
+     *
+     * The iterator function receives four values: *(acc, value, index, list)*
+     *
+     * Note: `R.reduceIndexed` does not skip deleted or unassigned indices (sparse arrays),
+     * unlike the native `Array.prototype.reduce` method. For more details on this behavior,
+     * see:
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce#Description
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a,b,i,[b] -> a) -> a -> [b] -> a
+     * @param {Function} fn The iterator function. Receives four values: the accumulator, the
+     *        current element from `list`, that element's index, and the entire `list` itself.
+     * @param {*} acc The accumulator value.
+     * @param {Array} list The list to iterate over.
+     * @return {*} The final, accumulated value.
+     * @example
+     *
+     *      var letters = ['a', 'b', 'c'];
+     *      var objectify = function(accObject, elem, idx, list) {
+     *        accObject[elem] = idx;
+     *        return accObject;
+     *      };
+     *
+     *      R.reduceIndexed(objectify, {}, letters); //=> { 'a': 0, 'b': 1, 'c': 2 }
+     */
+    var reduceIndexed = _curry3(function reduceIndexed(fn, acc, list) {
+        var idx = -1, len = list.length;
+        while (++idx < len) {
+            acc = fn(acc, list[idx], idx, list);
+        }
+        return acc;
+    });
+
+    /**
+     * Returns a single item by iterating through the list, successively calling the iterator
+     * function and passing it an accumulator value and the current value from the array, and
+     * then passing the result to the next call.
+     *
+     * Similar to `reduce`, except moves through the input list from the right to the left.
+     *
+     * The iterator function receives two values: *(acc, value)*
+     *
+     * Note: `R.reduceRight` does not skip deleted or unassigned indices (sparse arrays), unlike
+     * the native `Array.prototype.reduce` method. For more details on this behavior, see:
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduceRight#Description
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a,b -> a) -> a -> [b] -> a
+     * @param {Function} fn The iterator function. Receives two values, the accumulator and the
+     *        current element from the array.
+     * @param {*} acc The accumulator value.
+     * @param {Array} list The list to iterate over.
+     * @return {*} The final, accumulated value.
+     * @example
+     *
+     *      var pairs = [ ['a', 1], ['b', 2], ['c', 3] ];
+     *      var flattenPairs = function(acc, pair) {
+     *        return acc.concat(pair);
+     *      };
+     *
+     *      R.reduceRight(flattenPairs, [], pairs); //=> [ 'c', 3, 'b', 2, 'a', 1 ]
+     */
+    var reduceRight = _curry3(function reduceRight(fn, acc, list) {
+        var idx = list.length;
+        while (idx--) {
+            acc = fn(acc, list[idx]);
+        }
+        return acc;
+    });
+
+    /**
+     * Like `reduceRight`, but passes additional parameters to the predicate function. Moves through
+     * the input list from the right to the left.
+     *
+     * The iterator function receives four values: *(acc, value, index, list)*.
+     *
+     * Note: `R.reduceRightIndexed` does not skip deleted or unassigned indices (sparse arrays),
+     * unlike the native `Array.prototype.reduce` method. For more details on this behavior,
+     * see:
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduceRight#Description
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a,b,i,[b] -> a -> [b] -> a
+     * @param {Function} fn The iterator function. Receives four values: the accumulator, the
+     *        current element from `list`, that element's index, and the entire `list` itself.
+     * @param {*} acc The accumulator value.
+     * @param {Array} list The list to iterate over.
+     * @return {*} The final, accumulated value.
+     * @example
+     *
+     *      var letters = ['a', 'b', 'c'];
+     *      var objectify = function(accObject, elem, idx, list) {
+     *        accObject[elem] = idx;
+     *        return accObject;
+     *      };
+     *
+     *      R.reduceRightIndexed(objectify, {}, letters); //=> { 'c': 2, 'b': 1, 'a': 0 }
+     */
+    var reduceRightIndexed = _curry3(function reduceRightIndexed(fn, acc, list) {
+        var idx = list.length;
+        while (idx--) {
+            acc = fn(acc, list[idx], idx, list);
+        }
+        return acc;
+    });
+
+    /**
+     * Similar to `filter`, except that it keeps only values for which the given predicate
+     * function returns falsy. The predicate function is passed one argument: *(value)*.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> Boolean) -> [a] -> [a]
+     * @param {Function} fn The function called per iteration.
+     * @param {Array} list The collection to iterate over.
+     * @return {Array} The new filtered array.
+     * @example
+     *
+     *      var isOdd = function(n) {
+     *        return n % 2 === 1;
+     *      };
+     *      R.reject(isOdd, [1, 2, 3, 4]); //=> [2, 4]
+     */
+    var reject = _curry2(function reject(fn, list) {
+        return filter(not(fn), list);
+    });
+
+    /**
+     * Like `reject`, but passes additional parameters to the predicate function. The predicate
+     * function is passed three arguments: *(value, index, list)*.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a, i, [a] -> Boolean) -> [a] -> [a]
+     * @param {Function} fn The function called per iteration.
+     * @param {Array} list The collection to iterate over.
+     * @return {Array} The new filtered array.
+     * @example
+     *
+     *      var lastTwo = function(val, idx, list) {
+     *        return list.length - idx <= 2;
+     *      };
+     *
+     *      R.rejectIndexed(lastTwo, [8, 6, 7, 5, 3, 0, 9]); //=> [8, 6, 7, 5, 3]
+     */
+    var rejectIndexed = _curry2(function rejectIndexed(fn, list) {
+        return _filterIndexed(not(fn), list);
+    });
+
+    /**
+     * Removes the sub-list of `list` starting at index `start` and containing
+     * `count` elements.  _Note that this is not destructive_: it returns a
+     * copy of the list with the changes.
+     * <small>No lists have been harmed in the application of this function.</small>
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig Number -> Number -> [a] -> [a]
+     * @param {Number} start The position to start removing elements
+     * @param {Number} count The number of elements to remove
+     * @param {Array} list The list to remove from
+     * @return {Array} A new Array with `count` elements from `start` removed.
+     * @example
+     *
+     *      R.remove(2, 3, [1,2,3,4,5,6,7,8]); //=> [1,2,6,7,8]
+     */
+    var remove = _curry3(function remove(start, count, list) {
+        return _concat(_slice(list, 0, Math.min(start, list.length)), _slice(list, Math.min(list.length, start + count)));
+    });
+
+    /**
+     * Replace a substring or regex match in a string with a replacement.
+     *
+     * @func
+     * @memberOf R
+     * @category String
+     * @sig RegExp|String -> String -> String -> String
+     * @param {RegExp|String} pattern A regular expression or a substring to match.
+     * @param {String} replacement The string to replace the matches with.
+     * @param {String} str The String to do the search and replacement in.
+     * @return {String} The result.
+     * @example
+     *
+     *      R.replace('foo', 'bar', 'foo foo foo'); //=> 'bar foo foo'
+     *      R.replace(/foo/, 'bar', 'foo foo foo'); //=> 'bar foo foo'
+     *
+     *      // Use the "g" (global) flag to replace all occurrences:
+     *      R.replace(/foo/g, 'bar', 'foo foo foo'); //=> 'bar bar bar'
+     */
+    var replace = _curry3(function replace(regex, replacement, str) {
+        return str.replace(regex, replacement);
+    });
+
+    /**
+     * Scan is similar to reduce, but returns a list of successively reduced values from the left
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a,b -> a) -> a -> [b] -> [a]
+     * @param {Function} fn The iterator function. Receives two values, the accumulator and the
+     *        current element from the array
+     * @param {*} acc The accumulator value.
+     * @param {Array} list The list to iterate over.
+     * @return {Array} A list of all intermediately reduced values.
+     * @example
+     *
+     *      var numbers = [1, 2, 3, 4];
+     *      var factorials = R.scan(R.multiply, 1, numbers); //=> [1, 1, 2, 6, 24]
+     */
+    var scan = _curry3(function scan(fn, acc, list) {
+        var idx = 0, len = list.length + 1, result = new Array(len);
+        result[idx] = acc;
+        while (++idx < len) {
+            acc = fn(acc, list[idx - 1]);
+            result[idx] = acc;
+        }
+        return result;
+    });
+
+    /**
+     * Returns the elements from `xs` starting at `a` and ending at `b - 1`.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig Number -> Number -> [a] -> [a]
+     * @param {Number} a The starting index.
+     * @param {Number} b One more than the ending index.
+     * @param {Array} xs The list to take elements from.
+     * @return {Array} The items from `a` to `b - 1` from `xs`.
+     * @example
+     *
+     *      var xs = R.range(0, 10);
+     *      R.slice(2, 5)(xs); //=> [2, 3, 4]
+     */
+    var slice = invoker(2, 'slice');
+
+    /**
+     * Returns a copy of the list, sorted according to the comparator function, which should accept two values at a
+     * time and return a negative number if the first value is smaller, a positive number if it's larger, and zero
+     * if they are equal.  Please note that this is a **copy** of the list.  It does not modify the original.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a,a -> Number) -> [a] -> [a]
+     * @param {Function} comparator A sorting function :: a -> b -> Int
+     * @param {Array} list The list to sort
+     * @return {Array} a new array with its elements sorted by the comparator function.
+     * @example
+     *
+     *      var diff = function(a, b) { return a - b; };
+     *      R.sort(diff, [4,2,7,5]); //=> [2, 4, 5, 7]
+     */
+    var sort = _curry2(function sort(comparator, list) {
+        return clone(list).sort(comparator);
+    });
+
+    /**
+     * Sorts the list according to a key generated by the supplied function.
+     *
+     * @func
+     * @memberOf R
+     * @category Relation
+     * @sig (a -> String) -> [a] -> [a]
+     * @param {Function} fn The function mapping `list` items to keys.
+     * @param {Array} list The list to sort.
+     * @return {Array} A new list sorted by the keys generated by `fn`.
+     * @example
+     *
+     *      var sortByFirstItem = R.sortBy(prop(0));
+     *      var sortByNameCaseInsensitive = R.sortBy(compose(R.toLower, prop('name')));
+     *      var pairs = [[-1, 1], [-2, 2], [-3, 3]];
+     *      sortByFirstItem(pairs); //=> [[-3, 3], [-2, 2], [-1, 1]]
+     *      var alice = {
+     *         name: 'ALICE',
+     *         age: 101
+     *      };
+     *      var bob = {
+     *         name: 'Bob',
+     *        age: -10
+     *      };
+     *      var clara = {
+     *        name: 'clara',
+     *        age: 314.159
+     *      };
+     *      var people = [clara, bob, alice];
+     *      sortByNameCaseInsensitive(people); //=> [alice, bob, clara]
+     */
+    var sortBy = _curry2(function sortBy(fn, list) {
+        return _slice(list).sort(function (a, b) {
+            var aa = fn(a);
+            var bb = fn(b);
+            return aa < bb ? -1 : aa > bb ? 1 : 0;
+        });
+    });
+
+    /**
+     * Splits a string into an array of strings based on the given
+     * separator.
+     *
+     * @func
+     * @memberOf R
+     * @category String
+     * @sig String -> String -> [String]
+     * @param {String} sep The separator string.
+     * @param {String} str The string to separate into an array.
+     * @return {Array} The array of strings from `str` separated by `str`.
+     * @example
+     *
+     *      var pathComponents = R.split('/');
+     *      R.tail(pathComponents('/usr/local/bin/node')); //=> ['usr', 'local', 'bin', 'node']
+     *
+     *      R.split('.', 'a.b.c.xyz.d'); //=> ['a', 'b', 'c', 'xyz', 'd']
+     */
+    var split = invoker(1, 'split');
+
+    /**
+     * Finds the first index of a substring in a string, returning -1 if it's not present
+     *
+     * @func
+     * @memberOf R
+     * @category String
+     * @sig String -> String -> Number
+     * @param {String} c A string to find.
+     * @param {String} str The string to search in
+     * @return {Number} The first index of `c` or -1 if not found.
+     * @example
+     *
+     *      R.strIndexOf('c', 'abcdefg'); //=> 2
+     */
+    var strIndexOf = _curry2(function strIndexOf(c, str) {
+        return str.indexOf(c);
+    });
+
+    /**
+     *
+     * Finds the last index of a substring in a string, returning -1 if it's not present
+     *
+     * @func
+     * @memberOf R
+     * @category String
+     * @sig String -> String -> Number
+     * @param {String} c A string to find.
+     * @param {String} str The string to search in
+     * @return {Number} The last index of `c` or -1 if not found.
+     * @example
+     *
+     *      R.strLastIndexOf('a', 'banana split'); //=> 5
+     */
+    var strLastIndexOf = _curry2(function (c, str) {
+        return str.lastIndexOf(c);
+    });
+
+    /**
+     * returns a subset of a string between one index and another.
+     *
+     * @func
+     * @memberOf R
+     * @category String
+     * @sig Number -> Number -> String -> String
+     * @param {Number} indexA An integer between 0 and the length of the string.
+     * @param {Number} indexB An integer between 0 and the length of the string.
+     * @param {String} str The string to extract from
+     * @return {String} The extracted substring.
+     * @see R.invoker
+     * @example
+     *
+     *      R.substring(2, 5, 'abcdefghijklm'); //=> 'cde'
+     */
+    var substring = invoker(2, 'substring');
+
+    /**
+     * The trailing substring of a String starting with the nth character:
+     *
+     * @func
+     * @memberOf R
+     * @category String
+     * @sig Number -> String -> String
+     * @param {Number} indexA An integer between 0 and the length of the string.
+     * @param {String} str The string to extract from
+     * @return {String} The extracted substring.
+     * @example
+     *
+     *      R.substringFrom(8, 'abcdefghijklm'); //=> 'ijklm'
+     */
+    var substringFrom = flip(substring)(void 0);
+
+    /**
+     * The leading substring of a String ending before the nth character:
+     *
+     * @func
+     * @memberOf R
+     * @category String
+     * @sig Number -> String -> String
+     * @param {Number} indexA An integer between 0 and the length of the string.
+     * @param {String} str The string to extract from
+     * @return {String} The extracted substring.
+     * @example
+     *
+     *      R.substringTo(8, 'abcdefghijklm'); //=> 'abcdefgh'
+     */
+    var substringTo = substring(0);
+
+    /**
+     * Adds together all the elements of a list.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig [Number] -> Number
+     * @param {Array} list An array of numbers
+     * @return {Number} The sum of all the numbers in the list.
+     * @see reduce
+     * @example
+     *
+     *      R.sum([2,4,6,8,100,1]); //=> 121
+     */
+    var sum = reduce(_add, 0);
+
+    /**
+     * Returns all but the first element of a list. If the list provided has the `tail` method,
+     * it will instead return `list.tail()`.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> [a]
+     * @param {Array} [list=[]] The array to consider.
+     * @return {Array} A new array containing all but the first element of the input list, or an
+     *         empty list if the input list is empty.
+     * @example
+     *
+     *      R.tail(['fi', 'fo', 'fum']); //=> ['fo', 'fum']
+     */
+    var tail = _checkForMethod('tail', function (list) {
+        return _slice(list, 1);
+    });
+
+    /**
+     * Returns a new list containing the first `n` elements of the given list.  If
+     * `n > * list.length`, returns a list of `list.length` elements.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig Number -> [a] -> [a]
+     * @param {Number} n The number of elements to return.
+     * @param {Array} list The array to query.
+     * @return {Array} A new array containing the first elements of `list`.
+     */
+    var take = _curry2(_checkForMethod('take', function (n, list) {
+        return _slice(list, 0, Math.min(n, list.length));
+    }));
+
+    /**
+     * Returns a new list containing the first `n` elements of a given list, passing each value
+     * to the supplied predicate function, and terminating when the predicate function returns
+     * `false`. Excludes the element that caused the predicate function to fail. The predicate
+     * function is passed one argument: *(value)*.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> Boolean) -> [a] -> [a]
+     * @param {Function} fn The function called per iteration.
+     * @param {Array} list The collection to iterate over.
+     * @return {Array} A new array.
+     * @example
+     *
+     *      var isNotFour = function(x) {
+     *        return !(x === 4);
+     *      };
+     *
+     *      R.takeWhile(isNotFour, [1, 2, 3, 4]); //=> [1, 2, 3]
+     */
+    var takeWhile = _curry2(_checkForMethod('takeWhile', function (fn, list) {
+        var idx = -1, len = list.length;
+        while (++idx < len && fn(list[idx])) {
+        }
+        return _slice(list, 0, idx);
+    }));
+
+    /**
+     * Runs the given function with the supplied object, then returns the object.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (a -> *) -> a -> a
+     * @param {Function} fn The function to call with `x`. The return value of `fn` will be thrown away.
+     * @param {*} x
+     * @return {*} `x`.
+     * @example
+     *
+     *      var sayX = function(x) { console.log('x is ' + x); };
+     *      R.tap(sayX, 100); //=> 100
+     *      //-> 'x is 100')
+     */
+    var tap = _curry2(function tap(fn, x) {
+        fn(x);
+        return x;
+    });
+
+    /**
+     * Calls an input function `n` times, returning an array containing the results of those
+     * function calls.
+     *
+     * `fn` is passed one argument: The current value of `n`, which begins at `0` and is
+     * gradually incremented to `n - 1`.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (i -> a) -> i -> [a]
+     * @param {Function} fn The function to invoke. Passed one argument, the current value of `n`.
+     * @param {Number} n A value between `0` and `n - 1`. Increments after each function call.
+     * @return {Array} An array containing the return values of all calls to `fn`.
+     * @example
+     *
+     *      R.times(R.identity, 5); //=> [0, 1, 2, 3, 4]
+     */
+    var times = _curry2(function times(fn, n) {
+        var list = new Array(Number(n));
+        var len = list.length;
+        var idx = -1;
+        while (++idx < len) {
+            list[idx] = fn(idx);
+        }
+        return list;
+    });
+
+    /**
+     * The lower case version of a string.
+     *
+     * @func
+     * @memberOf R
+     * @category String
+     * @sig String -> String
+     * @param {String} str The string to lower case.
+     * @return {String} The lower case version of `str`.
+     * @example
+     *
+     *      R.toLower('XYZ'); //=> 'xyz'
+     */
+    var toLower = invoker(0, 'toLowerCase');
+
+    /**
+     * Converts an object into an array of key, value arrays.
+     * Only the object's own properties are used.
+     * Note that the order of the output array is not guaranteed to be
+     * consistent across different JS platforms.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {k: v} -> [[k,v]]
+     * @param {Object} obj The object to extract from
+     * @return {Array} An array of key, value arrays from the object's own properties.
+     * @example
+     *
+     *      R.toPairs({a: 1, b: 2, c: 3}); //=> [['a', 1], ['b', 2], ['c', 3]]
+     */
+    var toPairs = _pairWith(keys);
+
+    /**
+     * The upper case version of a string.
+     *
+     * @func
+     * @memberOf R
+     * @category String
+     * @sig String -> String
+     * @param {String} str The string to upper case.
+     * @return {String} The upper case version of `str`.
+     * @example
+     *
+     *      R.toUpper('abc'); //=> 'ABC'
+     */
+    var toUpper = invoker(0, 'toUpperCase');
+
+    /**
+     * Builds a list from a seed value. Accepts an iterator function, which returns either false
+     * to stop iteration or an array of length 2 containing the value to add to the resulting
+     * list and the seed to be used in the next call to the iterator function.
+     *
+     * The iterator function receives one argument: *(seed)*.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> [b]) -> * -> [b]
+     * @param {Function} fn The iterator function. receives one argument, `seed`, and returns
+     *        either false to quit iteration or an array of length two to proceed. The element
+     *        at index 0 of this array will be added to the resulting array, and the element
+     *        at index 1 will be passed to the next call to `fn`.
+     * @param {*} seed The seed value.
+     * @return {Array} The final list.
+     * @example
+     *
+     *      var f = function(n) { return n > 50 ? false : [-n, n + 10] };
+     *      R.unfold(f, 10); //=> [-10, -20, -30, -40, -50]
+     */
+    var unfold = _curry2(function unfold(fn, seed) {
+        var pair = fn(seed);
+        var result = [];
+        while (pair && pair.length) {
+            result[result.length] = pair[0];
+            pair = fn(pair[1]);
+        }
+        return result;
+    });
+
+    /**
+     * Returns a new list containing only one copy of each element in the original list.
+     * Equality is strict here, meaning reference equality for objects and non-coercing equality
+     * for primitives.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> [a]
+     * @param {Array} list The array to consider.
+     * @return {Array} The list of unique items.
+     * @example
+     *
+     *      R.uniq([1, 1, 2, 1]); //=> [1, 2]
+     *      R.uniq([{}, {}]);     //=> [{}, {}]
+     *      R.uniq([1, '1']);     //=> [1, '1']
+     */
+    var uniq = function uniq(list) {
+        var idx = -1, len = list.length;
+        var result = [], item;
+        while (++idx < len) {
+            item = list[idx];
+            if (!_contains(item, result)) {
+                result[result.length] = item;
+            }
+        }
+        return result;
+    };
+
+    /**
+     * Returns a new list containing only one copy of each element in the original list, based
+     * upon the value returned by applying the supplied predicate to two list elements. Prefers
+     * the first item if two items compare equal based on the predicate.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a, a -> Boolean) -> [a] -> [a]
+     * @param {Function} pred A predicate used to test whether two items are equal.
+     * @param {Array} list The array to consider.
+     * @return {Array} The list of unique items.
+     * @example
+     *
+     *      var strEq = function(a, b) { return String(a) === String(b); };
+     *      R.uniqWith(strEq)([1, '1', 2, 1]); //=> [1, 2]
+     *      R.uniqWith(strEq)([{}, {}]);       //=> [{}]
+     *      R.uniqWith(strEq)([1, '1', 1]);    //=> [1]
+     *      R.uniqWith(strEq)(['1', 1, 1]);    //=> ['1']
+     */
+    var uniqWith = _curry2(function uniqWith(pred, list) {
+        var idx = -1, len = list.length;
+        var result = [], item;
+        while (++idx < len) {
+            item = list[idx];
+            if (!_containsWith(pred, item, result)) {
+                result[result.length] = item;
+            }
+        }
+        return result;
+    });
+
+    /**
+     * Returns a new list by pulling every item at the first level of nesting out, and putting
+     * them in a new array.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> [b]
+     * @param {Array} list The array to consider.
+     * @return {Array} The flattened list.
+     * @example
+     *
+     *      R.unnest([1, [2], [[3]]]); //=> [1, 2, [3]]
+     *      R.unnest([[1, 2], [3, 4], [5, 6]]); //=> [1, 2, 3, 4, 5, 6]
+     */
+    var unnest = _makeFlat(false);
+
+    /**
+     * Returns a list of all the enumerable own properties of the supplied object.
+     * Note that the order of the output array is not guaranteed across
+     * different JS platforms.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {k: v} -> [v]
+     * @param {Object} obj The object to extract values from
+     * @return {Array} An array of the values of the object's own properties.
+     * @example
+     *
+     *      R.values({a: 1, b: 2, c: 3}); //=> [1, 2, 3]
+     */
+    var values = function values(obj) {
+        var props = keys(obj);
+        var len = props.length;
+        var vals = new Array(len);
+        var idx = -1;
+        while (++idx < len) {
+            vals[idx] = obj[props[idx]];
+        }
+        return vals;
+    };
+
+    /**
+     * Takes a spec object and a test object and returns true if the test satisfies the spec.
+     * Any property on the spec that is not a function is interpreted as an equality
+     * relation.
+     *
+     * If the spec has a property mapped to a function, then `where` evaluates the function, passing in
+     * the test object's value for the property in question, as well as the whole test object.
+     *
+     * `where` is well suited to declaratively expressing constraints for other functions, e.g.,
+     * `filter`, `find`, `pickBy`, etc.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {k: v} -> {k: v} -> Boolean
+     * @param {Object} spec
+     * @param {Object} testObj
+     * @return {Boolean}
+     * @example
+     *
+     *      var spec = {x: 2};
+     *      R.where(spec, {w: 10, x: 2, y: 300}); //=> true
+     *      R.where(spec, {x: 1, y: 'moo', z: true}); //=> false
+     *
+     *      var spec2 = {x: function(val, obj) { return  val + obj.y > 10; }};
+     *      R.where(spec2, {x: 2, y: 7}); //=> false
+     *      R.where(spec2, {x: 3, y: 8}); //=> true
+     *
+     *      var xs = [{x: 2, y: 1}, {x: 10, y: 2}, {x: 8, y: 3}, {x: 10, y: 4}];
+     *      R.filter(R.where({x: 10}), xs); // ==> [{x: 10, y: 2}, {x: 10, y: 4}]
+     */
+    var where = function where(spec, testObj) {
+        var parsedSpec = groupBy(function (key) {
+            return typeof spec[key] === 'function' ? 'fn' : 'obj';
+        }, keys(spec));
+        switch (arguments.length) {
+        case 0:
+            throw _noArgsException();
+        case 1:
+            return function (testObj) {
+                return _satisfiesSpec(spec, parsedSpec, testObj);
+            };
+        }
+        return _satisfiesSpec(spec, parsedSpec, testObj);
+    };
+
+    /**
+     * Wrap a function inside another to allow you to make adjustments to the parameters, or do
+     * other processing either before the internal function is called or with its results.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (a... -> b) -> ((a... -> b) -> a... -> c) -> (a... -> c)
+     * @param {Function} fn The function to wrap.
+     * @param {Function} wrapper The wrapper function.
+     * @return {Function} The wrapped function.
+     * @example
+     *
+     *      var greet = function(name) {return 'Hello ' + name;};
+     *
+     *      var shoutedGreet = R.wrap(greet, function(gr, name) {
+     *          return gr(name).toUpperCase();
+     *      });
+     *      shoutedGreet("Kathy"); //=> "HELLO KATHY"
+     *
+     *      var shortenedGreet = R.wrap(greet, function(gr, name) {
+     *          return gr(name.substring(0, 3));
+     *      });
+     *      shortenedGreet("Robert"); //=> "Hello Rob"
+     *
+     */
+    var wrap = function wrap(fn, wrapper) {
+        return curryN(fn.length, function () {
+            return wrapper.apply(this, _concat([fn], arguments));
+        });
+    };
+
+    /**
+     * Creates a new list out of the two supplied by creating each possible
+     * pair from the lists.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> [b] -> [[a,b]]
+     * @param {Array} as The first list.
+     * @param {Array} bs The second list.
+     * @return {Array} The list made by combining each possible pair from
+     *         `as` and `bs` into pairs (`[a, b]`).
+     * @example
+     *
+     *      R.xprod([1, 2], ['a', 'b']); //=> [[1, 'a'], [1, 'b'], [2, 'a'], [2, 'b']]
+     */
+    // = xprodWith(prepend); (takes about 3 times as long...)
+    // Better to push them all or to do `new Array(ilen * jlen)` and calculate indices?
+    var xprod = _curry2(function xprod(a, b) {
+        // = xprodWith(prepend); (takes about 3 times as long...)
+        var idx = -1;
+        var ilen = a.length;
+        var j;
+        var jlen = b.length;
+        // Better to push them all or to do `new Array(ilen * jlen)` and calculate indices?
+        var result = [];
+        while (++idx < ilen) {
+            j = -1;
+            while (++j < jlen) {
+                result[result.length] = [
+                    a[idx],
+                    b[j]
+                ];
+            }
+        }
+        return result;
+    });
+
+    /**
+     * Creates a new list out of the two supplied by pairing up
+     * equally-positioned items from both lists.  The returned list is
+     * truncated to the length of the shorter of the two input lists.
+     * Note: `zip` is equivalent to `zipWith(function(a, b) { return [a, b] })`.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig a -> b -> [[a,b]]
+     * @param {Array} list1 The first array to consider.
+     * @param {Array} list2 The second array to consider.
+     * @return {Array} The list made by pairing up same-indexed elements of `list1` and `list2`.
+     * @example
+     *
+     *      R.zip([1, 2, 3], ['a', 'b', 'c']); //=> [[1, 'a'], [2, 'b'], [3, 'c']]
+     */
+    var zip = _curry2(function zip(a, b) {
+        var rv = [];
+        var idx = -1;
+        var len = Math.min(a.length, b.length);
+        while (++idx < len) {
+            rv[idx] = [
+                a[idx],
+                b[idx]
+            ];
+        }
+        return rv;
+    });
+
+    /**
+     * Creates a new object out of a list of keys and a list of values.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig k -> v -> {k: v}
+     * @param {Array} keys The array that will be properties on the output object.
+     * @param {Array} values The list of values on the output object.
+     * @return {Object} The object made by pairing up same-indexed elements of `keys` and `values`.
+     * @example
+     *
+     *      R.zipObj(['a', 'b', 'c'], [1, 2, 3]); //=> {a: 1, b: 2, c: 3}
+     */
+    var zipObj = _curry2(function zipObj(keys, values) {
+        var idx = -1, len = keys.length, out = {};
+        while (++idx < len) {
+            out[keys[idx]] = values[idx];
+        }
+        return out;
+    });
+
+    /**
+     * Creates a new list out of the two supplied by applying the function to
+     * each equally-positioned pair in the lists. The returned list is
+     * truncated to the length of the shorter of the two input lists.
+     *
+     * @function
+     * @memberOf R
+     * @category List
+     * @sig (a,b -> c) -> [a] -> [b] -> [c]
+     * @param {Function} fn The function used to combine the two elements into one value.
+     * @param {Array} list1 The first array to consider.
+     * @param {Array} list2 The second array to consider.
+     * @return {Array} The list made by combining same-indexed elements of `list1` and `list2`
+     *         using `fn`.
+     * @example
+     *
+     *      var f = function(x, y) {
+     *        // ...
+     *      };
+     *      R.zipWith(f, [1, 2, 3], ['a', 'b', 'c']);
+     *      //=> [f(1, 'a'), f(2, 'b'), f(3, 'c')]
+     */
+    var zipWith = _curry3(function zipWith(fn, a, b) {
+        var rv = [], idx = -1, len = Math.min(a.length, b.length);
+        while (++idx < len) {
+            rv[idx] = fn(a[idx], b[idx]);
+        }
+        return rv;
+    });
+
+    var _ap = function _ap(fns, vs) {
+        return _hasMethod('ap', fns) ? fns.ap(vs) : _reduce(function (acc, fn) {
+            return _concat(acc, _map(fn, vs));
+        }, [], fns);
+    };
+
+    // The algorithm used to handle cyclic structures is
+    // inspired by underscore's isEqual
+    // RegExp equality algorithm: http://stackoverflow.com/a/10776635
+    var _eqDeep = function _eqDeep(a, b, stackA, stackB) {
+        var typeA = type(a);
+        if (typeA !== type(b)) {
+            return false;
+        }
+        if (eq(a, b)) {
+            return true;
+        }
+        if (typeA == 'RegExp') {
+            // RegExp equality algorithm: http://stackoverflow.com/a/10776635
+            return a.source === b.source && a.global === b.global && a.ignoreCase === b.ignoreCase && a.multiline === b.multiline && a.sticky === b.sticky && a.unicode === b.unicode;
+        }
+        if (Object(a) === a) {
+            if (typeA === 'Date' && a.getTime() != b.getTime()) {
+                return false;
+            }
+            var keysA = keys(a);
+            if (keysA.length !== keys(b).length) {
+                return false;
+            }
+            var idx = stackA.length;
+            while (idx--) {
+                if (stackA[idx] === a) {
+                    return stackB[idx] === b;
+                }
+            }
+            stackA.push(a);
+            stackB.push(b);
+            idx = keysA.length;
+            while (idx--) {
+                var key = keysA[idx];
+                if (!has(key, b) || !_eqDeep(b[key], a[key], stackA, stackB)) {
+                    return false;
+                }
+            }
+            stackA.pop();
+            stackB.pop();
+            return true;
+        }
+        return false;
+    };
+
+    /**
+     * Assigns own enumerable properties of the other object to the destination
+     * object preferring items in other.
+     *
+     * @private
+     * @memberOf R
+     * @category Object
+     * @param {Object} destination The destination object.
+     * @param {Object} other The other object to merge with destination.
+     * @return {Object} The destination object.
+     * @example
+     *
+     *      _extend({ 'name': 'fred', 'age': 10 }, { 'age': 40 });
+     *      //=> { 'name': 'fred', 'age': 40 }
+     */
+    var _extend = function _extend(destination, other) {
+        var props = keys(other), idx = -1, length = props.length;
+        while (++idx < length) {
+            destination[props[idx]] = other[props[idx]];
+        }
+        return destination;
+    };
+
+    /**
+     * Create a predicate wrapper which will call a pick function (all/any) for each predicate
+     *
+     * @private
+     * @see R.all
+     * @see R.any
+     */
+    // Call function immediately if given arguments
+    // Return a function which will call the predicates with the provided arguments
+    var _predicateWrap = function _predicateWrap(predPicker) {
+        return function (preds) {
+            var predIterator = function () {
+                var args = arguments;
+                return predPicker(function (predicate) {
+                    return predicate.apply(null, args);
+                }, preds);
+            };
+            return arguments.length > 1 ? // Call function immediately if given arguments
+            predIterator.apply(null, _slice(arguments, 1)) : // Return a function which will call the predicates with the provided arguments
+            arity(max(_pluck('length', preds)), predIterator);
+        };
+    };
+
+    /**
+     * Given a list of predicates, returns a new predicate that will be true exactly when all of them are.
+     *
+     * @func
+     * @memberOf R
+     * @category Logic
+     * @sig [(*... -> Boolean)] -> (*... -> Boolean)
+     * @param {Array} list An array of predicate functions
+     * @param {*} optional Any arguments to pass into the predicates
+     * @return {Function} a function that applies its arguments to each of
+     *         the predicates, returning `true` if all are satisfied.
+     * @example
+     *
+     *      var gt10 = function(x) { return x > 10; };
+     *      var even = function(x) { return x % 2 === 0};
+     *      var f = R.allPass([gt10, even]);
+     *      f(11); //=> false
+     *      f(12); //=> true
+     */
+    var allPass = _predicateWrap(_all);
+
+    /**
+     * Given a list of predicates returns a new predicate that will be true exactly when any one of them is.
+     *
+     * @func
+     * @memberOf R
+     * @category Logic
+     * @sig [(*... -> Boolean)] -> (*... -> Boolean)
+     * @param {Array} list An array of predicate functions
+     * @param {*} optional Any arguments to pass into the predicates
+     * @return {Function} A function that applies its arguments to each of the predicates, returning
+     *         `true` if all are satisfied.
+     * @example
+     *
+     *      var gt10 = function(x) { return x > 10; };
+     *      var even = function(x) { return x % 2 === 0};
+     *      var f = R.anyPass([gt10, even]);
+     *      f(11); //=> true
+     *      f(8); //=> true
+     *      f(9); //=> false
+     */
+    var anyPass = _predicateWrap(_any);
+
+    /**
+     * ap applies a list of functions to a list of values.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig [f] -> [a] -> [f a]
+     * @param {Array} fns An array of functions
+     * @param {Array} vs An array of values
+     * @return {Array} The value of applying each the function `fns` to each value in `vs`.
+     * @example
+     *
+     *      R.ap([R.multiply(2), R.add(3)], [1,2,3]); //=> [2, 4, 6, 4, 5, 6]
+     */
+    var ap = _curry2(_ap);
+
+    /**
+     * Makes a shallow clone of an object, setting or overriding the specified
+     * property with the given value.  Note that this copies and flattens
+     * prototype properties onto the new object as well.  All non-primitive
+     * properties are copied by reference.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig String -> a -> {k: v} -> {k: v}
+     * @param {String} prop the property name to set
+     * @param {*} val the new value
+     * @param {Object} obj the object to clone
+     * @return {Object} a new object similar to the original except for the specified property.
+     * @example
+     *
+     *      var obj1 = {a: 1, b: {c: 2, d: 3}, e: 4, f: 5};
+     *      var obj2 = R.assoc('e', {x: 42}, obj1);
+     *      //=>  {a: 1, b: {c: 2, d: 3}, e: {x: 42}, f: 5}
+     *
+     *      // And moreover, obj2.b is a reference to obj1.b
+     *      // No unnecessary objects are created.
+     */
+    // rather than `clone` to get prototype props too, even though they're flattened
+    var assoc = _curry3(function assoc(prop, val, obj) {
+        // rather than `clone` to get prototype props too, even though they're flattened
+        return _extend(fromPairs(_map(function (key) {
+            return [
+                key,
+                obj[key]
+            ];
+        }, keysIn(obj))), createMapEntry(prop, val));
+    });
+
+    /**
+     * Makes a shallow clone of an object, setting or overriding the nodes
+     * required to create the given path, and placing the specifiec value at the
+     * tail end of that path.  Note that this copies and flattens prototype
+     * properties onto the new object as well.  All non-primitive properties
+     * are copied by reference.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig String -> a -> {k: v} -> {k: v}
+     * @param {String} path the dot-delimited path to set
+     * @param {*} val the new value
+     * @param {Object} obj the object to clone
+     * @return {Object} a new object similar to the original except along the specified path.
+     * @example
+     *
+     *      var obj1 = {a: {b: 1, c: 2, d: {e: 3}}, f: {g: {h: 4, i: 5, j: {k: 6, l: 7}}}, m: 8};
+     *      var obj2 = R.assocPath('f.g.i', {x: 42}, obj1);
+     *      //=> {a: {b: 1, c: 2, d: {e: 3}}, f: {g: {h: 4, i: {x: 42}, j: {k: 6, l: 7}}}, m: 8}
+     */
+    var assocPath = function () {
+        var setParts = function (parts, val, obj) {
+            if (parts.length === 1) {
+                return assoc(parts[0], val, obj);
+            }
+            var current = obj[parts[0]];
+            return assoc(parts[0], setParts(_slice(parts, 1), val, is(Object, current) ? current : {}), obj);
+        };
+        return function (path, val, obj) {
+            var length = arguments.length;
+            if (length === 0) {
+                throw _noArgsException();
+            }
+            var parts = split('.', path);
+            var fn = _curry2(function (val, obj) {
+                return setParts(parts, val, obj);
+            });
+            switch (length) {
+            case 1:
+                return fn;
+            case 2:
+                return fn(val);
+            default:
+                return fn(val, obj);
+            }
+        };
+    }();
+
+    /**
+     * `chain` maps a function over a list and concatenates the results.
+     * This implementation is compatible with the
+     * Fantasy-land Chain spec, and will work with types that implement that spec.
+     * `chain` is also known as `flatMap` in some libraries
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig (a -> [b]) -> [a] -> [b]
+     * @param {Function} fn
+     * @param {Array} list
+     * @return {Array}
+     * @example
+     *
+     *      var duplicate = function(n) {
+     *        return [n, n];
+     *      };
+     *      R.chain(duplicate, [1, 2, 3]); //=> [1, 1, 2, 2, 3, 3]
+     *
+     */
+    var chain = _curry2(_checkForMethod('chain', function chain(f, list) {
+        return unnest(_map(f, list));
+    }));
+
+    /**
+     * The character at the nth position in a String:
+     *
+     * @func
+     * @memberOf R
+     * @category String
+     * @sig Number -> String -> String
+     * @param {Number} index An integer between 0 and the length of the string.
+     * @param {String} str The string to extract a char from
+     * @return {String} The character at `index` of `str`.
+     * @see R.invoker
+     * @example
+     *
+     *      R.charAt(8, 'abcdefghijklm'); //=> 'i'
+     */
+    var charAt = invoker(1, 'charAt');
+
+    /**
+     * The ascii code of the character at the nth position in a String:
+     *
+     * @func
+     * @memberOf R
+     * @category String
+     * @sig Number -> String -> Number
+     * @param {Number} index An integer between 0 and the length of the string.
+     * @param {String} str The string to extract a charCode from
+     * @return {Number} The code of the character at `index` of `str`.
+     * @see R.invoker
+     * @example
+     *
+     *      R.charCodeAt(8, 'abcdefghijklm'); //=> 105
+     *      // (... 'a' ~ 97, 'b' ~ 98, ... 'i' ~ 105)
+     */
+    var charCodeAt = invoker(1, 'charCodeAt');
+
+    /**
+     * Turns a list of Functors into a Functor of a list, applying
+     * a mapping function to the elements of the list along the way.
+     *
+     * Note: `commuteMap` may be more useful to convert a list of non-Array Functors (e.g.
+     * Maybe, Either, etc.) to Functor of a list.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @see R.commute
+     * @sig (a -> (b -> c)) -> (x -> [x]) -> [[*]...]
+     * @param {Function} fn The transformation function
+     * @param {Function} of A function that returns the data type to return
+     * @param {Array} list An Array (or other Functor) of Arrays (or other Functors)
+     * @return {Array}
+     * @example
+     *
+     *     var plus10map = R.map(function(x) { return x + 10; });
+     *     var as = [[1], [3, 4]];
+     *     R.commuteMap(R.map(function(x) { return x + 10; }), R.of, as); //=> [[11, 13], [11, 14]]
+     *
+     *     var bs = [[1, 2], [3]];
+     *     R.commuteMap(plus10map, R.of, bs); //=> [[11, 13], [12, 13]]
+     *
+     *     var cs = [[1, 2], [3, 4]];
+     *     R.commuteMap(plus10map, R.of, cs); //=> [[11, 13], [12, 13], [11, 14], [12, 14]]
+     *
+     */
+    var commuteMap = _curry3(function commuteMap(fn, of, list) {
+        function consF(acc, ftor) {
+            return _ap(_map(append, fn(ftor)), acc);
+        }
+        return _reduce(consF, of([]), list);
+    });
+
+    /**
+     * Counts the elements of a list according to how many match each value
+     * of a key generated by the supplied function. Returns an object
+     * mapping the keys produced by `fn` to the number of occurrences in
+     * the list. Note that all keys are coerced to strings because of how
+     * JavaScript objects work.
+     *
+     * @func
+     * @memberOf R
+     * @category Relation
+     * @sig (a -> String) -> [a] -> {*}
+     * @param {Function} fn The function used to map values to keys.
+     * @param {Array} list The list to count elements from.
+     * @return {Object} An object mapping keys to number of occurrences in the list.
+     * @example
+     *
+     *      var numbers = [1.0, 1.1, 1.2, 2.0, 3.0, 2.2];
+     *      var letters = R.split('', 'abcABCaaaBBc');
+     *      R.countBy(Math.floor)(numbers);    //=> {'1': 3, '2': 2, '3': 1}
+     *      R.countBy(R.toLower)(letters);   //=> {'a': 5, 'b': 4, 'c': 3}
+     */
+    var countBy = _curry2(function countBy(fn, list) {
+        var counts = {};
+        var len = list.length;
+        var idx = -1;
+        while (++idx < len) {
+            var key = fn(list[idx]);
+            counts[key] = (has(key, counts) ? counts[key] : 0) + 1;
+        }
+        return counts;
+    });
+
+    /**
+     * Creates a new version of `fn` that, when invoked, will return either:
+     * - A new function ready to accept one or more of `fn`'s remaining arguments, if all of
+     * `fn`'s expected arguments have not yet been provided
+     * - `fn`'s result if all of its expected arguments have been provided
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (* -> a) -> (* -> a)
+     * @param {Function} fn The function to curry.
+     * @return {Function} A new, curried function.
+     * @see R.curryN
+     * @example
+     *
+     *      var addFourNumbers = function(a, b, c, d) {
+     *        return a + b + c + d;
+     *      };
+     *
+     *      var curriedAddFourNumbers = R.curry(addFourNumbers);
+     *      var f = curriedAddFourNumbers(1, 2);
+     *      var g = f(3);
+     *      g(4);//=> 10
+     */
+    var curry = function curry(fn) {
+        return curryN(fn.length, fn);
+    };
+
+    /**
+     * Performs a deep test on whether two items are equal.
+     * Equality implies the two items are semmatically equivalent.
+     * Cyclic structures are handled as expected
+     *
+     * @func
+     * @memberOf R
+     * @category Relation
+     * @sig a -> b -> Boolean
+     * @param {*} a
+     * @param {*} b
+     * @return {Boolean}
+     * @example
+     *
+     *      var o = {};
+     *      R.eqDeep(o, o); //=> true
+     *      R.eqDeep(o, {}); //=> true
+     *      R.eqDeep(1, 1); //=> true
+     *      R.eqDeep(1, '1'); //=> false
+     *
+     *      var a = {}; a.v = a;
+     *      var b = {}; b.v = b;
+     *      R.eqDeep(a, b); //=> true
+     */
+    var eqDeep = _curry2(function eqDeep(a, b) {
+        return _eqDeep(a, b, [], []);
+    });
+
+    /**
+     * Creates a new object by evolving a shallow copy of `object`, according to the
+     * `transformation` functions.  All non-primitive properties are copied by reference.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {k: (v -> v)} -> {k: v} -> {k: v}
+     * @param {Object} transformations The object specifying transformation functions to apply
+     *        to the object.
+     * @param {Object} object The object to be transformed.
+     * @return {Object} The transformed object.
+     * @example
+     *
+     *      R.evolve({ elapsed: R.add(1), remaining: R.add(-1) }, { name: 'Tomato', elapsed: 100, remaining: 1400 }); //=> { name: 'Tomato', elapsed: 101, remaining: 1399 }
+     */
+    var evolve = _curry2(function evolve(transformations, object) {
+        return _extend(_extend({}, object), mapObjIndexed(function (fn, key) {
+            return fn(object[key]);
+        }, transformations));
+    });
+
+    /**
+     * Returns a list of function names of object's own functions
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {*} -> [String]
+     * @param {Object} obj The objects with functions in it
+     * @return {Array} A list of the object's own properties that map to functions.
+     * @example
+     *
+     *      R.functions(R); // returns list of ramda's own function names
+     *
+     *      var F = function() { this.x = function(){}; this.y = 1; }
+     *      F.prototype.z = function() {};
+     *      F.prototype.a = 100;
+     *      R.functions(new F()); //=> ["x"]
+     */
+    var functions = _functionsWith(keys);
+
+    /**
+     * Returns the first element in a list.
+     * In some libraries this function is named `first`.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> a
+     * @param {Array} [list=[]] The array to consider.
+     * @return {*} The first element of the list, or `undefined` if the list is empty.
+     * @example
+     *
+     *      R.head(['fi', 'fo', 'fum']); //=> 'fi'
+     */
+    var head = nth(0);
+
+    /**
+     * Returns all but the last element of a list.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> [a]
+     * @param {Array} [list=[]] The array to consider.
+     * @return {Array} A new array containing all but the last element of the input list, or an
+     *         empty list if the input list is empty.
+     * @example
+     *
+     *      R.init(['fi', 'fo', 'fum']); //=> ['fi', 'fo']
+     */
+    var init = slice(0, -1);
+
+    /* global R */
+    /**
+     * Expose the functions from ramda as properties of another object.
+     * If the provided object is the global object then the ramda
+     * functions become global functions.
+     * Warning: This function *will* mutate the object provided.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig -> {*} -> {*}
+     * @param {Object} obj The object to attach ramda functions
+     * @return {Object} a reference to the mutated object.
+     * @example
+     *
+     *      var x = {}
+     *      R.installTo(x); // x now contains ramda functions
+     *      R.installTo(this); // add ramda functions to `this` object
+     */
+    var installTo = function (obj) {
+        return _extend(obj, R);
+    };
+
+    /**
+     * Combines two lists into a set (i.e. no duplicates) composed of those elements common to both lists.
+     *
+     * @func
+     * @memberOf R
+     * @category Relation
+     * @sig [a] -> [a] -> [a]
+     * @param {Array} list1 The first list.
+     * @param {Array} list2 The second list.
+     * @see R.intersectionWith
+     * @return {Array} The list of elements found in both `list1` and `list2`.
+     * @example
+     *
+     *      R.intersection([1,2,3,4], [7,6,5,4,3]); //=> [4, 3]
+     */
+    var intersection = _curry2(function intersection(list1, list2) {
+        return uniq(_filter(flip(_contains)(list1), list2));
+    });
+
+    /**
+     * Combines two lists into a set (i.e. no duplicates) composed of those
+     * elements common to both lists.  Duplication is determined according
+     * to the value returned by applying the supplied predicate to two list
+     * elements.
+     *
+     * @func
+     * @memberOf R
+     * @category Relation
+     * @sig (a,a -> Boolean) -> [a] -> [a] -> [a]
+     * @param {Function} pred A predicate function that determines whether
+     *        the two supplied elements are equal.
+     * @param {Array} list1 One list of items to compare
+     * @param {Array} list2 A second list of items to compare
+     * @see R.intersection
+     * @return {Array} A new list containing those elements common to both lists.
+     * @example
+     *
+     *      var buffaloSpringfield = [
+     *        {id: 824, name: 'Richie Furay'},
+     *        {id: 956, name: 'Dewey Martin'},
+     *        {id: 313, name: 'Bruce Palmer'},
+     *        {id: 456, name: 'Stephen Stills'},
+     *        {id: 177, name: 'Neil Young'}
+     *      ];
+     *      var csny = [
+     *        {id: 204, name: 'David Crosby'},
+     *        {id: 456, name: 'Stephen Stills'},
+     *        {id: 539, name: 'Graham Nash'},
+     *        {id: 177, name: 'Neil Young'}
+     *      ];
+     *
+     *      var sameId = function(o1, o2) {return o1.id === o2.id;};
+     *
+     *      R.intersectionWith(sameId, buffaloSpringfield, csny);
+     *      //=> [{id: 456, name: 'Stephen Stills'}, {id: 177, name: 'Neil Young'}]
+     */
+    var intersectionWith = _curry3(function intersectionWith(pred, list1, list2) {
+        var results = [], idx = -1;
+        while (++idx < list1.length) {
+            if (_containsWith(pred, list1[idx], list2)) {
+                results[results.length] = list1[idx];
+            }
+        }
+        return uniqWith(pred, results);
+    });
+
+    /**
+     * Same as R.invertObj, however this accounts for objects
+     * with duplicate values by putting the values into an
+     * array.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {s: x} -> {x: [ s, ... ]}
+     * @param {Object} obj The object or array to invert
+     * @return {Object} out A new object with keys
+     * in an array.
+     * @example
+     *
+     *      var raceResultsByFirstName = {
+     *        first: 'alice',
+     *        second: 'jake',
+     *        third: 'alice',
+     *      };
+     *      R.invert(raceResultsByFirstName);
+     *      //=> { 'alice': ['first', 'third'], 'jake':['second'] }
+     *
+     */
+    var invert = function invert(obj) {
+        var props = keys(obj);
+        var len = props.length;
+        var idx = -1;
+        var out = {};
+        while (++idx < len) {
+            var key = props[idx];
+            var val = obj[key];
+            if (!has(val, out)) {
+                out[val] = [];
+            }
+            out[val].push(key);
+        }
+        return out;
+    };
+
+    /**
+     * Returns a new object with the keys of the given object
+     * as values, and the values of the given object as keys.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {s: x} -> {x: s}
+     * @param {Object} obj The object or array to invert
+     * @return {Object} out A new object
+     * @example
+     *
+     *      var raceResults = {
+     *        first: 'alice',
+     *        second: 'jake'
+     *      };
+     *      R.invertObj(raceResults);
+     *      //=> { 'alice': 'first', 'jake':'second' }
+     *
+     *      // Alternatively:
+     *      var raceResults = ['alice', 'jake'];
+     *      R.invertObj(raceResults);
+     *      //=> { 'alice': '0', 'jake':'1' }
+     */
+    var invertObj = function invertObj(obj) {
+        var props = keys(obj);
+        var len = props.length;
+        var idx = -1;
+        var out = {};
+        while (++idx < len) {
+            var key = props[idx];
+            out[obj[key]] = key;
+        }
+        return out;
+    };
+
+    /**
+     * Returns the last element from a list.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> a
+     * @param {Array} [list=[]] The array to consider.
+     * @return {*} The last element of the list, or `undefined` if the list is empty.
+     * @example
+     *
+     *      R.last(['fi', 'fo', 'fum']); //=> 'fum'
+     */
+    var last = nth(-1);
+
+    /**
+     * "lifts" a function to be the specified arity, so that it may "map over" that many
+     * lists (or other Functors).
+     *
+     * @func
+     * @memberOf R
+     * @see R.lift
+     * @category Function
+     * @sig Number -> (*... -> *) -> ([*]... -> [*])
+     * @param {Function} fn The function to lift into higher context
+     * @return {Function} The function `fn` applicable to mappable objects.
+     * @example
+     *
+     *     var madd3 = R.liftN(3, R.curryN(3, function() {
+     *         return R.reduce(R.add, 0, arguments);
+     *     }));
+     *     madd3([1,2,3], [1,2,3], [1]); //=> [3, 4, 5, 4, 5, 6, 5, 6, 7]
+     */
+    var liftN = _curry2(function liftN(arity, fn) {
+        var lifted = curryN(arity, fn);
+        if (arguments.length === 0) {
+            throw _noArgsException();
+        }
+        return curryN(arity, function () {
+            return _reduce(_ap, map(lifted, arguments[0]), _slice(arguments, 1));
+        });
+    });
+
+    /**
+     * Uses a placeholder to convert a binary function into something like an infix operation.
+     * When called with the `R.__` placeholder the second argument is applied to the
+     * second position, and it returns a function waiting for its first argument.
+     * This can allow for more natural processing of functions which are really binary operators.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @param {Function} fn The binary operation to adjust
+     * @return {Function} A new function that acts somewhat like an infix operator.
+     * @example
+     *
+     *      var div = R.op(function (a, b) {
+     *          return a / b;
+     *      });
+     *
+     *      div(6, 3); //=> 2
+     *      div(6)(3); //=> 2
+     *      div(R.__, 3)(6); //=> 2
+     *      div(R.__)(3, 6); //=> 2
+     *      div(R.__)(3)(6); //=> 2
+     */
+    var op = function op(fn) {
+        if (fn.length !== 2) {
+            throw new Error('Expected binary function.');
+        }
+        return function _op(a, b) {
+            switch (arguments.length) {
+            case 0:
+                throw _noArgsException();
+            case 1:
+                return a === __ ? flip(_op) : partial(fn, a);
+            default:
+                return a === __ ? flip(fn)(b) : fn(a, b);
+            }
+        };
+    };
+
+    /**
+     * Retrieve a nested path on an object separated by periods
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig String -> {*} -> *
+     * @param {String} path The dot path to use.
+     * @return {*} The data at `path`.
+     * @example
+     *
+     *      R.path('a.b', {a: {b: 2}}); //=> 2
+     */
+    var path = pathOn('.');
+
+    /**
+     * Multiplies together all the elements of a list.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig [Number] -> Number
+     * @param {Array} list An array of numbers
+     * @return {Number} The product of all the numbers in the list.
+     * @see reduce
+     * @example
+     *
+     *      R.product([2,4,6,8,100,1]); //=> 38400
+     */
+    var product = reduce(_multiply, 1);
+
+    /**
+     * Returns a fixed list of size `n` containing a specified identical value.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig a -> n -> [a]
+     * @param {*} value The value to repeat.
+     * @param {Number} n The desired size of the output list.
+     * @return {Array} A new array containing `n` `value`s.
+     * @example
+     *
+     *      R.repeat('hi', 5); //=> ['hi', 'hi', 'hi', 'hi', 'hi']
+     *
+     *      var obj = {};
+     *      var repeatedObjs = R.repeat(obj, 5); //=> [{}, {}, {}, {}, {}]
+     *      repeatedObjs[0] === repeatedObjs[1]; //=> true
+     */
+    var repeat = _curry2(function repeat(value, n) {
+        return times(always(value), n);
+    });
+
+    /**
+     * Subtracts two numbers. Equivalent to `a - b` but curried.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig Number -> Number -> Number
+     * @param {Number} a The first value.
+     * @param {Number} b The second value.
+     * @return {Number} The result of `a - b`.
+     * @note Operator: Since this is a non-commutative infix operator converted to prefix, it can
+     *                 be curried right by explicitly passing `R.__` for its first argument.
+     * @example
+     *
+     *      R.subtract(10, 8); //=> 2
+     *
+     *      var minus5 = R.subtract(R.__, 5);
+     *      minus5(17); //=> 12
+     *
+     *      var complementaryAngle = R.subtract(90);
+     *      complementaryAngle(30); //=> 60
+     *      complementaryAngle(72); //=> 18
+     */
+    var subtract = op(function subtract(a, b) {
+        return a - b;
+    });
+
+    /**
+     * Combines two lists into a set (i.e. no duplicates) composed of the
+     * elements of each list.
+     *
+     * @func
+     * @memberOf R
+     * @category Relation
+     * @sig [a] -> [a] -> [a]
+     * @param {Array} as The first list.
+     * @param {Array} bs The second list.
+     * @return {Array} The first and second lists concatenated, with
+     *         duplicates removed.
+     * @example
+     *
+     *      R.union([1, 2, 3], [2, 3, 4]); //=> [1, 2, 3, 4]
+     */
+    var union = _curry2(compose(uniq, _concat));
+
+    /**
+     * Combines two lists into a set (i.e. no duplicates) composed of the elements of each list.  Duplication is
+     * determined according to the value returned by applying the supplied predicate to two list elements.
+     *
+     * @func
+     * @memberOf R
+     * @category Relation
+     * @sig (a,a -> Boolean) -> [a] -> [a] -> [a]
+     * @param {Function} pred A predicate used to test whether two items are equal.
+     * @param {Array} list1 The first list.
+     * @param {Array} list2 The second list.
+     * @return {Array} The first and second lists concatenated, with
+     *         duplicates removed.
+     * @see R.union
+     * @example
+     *
+     *      function cmp(x, y) { return x.a === y.a; }
+     *      var l1 = [{a: 1}, {a: 2}];
+     *      var l2 = [{a: 1}, {a: 4}];
+     *      R.unionWith(cmp, l1, l2); //=> [{a: 1}, {a: 2}, {a: 4}]
+     */
+    var unionWith = _curry3(function unionWith(pred, list1, list2) {
+        return uniqWith(pred, _concat(list1, list2));
+    });
+
+    /**
+     * Accepts a function `fn` and any number of transformer functions and returns a new
+     * function. When the new function is invoked, it calls the function `fn` with parameters
+     * consisting of the result of calling each supplied handler on successive arguments to the
+     * new function.
+     *
+     * If more arguments are passed to the returned function than transformer functions, those
+     * arguments are passed directly to `fn` as additional parameters. If you expect additional
+     * arguments that don't need to be transformed, although you can ignore them, it's best to
+     * pass an identity function so that the new function reports the correct arity.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig ((* -> *), (* -> *)...) -> (* -> *)
+     * @param {Function} fn The function to wrap.
+     * @param {...Function} transformers A variable number of transformer functions
+     * @return {Function} The wrapped function.
+     * @example
+     *
+     *      // Example 1:
+     *
+     *      // Number -> [Person] -> [Person]
+     *      var byAge = R.useWith(R.filter, R.propEq('age'), R.identity);
+     *
+     *      var kids = [
+     *          {name: 'Abbie', age: 6},
+     *          {name: 'Brian', age: 5},
+     *          {name: 'Chris', age: 6},
+     *          {name: 'David', age: 4},
+     *          {name: 'Ellie', age: 5}
+     *      ];
+     *
+     *      byAge(5, kids); //=> [{name: 'Brian', age: 5}, {name: 'Ellie', age: 5}]
+     *
+     *
+     *      // Example 2:
+     *
+     *      var double = function(y) { return y * 2; };
+     *      var square = function(x) { return x * x; };
+     *      var add = function(a, b) { return a + b; };
+     *      // Adds any number of arguments together
+     *      var addAll = function() {
+     *        return R.reduce(add, 0, arguments);
+     *      };
+     *
+     *      // Basic example
+     *      var addDoubleAndSquare = R.useWith(addAll, double, square);
+     *
+     *      //≅ addAll(double(10), square(5));
+     *      addDoubleAndSquare(10, 5); //=> 45
+     *
+     *      // Example of passing more arguments than transformers
+     *      //≅ addAll(double(10), square(5), 100);
+     *      addDoubleAndSquare(10, 5, 100); //=> 145
+     *
+     *      // If there are extra _expected_ arguments that don't need to be transformed, although
+     *      // you can ignore them, it might be best to pass in the identity function so that the new
+     *      // function correctly reports arity.
+     *      var addDoubleAndSquareWithExtraParams = R.useWith(addAll, double, square, R.identity);
+     *      // addDoubleAndSquareWithExtraParams.length //=> 3
+     *      //≅ addAll(double(10), square(5), R.identity(100));
+     *      addDoubleAndSquare(10, 5, 100); //=> 145
+     */
+    /*, transformers */
+    var useWith = function useWith(fn) {
+        var transformers = _slice(arguments, 1);
+        var tlen = transformers.length;
+        return curry(arity(tlen, function () {
+            var args = [], idx = -1;
+            while (++idx < tlen) {
+                args[args.length] = transformers[idx](arguments[idx]);
+            }
+            return fn.apply(this, args.concat(_slice(arguments, tlen)));
+        }));
+    };
+
+    /**
+     * Turns a list of Functors into a Functor of a list.
+     *
+     * Note: `commute` may be more useful to convert a list of non-Array Functors (e.g.
+     * Maybe, Either, etc.) to Functor of a list.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @see R.commuteMap
+     * @sig (x -> [x]) -> [[*]...]
+     * @param {Function} of A function that returns the data type to return
+     * @param {Array} list An Array (or other Functor) of Arrays (or other Functors)
+     * @return {Array}
+     * @example
+     *
+     *     var as = [[1], [3, 4]];
+     *     R.commute(R.of, as); //=> [[1, 3], [1, 4]]
+     *
+     *     var bs = [[1, 2], [3]];
+     *     R.commute(R.of, bs); //=> [[1, 3], [2, 3]]
+     *
+     *     var cs = [[1, 2], [3, 4]];
+     *     R.commute(R.of, cs); //=> [[1, 3], [2, 3], [1, 4], [2, 4]]
+     */
+    var commute = commuteMap(map(identity));
+
+    /**
+     * Returns a new list consisting of the elements of the first list followed by the elements
+     * of the second.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [a] -> [a] -> [a]
+     * @param {Array} list1 The first list to merge.
+     * @param {Array} list2 The second set to merge.
+     * @return {Array} A new array consisting of the contents of `list1` followed by the
+     *         contents of `list2`. If, instead of an Array for `list1`, you pass an
+     *         object with a `concat` method on it, `concat` will call `list1.concat`
+     *         and pass it the value of `list2`.
+     * @note Operator: Since this is a non-commutative infix operator converted to prefix, it can
+     *         be curried right by explicitly passing `R.__` for its first argument.
+     *
+     * @example
+     *
+     *      R.concat([], []); //=> []
+     *      R.concat([4, 5, 6], [1, 2, 3]); //=> [4, 5, 6, 1, 2, 3]
+     *      R.concat('ABC', 'DEF'); // 'ABCDEF'
+     *
+     *      // operator-style:
+     *      R.concat(R.__)([4, 5, 6], [1, 2, 3]); //=> [1, 2, 3, 4, 5, 6]
+     *
+     */
+    var concat = op(function (set1, set2) {
+        if (_isArray(set2)) {
+            return _concat(set1, set2);
+        } else if (_hasMethod('concat', set1)) {
+            return set1.concat(set2);
+        } else {
+            throw new TypeError('can\'t concat ' + typeof set1);
+        }
+    });
+
+    /**
+     * Wraps a constructor function inside a curried function that can be called with the same
+     * arguments and returns the same type. The arity of the function returned is specified
+     * to allow using variadic constructor functions.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig Number -> (* -> {*}) -> (* -> {*})
+     * @param {Number} n The arity of the constructor function.
+     * @param {Function} Fn The constructor function to wrap.
+     * @return {Function} A wrapped, curried constructor function.
+     * @example
+     *
+     *      // Variadic constructor function
+     *      var Widget = function() {
+     *        this.children = Array.prototype.slice.call(arguments);
+     *        // ...
+     *      };
+     *      Widget.prototype = {
+     *        // ...
+     *      };
+     *      var allConfigs = {
+     *        // ...
+     *      };
+     *      R.map(R.constructN(1, Widget), allConfigs); // a list of Widgets
+     */
+    var constructN = _curry2(function constructN(n, Fn) {
+        if (n > 10) {
+            throw new Error('Constructor with greater than ten arguments');
+        }
+        if (n === 0) {
+            return function () {
+                return new Fn();
+            };
+        }
+        return curry(nAry(n, function ($0, $1, $2, $3, $4, $5, $6, $7, $8, $9) {
+            switch (arguments.length) {
+            case 1:
+                return new Fn($0);
+            case 2:
+                return new Fn($0, $1);
+            case 3:
+                return new Fn($0, $1, $2);
+            case 4:
+                return new Fn($0, $1, $2, $3);
+            case 5:
+                return new Fn($0, $1, $2, $3, $4);
+            case 6:
+                return new Fn($0, $1, $2, $3, $4, $5);
+            case 7:
+                return new Fn($0, $1, $2, $3, $4, $5, $6);
+            case 8:
+                return new Fn($0, $1, $2, $3, $4, $5, $6, $7);
+            case 9:
+                return new Fn($0, $1, $2, $3, $4, $5, $6, $7, $8);
+            case 10:
+                return new Fn($0, $1, $2, $3, $4, $5, $6, $7, $8, $9);
+            }
+        }));
+    });
+
+    /**
+     * Returns `true` if the specified item is somewhere in the list, `false` otherwise.
+     * Equivalent to `indexOf(a)(list) > -1`. Uses strict (`===`) equality checking.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig a -> [a] -> Boolean
+     * @param {Object} a The item to compare against.
+     * @param {Array} list The array to consider.
+     * @return {Boolean} `true` if the item is in the list, `false` otherwise.
+     * @note Operator: Since this is a non-commutative infix operator converted to prefix, it can
+     *       be curried right by explicitly passing `R.__` for its first argument.
+     *
+     * @example
+     *
+     *      R.contains(3)([1, 2, 3]); //=> true
+     *      R.contains(4)([1, 2, 3]); //=> false
+     *      R.contains({})([{}, {}]); //=> false
+     *      var obj = {};
+     *      R.contains(obj)([{}, obj, {}]); //=> true
+     *
+     *      // operator-style
+     *      R.contains(R.__)([1, 2, 3], 3) //=> true
+     *
+     */
+    var contains = op(_contains);
+
+    /**
+     * Divides two numbers. Equivalent to `a / b`.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig Number -> Number -> Number
+     * @param {Number} a The first value.
+     * @param {Number} b The second value.
+     * @return {Number} The result of `a / b`.
+     * @note Operator: Since this is a non-commutative infix operator converted to prefix, it can
+     *                 be curried right by explicitly passing `undefined` for its first argument.
+     * @example
+     *
+     *      R.divide(71, 100); //=> 0.71
+     *
+     *      var half = R.divide(R.__, 2);
+     *      half(42); //=> 21
+     *
+     *      var reciprocal = R.divide(1);
+     *      reciprocal(4);   //=> 0.25
+     */
+    var divide = op(function divide(a, b) {
+        return a / b;
+    });
+
+    /**
+     * Returns true if the first parameter is greater than the second.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig Number -> Number -> Boolean
+     * @param {Number} a
+     * @param {Number} b
+     * @return {Boolean} a > b
+     * @note Operator: Since this is a non-commutative infix operator converted to prefix, it can
+     *                 be curried right by explicitly passing `undefined` for its first argument.
+     * @example
+     *
+     *      R.gt(2, 6); //=> false
+     *      R.gt(2, 0); //=> true
+     *      R.gt(2, 2); //=> false
+     *      R.gt(R.__, 2)(10); //=> true
+     *      R.gt(2)(10); //=> false
+     */
+    var gt = op(_gt);
+
+    /**
+     * Returns true if the first parameter is greater than or equal to the second.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig Number -> Number -> Boolean
+     * @param {Number} a
+     * @param {Number} b
+     * @return {Boolean} a >= b
+     * @note Operator: this is right-curried by default, but can be called via sections
+     * @example
+     *
+     *      R.gte(2, 6); //=> false
+     *      R.gte(2, 0); //=> true
+     *      R.gte(2, 2); //=> true
+     *      R.gte(R.__, 6)(2); //=> false
+     *      R.gte(2)(0); //=> true
+     *      R.gte(R.__)(1, 2); //=> true
+     */
+    var gte = op(function gte(a, b) {
+        return a >= b;
+    });
+
+    /**
+     * "lifts" a function of arity > 1 so that it may "map over" an Array or
+     * other Functor.
+     *
+     * @func
+     * @memberOf R
+     * @see R.liftN
+     * @category Function
+     * @sig (*... -> *) -> ([*]... -> [*])
+     * @param {Function} fn The function to lift into higher context
+     * @return {Function} The function `fn` applicable to mappable objects.
+     * @example
+     *
+     *     var madd3 = R.lift(R.curryN(3, function(a, b, c) {
+     *         return a + b + c;
+     *     }));
+     *     madd3([1,2,3], [1,2,3], [1]); //=> [3, 4, 5, 4, 5, 6, 5, 6, 7]
+     *
+     *     var madd5 = R.lift(R.curryN(5, function(a, b, c, d, e) {
+     *         return a + b + c + d + e;
+     *     }));
+     *     madd5([1,2], [3], [4, 5], [6], [7, 8]); //=> [21, 22, 22, 23, 22, 23, 23, 24]
+     */
+    var lift = function lift(fn) {
+        if (arguments.length === 0) {
+            throw _noArgsException();
+        }
+        return liftN(fn.length, fn);
+    };
+
+    /**
+     * Returns true if the first parameter is less than the second.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig Number -> Number -> Boolean
+     * @param {Number} a
+     * @param {Number} b
+     * @return {Boolean} a < b
+     * @note Operator: Since this is a non-commutative infix operator converted to prefix, it can
+     *                 be curried right by explicitly passing `undefined` for its first argument.
+     * @example
+     *
+     *      R.lt(2, 6); //=> true
+     *      R.lt(2, 0); //=> false
+     *      R.lt(2, 2); //=> false
+     *      R.lt(5)(10); //=> true
+     *      R.lt(R.__, 5)(10); //=> false // right-sectioned currying
+     */
+    var lt = op(_lt);
+
+    /**
+     * Returns true if the first parameter is less than or equal to the second.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig Number -> Number -> Boolean
+     * @param {Number} a
+     * @param {Number} b
+     * @return {Boolean} a <= b
+     * @note Operator: Since this is a non-commutative infix operator converted to prefix, it can
+     *                 be curried right by explicitly passing `R.__` for its first argument.
+     * @example
+     *
+     *      R.lte(2, 6); //=> true
+     *      R.lte(2, 0); //=> false
+     *      R.lte(2, 2); //=> true
+     *      R.lte(R.__, 2)(1); //=> true
+     *      R.lte(2)(10); //=> true
+     *      R.lte(R.__)(5, 4) // => true
+     */
+    var lte = op(function lte(a, b) {
+        return a <= b;
+    });
+
+    /**
+     * mathMod behaves like the modulo operator should mathematically, unlike the `%`
+     * operator (and by extension, R.modulo). So while "-17 % 5" is -2,
+     * mathMod(-17, 5) is 3. mathMod requires Integer arguments, and returns NaN
+     * when the modulus is zero or negative.
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig Number -> Number -> Number
+     * @param {Number} m The dividend.
+     * @param {Number} p the modulus.
+     * @return {Number} The result of `b mod a`.
+     * @see R.moduloBy
+     * @note Operator: Since this is a non-commutative infix operator converted to prefix, it can
+     *                 be curried right by explicitly passing `R.__` for its first argument.
+     * @example
+     *
+     *      R.mathMod(-17, 5);  //=> 3
+     *      R.mathMod(17, 5);   //=> 2
+     *      R.mathMod(17, -5);  //=> NaN
+     *      R.mathMod(17, 0);   //=> NaN
+     *      R.mathMod(17.2, 5); //=> NaN
+     *      R.mathMod(17, 5.3); //=> NaN
+     *
+     *      var clock = R.mathMod(R.__, 12);
+     *      clock(15); //=> 3
+     *      clock(24); //=> 0
+     *
+     *      var seventeenMod = R.mathMod(17);
+     *      seventeenMod(3);  //=> 2
+     *      seventeenMod(4);  //=> 1
+     *      seventeenMod(10); //=> 7
+     */
+    var mathMod = op(function mathMod(m, p) {
+        if (!_isInteger(m)) {
+            return NaN;
+        }
+        if (!_isInteger(p) || p < 1) {
+            return NaN;
+        }
+        return (m % p + p) % p;
+    });
+
+    /**
+     * Create a new object with the own properties of a
+     * merged with the own properties of object b.
+     * This function will *not* mutate passed-in objects.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @sig {k: v} -> {k: v} -> {k: v}
+     * @param {Object} a source object
+     * @param {Object} b object with higher precedence in output
+     * @return {Object} The destination object.
+     * @example
+     *
+     *      R.merge({ 'name': 'fred', 'age': 10 }, { 'age': 40 });
+     *      //=> { 'name': 'fred', 'age': 40 }
+     *
+     *      var resetToDefault = R.merge(R.__, {x: 0});
+     *      resetToDefault({x: 5, y: 2}); //=> {x: 0, y: 2}
+     */
+    var merge = op(function merge(a, b) {
+        return _extend(_extend({}, a), b);
+    });
+
+    /**
+     * Merges a list of objects together into one object.
+     *
+     * @func
+     * @memberOf R
+     * @category List
+     * @sig [{k: v}] -> {k: v}
+     * @param {Array} list An array of objects
+     * @return {Object} A merged object.
+     * @see reduce
+     * @example
+     *
+     *      R.mergeAll([{foo:1},{bar:2},{baz:3}]); //=> {foo:1,bar:2,baz:3}
+     *      R.mergeAll([{foo:1},{foo:2},{bar:2}]); //=> {foo:2,bar:2}
+     */
+    var mergeAll = reduce(merge, {});
+
+    /**
+     * Divides the second parameter by the first and returns the remainder.
+     * Note that this functions preserves the JavaScript-style behavior for
+     * modulo. For mathematical modulo see `mathMod`
+     *
+     * @func
+     * @memberOf R
+     * @category Math
+     * @sig Number -> Number -> Number
+     * @param {Number} a The value to the divide.
+     * @param {Number} b The pseudo-modulus
+     * @return {Number} The result of `b % a`.
+     * @note Operator: Since this is a non-commutative infix operator converted to prefix, it can
+     *                 be curried right by explicitly passing `R.__` for its first argument.
+     * @see R.mathMod
+     * @example
+     *
+     *      R.modulo(17, 3); //=> 2
+     *      // JS behavior:
+     *      R.modulo(-17, 3); //=> -2
+     *      R.modulo(17, -3); //=> 2
+     *
+     *      var isOdd = R.modulo(R.__, 2);
+     *      isOdd(42); //=> 0
+     *      isOdd(21); //=> 1
+     */
+    var modulo = op(function modulo(a, b) {
+        return a % b;
+    });
+
+    /**
+     * Reasonable analog to SQL `select` statement.
+     *
+     * @func
+     * @memberOf R
+     * @category Object
+     * @category Relation
+     * @sig [k] -> [{k: v}] -> [{k: v}]
+     * @param {Array} props The property names to project
+     * @param {Array} objs The objects to query
+     * @return {Array} An array of objects with just the `props` properties.
+     * @example
+     *
+     *      var abby = {name: 'Abby', age: 7, hair: 'blond', grade: 2};
+     *      var fred = {name: 'Fred', age: 12, hair: 'brown', grade: 7};
+     *      var kids = [abby, fred];
+     *      R.project(['name', 'grade'], kids); //=> [{name: 'Abby', grade: 2}, {name: 'Fred', grade: 7}]
+     */
+    // passing `identity` gives correct arity
+    var project = useWith(_map, pickAll, identity);
+
+    /**
+     * Wraps a constructor function inside a curried function that can be called with the same
+     * arguments and returns the same type.
+     *
+     * @func
+     * @memberOf R
+     * @category Function
+     * @sig (* -> {*}) -> (* -> {*})
+     * @param {Function} Fn The constructor function to wrap.
+     * @return {Function} A wrapped, curried constructor function.
+     * @example
+     *
+     *      // Constructor function
+     *      var Widget = function(config) {
+     *        // ...
+     *      };
+     *      Widget.prototype = {
+     *        // ...
+     *      };
+     *      var allConfigs = {
+     *        // ...
+     *      };
+     *      R.map(R.construct(Widget), allConfigs); // a list of Widgets
+     */
+    var construct = function construct(Fn) {
+        return constructN(Fn.length, Fn);
+    };
+
+    var R = {
+        F: F,
+        I: I,
+        T: T,
+        __: __,
+        add: add,
+        all: all,
+        allPass: allPass,
+        always: always,
+        and: and,
+        any: any,
+        anyPass: anyPass,
+        ap: ap,
+        append: append,
+        appendTo: appendTo,
+        apply: apply,
+        arity: arity,
+        assoc: assoc,
+        assocPath: assocPath,
+        binary: binary,
+        bind: bind,
+        call: call,
+        chain: chain,
+        charAt: charAt,
+        charCodeAt: charCodeAt,
+        clone: clone,
+        commute: commute,
+        commuteMap: commuteMap,
+        comparator: comparator,
+        compose: compose,
+        composeP: composeP,
+        concat: concat,
+        cond: cond,
+        construct: construct,
+        constructN: constructN,
+        contains: contains,
+        containsWith: containsWith,
+        converge: converge,
+        countBy: countBy,
+        createMapEntry: createMapEntry,
+        curry: curry,
+        curryN: curryN,
+        dec: dec,
+        defaultTo: defaultTo,
+        difference: difference,
+        differenceWith: differenceWith,
+        dissoc: dissoc,
+        divide: divide,
+        drop: drop,
+        dropWhile: dropWhile,
+        empty: empty,
+        eq: eq,
+        eqDeep: eqDeep,
+        eqProps: eqProps,
+        evolve: evolve,
+        filter: filter,
+        filterIndexed: filterIndexed,
+        find: find,
+        findIndex: findIndex,
+        findLast: findLast,
+        findLastIndex: findLastIndex,
+        flatten: flatten,
+        flip: flip,
+        forEach: forEach,
+        forEachIndexed: forEachIndexed,
+        fromPairs: fromPairs,
+        func: func,
+        functions: functions,
+        functionsIn: functionsIn,
+        get: get,
+        groupBy: groupBy,
+        gt: gt,
+        gte: gte,
+        has: has,
+        hasIn: hasIn,
+        head: head,
+        identity: identity,
+        ifElse: ifElse,
+        inc: inc,
+        indexOf: indexOf,
+        init: init,
+        insert: insert,
+        insertAll: insertAll,
+        installTo: installTo,
+        intersection: intersection,
+        intersectionWith: intersectionWith,
+        invert: invert,
+        invertObj: invertObj,
+        invoker: invoker,
+        is: is,
+        isArrayLike: isArrayLike,
+        isEmpty: isEmpty,
+        isNil: isNil,
+        isSet: isSet,
+        join: join,
+        keys: keys,
+        keysIn: keysIn,
+        last: last,
+        lastIndexOf: lastIndexOf,
+        length: length,
+        lens: lens,
+        lift: lift,
+        liftN: liftN,
+        lt: lt,
+        lte: lte,
+        map: map,
+        mapAccum: mapAccum,
+        mapAccumRight: mapAccumRight,
+        mapIndexed: mapIndexed,
+        mapObj: mapObj,
+        mapObjIndexed: mapObjIndexed,
+        match: match,
+        mathMod: mathMod,
+        max: max,
+        maxBy: maxBy,
+        memoize: memoize,
+        merge: merge,
+        mergeAll: mergeAll,
+        min: min,
+        minBy: minBy,
+        modulo: modulo,
+        multiply: multiply,
+        nAry: nAry,
+        negate: negate,
+        not: not,
+        nth: nth,
+        nthArg: nthArg,
+        of: of,
+        omit: omit,
+        once: once,
+        op: op,
+        or: or,
+        partial: partial,
+        partialRight: partialRight,
+        partition: partition,
+        path: path,
+        pathEq: pathEq,
+        pathOn: pathOn,
+        pick: pick,
+        pickAll: pickAll,
+        pickBy: pickBy,
+        pipe: pipe,
+        pipeP: pipeP,
+        pluck: pluck,
+        prepend: prepend,
+        prependTo: prependTo,
+        product: product,
+        project: project,
+        prop: prop,
+        propEq: propEq,
+        propOf: propOf,
+        propOr: propOr,
+        props: props,
+        range: range,
+        reduce: reduce,
+        reduceIndexed: reduceIndexed,
+        reduceRight: reduceRight,
+        reduceRightIndexed: reduceRightIndexed,
+        reject: reject,
+        rejectIndexed: rejectIndexed,
+        remove: remove,
+        repeat: repeat,
+        replace: replace,
+        reverse: reverse,
+        scan: scan,
+        slice: slice,
+        sort: sort,
+        sortBy: sortBy,
+        split: split,
+        strIndexOf: strIndexOf,
+        strLastIndexOf: strLastIndexOf,
+        substring: substring,
+        substringFrom: substringFrom,
+        substringTo: substringTo,
+        subtract: subtract,
+        sum: sum,
+        tail: tail,
+        take: take,
+        takeWhile: takeWhile,
+        tap: tap,
+        times: times,
+        toLower: toLower,
+        toPairs: toPairs,
+        toPairsIn: toPairsIn,
+        toUpper: toUpper,
+        trim: trim,
+        type: type,
+        unapply: unapply,
+        unary: unary,
+        unfold: unfold,
+        union: union,
+        unionWith: unionWith,
+        uniq: uniq,
+        uniqWith: uniqWith,
+        unnest: unnest,
+        useWith: useWith,
+        values: values,
+        valuesIn: valuesIn,
+        where: where,
+        wrap: wrap,
+        xprod: xprod,
+        zip: zip,
+        zipObj: zipObj,
+        zipWith: zipWith
+    };
+
+    /* TEST_ENTRY_POINT */
+
+    if (typeof exports === 'object') {
+        module.exports = R;
+    } else if (typeof define === 'function' && define.amd) {
+        define(function() { return R; });
+    } else {
+        this.R = R;
+    }
+
+}.call(this));
+
+},{}],117:[function(require,module,exports){
 /**
  * Actions that modify the URL.
  */
@@ -22663,7 +37596,7 @@ var LocationActions = {
 
 module.exports = LocationActions;
 
-},{}],52:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 var LocationActions = require('../actions/LocationActions');
 
 /**
@@ -22692,7 +37625,7 @@ var ImitateBrowserBehavior = {
 
 module.exports = ImitateBrowserBehavior;
 
-},{"../actions/LocationActions":51}],53:[function(require,module,exports){
+},{"../actions/LocationActions":117}],119:[function(require,module,exports){
 /**
  * A scroll behavior that always scrolls to the top of the page
  * after a transition.
@@ -22707,7 +37640,7 @@ var ScrollToTopBehavior = {
 
 module.exports = ScrollToTopBehavior;
 
-},{}],54:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 var React = require('react');
 var FakeNode = require('../mixins/FakeNode');
 var PropTypes = require('../utils/PropTypes');
@@ -22734,7 +37667,7 @@ var DefaultRoute = React.createClass({
 
 module.exports = DefaultRoute;
 
-},{"../mixins/FakeNode":64,"../utils/PropTypes":75,"react":270}],55:[function(require,module,exports){
+},{"../mixins/FakeNode":130,"../utils/PropTypes":141,"react":336}],121:[function(require,module,exports){
 var React = require('react');
 var classSet = require('react/lib/cx');
 var assign = require('react/lib/Object.assign');
@@ -22843,7 +37776,7 @@ var Link = React.createClass({
 
 module.exports = Link;
 
-},{"../mixins/Navigation":65,"../mixins/State":69,"react":270,"react/lib/Object.assign":137,"react/lib/cx":227}],56:[function(require,module,exports){
+},{"../mixins/Navigation":131,"../mixins/State":135,"react":336,"react/lib/Object.assign":203,"react/lib/cx":293}],122:[function(require,module,exports){
 var React = require('react');
 var FakeNode = require('../mixins/FakeNode');
 var PropTypes = require('../utils/PropTypes');
@@ -22871,7 +37804,7 @@ var NotFoundRoute = React.createClass({
 
 module.exports = NotFoundRoute;
 
-},{"../mixins/FakeNode":64,"../utils/PropTypes":75,"react":270}],57:[function(require,module,exports){
+},{"../mixins/FakeNode":130,"../utils/PropTypes":141,"react":336}],123:[function(require,module,exports){
 var React = require('react');
 var FakeNode = require('../mixins/FakeNode');
 var PropTypes = require('../utils/PropTypes');
@@ -22897,7 +37830,7 @@ var Redirect = React.createClass({
 
 module.exports = Redirect;
 
-},{"../mixins/FakeNode":64,"../utils/PropTypes":75,"react":270}],58:[function(require,module,exports){
+},{"../mixins/FakeNode":130,"../utils/PropTypes":141,"react":336}],124:[function(require,module,exports){
 var React = require('react');
 var FakeNode = require('../mixins/FakeNode');
 
@@ -22956,7 +37889,7 @@ var Route = React.createClass({
 
 module.exports = Route;
 
-},{"../mixins/FakeNode":64,"react":270}],59:[function(require,module,exports){
+},{"../mixins/FakeNode":130,"react":336}],125:[function(require,module,exports){
 var React = require('react');
 var RouteHandlerMixin = require('../mixins/RouteHandler');
 
@@ -22984,7 +37917,7 @@ var RouteHandler = React.createClass({
 
 module.exports = RouteHandler;
 
-},{"../mixins/RouteHandler":67,"react":270}],60:[function(require,module,exports){
+},{"../mixins/RouteHandler":133,"react":336}],126:[function(require,module,exports){
 exports.DefaultRoute = require('./components/DefaultRoute');
 exports.Link = require('./components/Link');
 exports.NotFoundRoute = require('./components/NotFoundRoute');
@@ -23007,7 +37940,7 @@ exports.run = require('./utils/runRouter');
 
 exports.History = require('./utils/History');
 
-},{"./behaviors/ImitateBrowserBehavior":52,"./behaviors/ScrollToTopBehavior":53,"./components/DefaultRoute":54,"./components/Link":55,"./components/NotFoundRoute":56,"./components/Redirect":57,"./components/Route":58,"./components/RouteHandler":59,"./locations/HashLocation":61,"./locations/HistoryLocation":62,"./locations/RefreshLocation":63,"./mixins/Navigation":65,"./mixins/State":69,"./utils/History":72,"./utils/createRouter":78,"./utils/runRouter":82}],61:[function(require,module,exports){
+},{"./behaviors/ImitateBrowserBehavior":118,"./behaviors/ScrollToTopBehavior":119,"./components/DefaultRoute":120,"./components/Link":121,"./components/NotFoundRoute":122,"./components/Redirect":123,"./components/Route":124,"./components/RouteHandler":125,"./locations/HashLocation":127,"./locations/HistoryLocation":128,"./locations/RefreshLocation":129,"./mixins/Navigation":131,"./mixins/State":135,"./utils/History":138,"./utils/createRouter":144,"./utils/runRouter":148}],127:[function(require,module,exports){
 var LocationActions = require('../actions/LocationActions');
 var History = require('../utils/History');
 var Path = require('../utils/Path');
@@ -23134,7 +38067,7 @@ var HashLocation = {
 
 module.exports = HashLocation;
 
-},{"../actions/LocationActions":51,"../utils/History":72,"../utils/Path":73}],62:[function(require,module,exports){
+},{"../actions/LocationActions":117,"../utils/History":138,"../utils/Path":139}],128:[function(require,module,exports){
 var LocationActions = require('../actions/LocationActions');
 var History = require('../utils/History');
 var Path = require('../utils/Path');
@@ -23230,7 +38163,7 @@ var HistoryLocation = {
 
 module.exports = HistoryLocation;
 
-},{"../actions/LocationActions":51,"../utils/History":72,"../utils/Path":73}],63:[function(require,module,exports){
+},{"../actions/LocationActions":117,"../utils/History":138,"../utils/Path":139}],129:[function(require,module,exports){
 var HistoryLocation = require('./HistoryLocation');
 var History = require('../utils/History');
 var Path = require('../utils/Path');
@@ -23262,7 +38195,7 @@ var RefreshLocation = {
 
 module.exports = RefreshLocation;
 
-},{"../utils/History":72,"../utils/Path":73,"./HistoryLocation":62}],64:[function(require,module,exports){
+},{"../utils/History":138,"../utils/Path":139,"./HistoryLocation":128}],130:[function(require,module,exports){
 var invariant = require('react/lib/invariant');
 
 var FakeNode = {
@@ -23279,7 +38212,7 @@ var FakeNode = {
 
 module.exports = FakeNode;
 
-},{"react/lib/invariant":249}],65:[function(require,module,exports){
+},{"react/lib/invariant":315}],131:[function(require,module,exports){
 var React = require('react');
 
 /**
@@ -23353,7 +38286,7 @@ var Navigation = {
 
 module.exports = Navigation;
 
-},{"react":270}],66:[function(require,module,exports){
+},{"react":336}],132:[function(require,module,exports){
 var React = require('react');
 
 /**
@@ -23383,7 +38316,7 @@ var NavigationContext = {
 
 module.exports = NavigationContext;
 
-},{"react":270}],67:[function(require,module,exports){
+},{"react":336}],133:[function(require,module,exports){
 var React = require('react');
 
 module.exports = {
@@ -23426,7 +38359,7 @@ module.exports = {
     return route ? React.createElement(route.handler, props || this.props) : null;
   }
 };
-},{"react":270}],68:[function(require,module,exports){
+},{"react":336}],134:[function(require,module,exports){
 var invariant = require('react/lib/invariant');
 var canUseDOM = require('react/lib/ExecutionEnvironment').canUseDOM;
 var getWindowScrollPosition = require('../utils/getWindowScrollPosition');
@@ -23511,7 +38444,7 @@ var Scrolling = {
 
 module.exports = Scrolling;
 
-},{"../utils/getWindowScrollPosition":80,"react/lib/ExecutionEnvironment":131,"react/lib/invariant":249}],69:[function(require,module,exports){
+},{"../utils/getWindowScrollPosition":146,"react/lib/ExecutionEnvironment":197,"react/lib/invariant":315}],135:[function(require,module,exports){
 var React = require('react');
 
 /**
@@ -23590,7 +38523,7 @@ var State = {
 
 module.exports = State;
 
-},{"react":270}],70:[function(require,module,exports){
+},{"react":336}],136:[function(require,module,exports){
 var React = require('react');
 var assign = require('react/lib/Object.assign');
 var Path = require('../utils/Path');
@@ -23693,7 +38626,7 @@ var StateContext = {
 
 module.exports = StateContext;
 
-},{"../utils/Path":73,"react":270,"react/lib/Object.assign":137}],71:[function(require,module,exports){
+},{"../utils/Path":139,"react":336,"react/lib/Object.assign":203}],137:[function(require,module,exports){
 /**
  * Represents a cancellation caused by navigating away
  * before the previous transition has fully resolved.
@@ -23702,7 +38635,7 @@ function Cancellation() { }
 
 module.exports = Cancellation;
 
-},{}],72:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 var invariant = require('react/lib/invariant');
 var canUseDOM = require('react/lib/ExecutionEnvironment').canUseDOM;
 
@@ -23733,7 +38666,7 @@ var History = {
 
 module.exports = History;
 
-},{"react/lib/ExecutionEnvironment":131,"react/lib/invariant":249}],73:[function(require,module,exports){
+},{"react/lib/ExecutionEnvironment":197,"react/lib/invariant":315}],139:[function(require,module,exports){
 var invariant = require('react/lib/invariant');
 var merge = require('qs/lib/utils').merge;
 var qs = require('qs');
@@ -23913,7 +38846,7 @@ var Path = {
 
 module.exports = Path;
 
-},{"qs":84,"qs/lib/utils":88,"react/lib/invariant":249}],74:[function(require,module,exports){
+},{"qs":150,"qs/lib/utils":154,"react/lib/invariant":315}],140:[function(require,module,exports){
 var Promise = require('when/lib/Promise');
 
 // TODO: Use process.env.NODE_ENV check + envify to enable
@@ -23921,7 +38854,7 @@ var Promise = require('when/lib/Promise');
 
 module.exports = Promise;
 
-},{"when/lib/Promise":89}],75:[function(require,module,exports){
+},{"when/lib/Promise":155}],141:[function(require,module,exports){
 var PropTypes = {
 
   /**
@@ -23936,7 +38869,7 @@ var PropTypes = {
 
 module.exports = PropTypes;
 
-},{}],76:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
 /**
  * Encapsulates a redirect to the given route.
  */
@@ -23948,7 +38881,7 @@ function Redirect(to, params, query) {
 
 module.exports = Redirect;
 
-},{}],77:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
 var assign = require('react/lib/Object.assign');
 var reversedArray = require('./reversedArray');
 var Redirect = require('./Redirect');
@@ -24079,7 +39012,7 @@ assign(Transition.prototype, {
 
 module.exports = Transition;
 
-},{"./Promise":74,"./Redirect":76,"./reversedArray":81,"react/lib/Object.assign":137}],78:[function(require,module,exports){
+},{"./Promise":140,"./Redirect":142,"./reversedArray":147,"react/lib/Object.assign":203}],144:[function(require,module,exports){
 (function (process){
 /* jshint -W058 */
 var React = require('react');
@@ -24577,7 +39510,7 @@ function createRouter(options) {
 module.exports = createRouter;
 
 }).call(this,require("DF1urx"))
-},{"../actions/LocationActions":51,"../behaviors/ImitateBrowserBehavior":52,"../components/RouteHandler":59,"../locations/HashLocation":61,"../locations/HistoryLocation":62,"../locations/RefreshLocation":63,"../mixins/NavigationContext":66,"../mixins/Scrolling":68,"../mixins/StateContext":70,"./Cancellation":71,"./History":72,"./Path":73,"./PropTypes":75,"./Redirect":76,"./Transition":77,"./createRoutesFromChildren":79,"./supportsHistory":83,"DF1urx":41,"react":270,"react/lib/ExecutionEnvironment":131,"react/lib/invariant":249,"react/lib/warning":269}],79:[function(require,module,exports){
+},{"../actions/LocationActions":117,"../behaviors/ImitateBrowserBehavior":118,"../components/RouteHandler":125,"../locations/HashLocation":127,"../locations/HistoryLocation":128,"../locations/RefreshLocation":129,"../mixins/NavigationContext":132,"../mixins/Scrolling":134,"../mixins/StateContext":136,"./Cancellation":137,"./History":138,"./Path":139,"./PropTypes":141,"./Redirect":142,"./Transition":143,"./createRoutesFromChildren":145,"./supportsHistory":149,"DF1urx":43,"react":336,"react/lib/ExecutionEnvironment":197,"react/lib/invariant":315,"react/lib/warning":335}],145:[function(require,module,exports){
 /* jshint -W084 */
 var React = require('react');
 var warning = require('react/lib/warning');
@@ -24744,7 +39677,7 @@ function createRoutesFromChildren(children, parentRoute, namedRoutes) {
 
 module.exports = createRoutesFromChildren;
 
-},{"../components/DefaultRoute":54,"../components/NotFoundRoute":56,"../components/Redirect":57,"../components/Route":58,"./Path":73,"react":270,"react/lib/invariant":249,"react/lib/warning":269}],80:[function(require,module,exports){
+},{"../components/DefaultRoute":120,"../components/NotFoundRoute":122,"../components/Redirect":123,"../components/Route":124,"./Path":139,"react":336,"react/lib/invariant":315,"react/lib/warning":335}],146:[function(require,module,exports){
 var invariant = require('react/lib/invariant');
 var canUseDOM = require('react/lib/ExecutionEnvironment').canUseDOM;
 
@@ -24765,14 +39698,14 @@ function getWindowScrollPosition() {
 
 module.exports = getWindowScrollPosition;
 
-},{"react/lib/ExecutionEnvironment":131,"react/lib/invariant":249}],81:[function(require,module,exports){
+},{"react/lib/ExecutionEnvironment":197,"react/lib/invariant":315}],147:[function(require,module,exports){
 function reversedArray(array) {
   return array.slice(0).reverse();
 }
 
 module.exports = reversedArray;
 
-},{}],82:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 var createRouter = require('./createRouter');
 
 /**
@@ -24822,7 +39755,7 @@ function runRouter(routes, location, callback) {
 
 module.exports = runRouter;
 
-},{"./createRouter":78}],83:[function(require,module,exports){
+},{"./createRouter":144}],149:[function(require,module,exports){
 function supportsHistory() {
   /*! taken from modernizr
    * https://github.com/Modernizr/Modernizr/blob/master/LICENSE
@@ -24842,10 +39775,10 @@ function supportsHistory() {
 
 module.exports = supportsHistory;
 
-},{}],84:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 module.exports = require('./lib');
 
-},{"./lib":85}],85:[function(require,module,exports){
+},{"./lib":151}],151:[function(require,module,exports){
 // Load modules
 
 var Stringify = require('./stringify');
@@ -24862,7 +39795,7 @@ module.exports = {
     parse: Parse
 };
 
-},{"./parse":86,"./stringify":87}],86:[function(require,module,exports){
+},{"./parse":152,"./stringify":153}],152:[function(require,module,exports){
 // Load modules
 
 var Utils = require('./utils');
@@ -25018,7 +39951,7 @@ module.exports = function (str, options) {
     return Utils.compact(obj);
 };
 
-},{"./utils":88}],87:[function(require,module,exports){
+},{"./utils":154}],153:[function(require,module,exports){
 // Load modules
 
 var Utils = require('./utils');
@@ -25078,7 +40011,7 @@ module.exports = function (obj, options) {
     return keys.join(delimiter);
 };
 
-},{"./utils":88}],88:[function(require,module,exports){
+},{"./utils":154}],154:[function(require,module,exports){
 (function (Buffer){
 // Load modules
 
@@ -25221,7 +40154,7 @@ exports.isBuffer = function (obj) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":37}],89:[function(require,module,exports){
+},{"buffer":39}],155:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -25240,7 +40173,7 @@ define(function (require) {
 });
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
-},{"./Scheduler":91,"./async":92,"./makePromise":93}],90:[function(require,module,exports){
+},{"./Scheduler":157,"./async":158,"./makePromise":159}],156:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -25312,7 +40245,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],91:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -25396,7 +40329,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"./Queue":90}],92:[function(require,module,exports){
+},{"./Queue":156}],158:[function(require,module,exports){
 (function (process){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
@@ -25471,7 +40404,7 @@ define(function(require) {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
 }).call(this,require("DF1urx"))
-},{"DF1urx":41}],93:[function(require,module,exports){
+},{"DF1urx":43}],159:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -26269,7 +41202,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],94:[function(require,module,exports){
+},{}],160:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -26580,7 +41513,7 @@ var ResponderEventPlugin = {
 
 module.exports = ResponderEventPlugin;
 
-},{"react/lib/EventConstants":125,"react/lib/EventPluginUtils":129,"react/lib/EventPropagators":130,"react/lib/SyntheticEvent":208,"react/lib/accumulateInto":218,"react/lib/keyOf":256}],95:[function(require,module,exports){
+},{"react/lib/EventConstants":191,"react/lib/EventPluginUtils":195,"react/lib/EventPropagators":196,"react/lib/SyntheticEvent":274,"react/lib/accumulateInto":284,"react/lib/keyOf":322}],161:[function(require,module,exports){
 /**
  * Copyright 2013-2014 Facebook, Inc.
  *
@@ -26738,7 +41671,7 @@ var TapEventPlugin = {
 };
 
 module.exports = TapEventPlugin;
-},{"./TouchEventUtils":96,"react/lib/EventConstants":125,"react/lib/EventPluginUtils":129,"react/lib/EventPropagators":130,"react/lib/SyntheticUIEvent":214,"react/lib/ViewportMetrics":217,"react/lib/keyOf":256}],96:[function(require,module,exports){
+},{"./TouchEventUtils":162,"react/lib/EventConstants":191,"react/lib/EventPluginUtils":195,"react/lib/EventPropagators":196,"react/lib/SyntheticUIEvent":280,"react/lib/ViewportMetrics":283,"react/lib/keyOf":322}],162:[function(require,module,exports){
 /**
  * Copyright 2013-2014 Facebook, Inc.
  *
@@ -26782,7 +41715,7 @@ var TouchEventUtils = {
 
 module.exports = TouchEventUtils;
 
-},{}],97:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 module.exports = function injectTapEventPlugin () {
   var React = require("react");
   React.initializeTouchEvents(true);
@@ -26793,7 +41726,7 @@ module.exports = function injectTapEventPlugin () {
   });
 };
 
-},{"./ResponderEventPlugin.js":94,"./TapEventPlugin.js":95,"react":270,"react/lib/EventPluginHub":127}],98:[function(require,module,exports){
+},{"./ResponderEventPlugin.js":160,"./TapEventPlugin.js":161,"react":336,"react/lib/EventPluginHub":193}],164:[function(require,module,exports){
 var React = require('react');
 
 // var Router = require('./routing/Router');
@@ -26809,7 +41742,7 @@ var ReactTouch = {
 };
 
 module.exports = ReactTouch;
-},{"react":270,"react-tap-event-plugin":97}],99:[function(require,module,exports){
+},{"react":336,"react-tap-event-plugin":163}],165:[function(require,module,exports){
 var rAF = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame;
 
 var FPSCounter = {
@@ -26834,7 +41767,7 @@ var FPSCounter = {
 };
 
 module.exports = FPSCounter;
-},{}],100:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 var TRANSFORM_KEY = typeof document.body.style.MozTransform !== 'undefined' ? 'MozTransform' : 'WebkitTransform';
 var FILTER_KEY = typeof document.body.style.MozFilter !== 'undefined' ? 'MozFilter' : 'WebkitFilter';
 
@@ -26842,11 +41775,11 @@ module.exports = {
   TRANSFORM: TRANSFORM_KEY,
   FILTER: FILTER_KEY
 };
-},{}],101:[function(require,module,exports){
+},{}],167:[function(require,module,exports){
 var ZyngaScroller = window.Scroller;
 
 module.exports = ZyngaScroller;
-},{}],102:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 var LeftNavBehaviors = {
   PARALLAX_FADE: {
     side: {
@@ -26888,7 +41821,7 @@ var LeftNavBehaviors = {
 };
 
 module.exports = LeftNavBehaviors;
-},{}],103:[function(require,module,exports){
+},{}],169:[function(require,module,exports){
 /** @cjsx React.DOM */
 
 var React = require('react');
@@ -27068,7 +42001,7 @@ var LeftNavContainer = React.createClass({displayName: 'LeftNavContainer',
 
 // {this.props.sideWidth, this.props.button, this.props.children, ...other}
 module.exports = LeftNavContainer;
-},{"../../environment/ZyngaScroller":101,"../../primitives/AnimatableContainer":105,"../../primitives/TouchableArea":107,"./LeftNavBehaviors":102,"react":270,"react-tap-event-plugin":97}],104:[function(require,module,exports){
+},{"../../environment/ZyngaScroller":167,"../../primitives/AnimatableContainer":171,"../../primitives/TouchableArea":173,"./LeftNavBehaviors":168,"react":336,"react-tap-event-plugin":163}],170:[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react');
@@ -27139,7 +42072,7 @@ var SimpleScroller = React.createClass({displayName: 'SimpleScroller',
 });
 
 module.exports = SimpleScroller;
-},{"../../environment/ZyngaScroller":101,"../../primitives/AnimatableContainer":105,"../../primitives/TouchableArea":107,"react":270}],105:[function(require,module,exports){
+},{"../../environment/ZyngaScroller":167,"../../primitives/AnimatableContainer":171,"../../primitives/TouchableArea":173,"react":336}],171:[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react');
@@ -27274,7 +42207,7 @@ var AnimatableContainer = React.createClass({displayName: 'AnimatableContainer',
 });
 
 module.exports = AnimatableContainer;
-},{"../environment/StyleKeys":100,"./helpers/StaticContainer":108,"react":270}],106:[function(require,module,exports){
+},{"../environment/StyleKeys":166,"./helpers/StaticContainer":174,"react":336}],172:[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react');
@@ -27303,7 +42236,7 @@ var App = React.createClass({displayName: 'App',
 });
 
 module.exports = App;
-},{"react":270}],107:[function(require,module,exports){
+},{"react":336}],173:[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react');
@@ -27358,7 +42291,7 @@ var TouchableArea = React.createClass({displayName: 'TouchableArea',
 });
 
 module.exports = TouchableArea;
-},{"react":270}],108:[function(require,module,exports){
+},{"react":336}],174:[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react');
@@ -27378,10 +42311,10 @@ var StaticContainer = React.createClass({displayName: 'StaticContainer',
 });
 
 module.exports = StaticContainer;
-},{"react":270}],109:[function(require,module,exports){
+},{"react":336}],175:[function(require,module,exports){
 module.exports = require('./lib/ReactWithAddons');
 
-},{"./lib/ReactWithAddons":200}],110:[function(require,module,exports){
+},{"./lib/ReactWithAddons":266}],176:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -27408,7 +42341,7 @@ var AutoFocusMixin = {
 
 module.exports = AutoFocusMixin;
 
-},{"./focusNode":234}],111:[function(require,module,exports){
+},{"./focusNode":300}],177:[function(require,module,exports){
 /**
  * Copyright 2013 Facebook, Inc.
  * All rights reserved.
@@ -27630,7 +42563,7 @@ var BeforeInputEventPlugin = {
 
 module.exports = BeforeInputEventPlugin;
 
-},{"./EventConstants":125,"./EventPropagators":130,"./ExecutionEnvironment":131,"./SyntheticInputEvent":210,"./keyOf":256}],112:[function(require,module,exports){
+},{"./EventConstants":191,"./EventPropagators":196,"./ExecutionEnvironment":197,"./SyntheticInputEvent":276,"./keyOf":322}],178:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -27742,7 +42675,7 @@ var CSSCore = {
 module.exports = CSSCore;
 
 }).call(this,require("DF1urx"))
-},{"./invariant":249,"DF1urx":41}],113:[function(require,module,exports){
+},{"./invariant":315,"DF1urx":43}],179:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -27861,7 +42794,7 @@ var CSSProperty = {
 
 module.exports = CSSProperty;
 
-},{}],114:[function(require,module,exports){
+},{}],180:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -27996,7 +42929,7 @@ var CSSPropertyOperations = {
 module.exports = CSSPropertyOperations;
 
 }).call(this,require("DF1urx"))
-},{"./CSSProperty":113,"./ExecutionEnvironment":131,"./camelizeStyleName":221,"./dangerousStyleValue":228,"./hyphenateStyleName":247,"./memoizeStringOnly":258,"./warning":269,"DF1urx":41}],115:[function(require,module,exports){
+},{"./CSSProperty":179,"./ExecutionEnvironment":197,"./camelizeStyleName":287,"./dangerousStyleValue":294,"./hyphenateStyleName":313,"./memoizeStringOnly":324,"./warning":335,"DF1urx":43}],181:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -28096,7 +43029,7 @@ PooledClass.addPoolingTo(CallbackQueue);
 module.exports = CallbackQueue;
 
 }).call(this,require("DF1urx"))
-},{"./Object.assign":137,"./PooledClass":138,"./invariant":249,"DF1urx":41}],116:[function(require,module,exports){
+},{"./Object.assign":203,"./PooledClass":204,"./invariant":315,"DF1urx":43}],182:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -28478,7 +43411,7 @@ var ChangeEventPlugin = {
 
 module.exports = ChangeEventPlugin;
 
-},{"./EventConstants":125,"./EventPluginHub":127,"./EventPropagators":130,"./ExecutionEnvironment":131,"./ReactUpdates":199,"./SyntheticEvent":208,"./isEventSupported":250,"./isTextInputElement":252,"./keyOf":256}],117:[function(require,module,exports){
+},{"./EventConstants":191,"./EventPluginHub":193,"./EventPropagators":196,"./ExecutionEnvironment":197,"./ReactUpdates":265,"./SyntheticEvent":274,"./isEventSupported":316,"./isTextInputElement":318,"./keyOf":322}],183:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -28503,7 +43436,7 @@ var ClientReactRootIndex = {
 
 module.exports = ClientReactRootIndex;
 
-},{}],118:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -28762,7 +43695,7 @@ var CompositionEventPlugin = {
 
 module.exports = CompositionEventPlugin;
 
-},{"./EventConstants":125,"./EventPropagators":130,"./ExecutionEnvironment":131,"./ReactInputSelection":173,"./SyntheticCompositionEvent":206,"./getTextContentAccessor":244,"./keyOf":256}],119:[function(require,module,exports){
+},{"./EventConstants":191,"./EventPropagators":196,"./ExecutionEnvironment":197,"./ReactInputSelection":239,"./SyntheticCompositionEvent":272,"./getTextContentAccessor":310,"./keyOf":322}],185:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -28937,7 +43870,7 @@ var DOMChildrenOperations = {
 module.exports = DOMChildrenOperations;
 
 }).call(this,require("DF1urx"))
-},{"./Danger":122,"./ReactMultiChildUpdateTypes":180,"./getTextContentAccessor":244,"./invariant":249,"DF1urx":41}],120:[function(require,module,exports){
+},{"./Danger":188,"./ReactMultiChildUpdateTypes":246,"./getTextContentAccessor":310,"./invariant":315,"DF1urx":43}],186:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -29236,7 +44169,7 @@ var DOMProperty = {
 module.exports = DOMProperty;
 
 }).call(this,require("DF1urx"))
-},{"./invariant":249,"DF1urx":41}],121:[function(require,module,exports){
+},{"./invariant":315,"DF1urx":43}],187:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -29433,7 +44366,7 @@ var DOMPropertyOperations = {
 module.exports = DOMPropertyOperations;
 
 }).call(this,require("DF1urx"))
-},{"./DOMProperty":120,"./escapeTextForBrowser":232,"./memoizeStringOnly":258,"./warning":269,"DF1urx":41}],122:[function(require,module,exports){
+},{"./DOMProperty":186,"./escapeTextForBrowser":298,"./memoizeStringOnly":324,"./warning":335,"DF1urx":43}],188:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -29619,7 +44552,7 @@ var Danger = {
 module.exports = Danger;
 
 }).call(this,require("DF1urx"))
-},{"./ExecutionEnvironment":131,"./createNodesFromMarkup":226,"./emptyFunction":230,"./getMarkupWrap":241,"./invariant":249,"DF1urx":41}],123:[function(require,module,exports){
+},{"./ExecutionEnvironment":197,"./createNodesFromMarkup":292,"./emptyFunction":296,"./getMarkupWrap":307,"./invariant":315,"DF1urx":43}],189:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -29659,7 +44592,7 @@ var DefaultEventPluginOrder = [
 
 module.exports = DefaultEventPluginOrder;
 
-},{"./keyOf":256}],124:[function(require,module,exports){
+},{"./keyOf":322}],190:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -29799,7 +44732,7 @@ var EnterLeaveEventPlugin = {
 
 module.exports = EnterLeaveEventPlugin;
 
-},{"./EventConstants":125,"./EventPropagators":130,"./ReactMount":178,"./SyntheticMouseEvent":212,"./keyOf":256}],125:[function(require,module,exports){
+},{"./EventConstants":191,"./EventPropagators":196,"./ReactMount":244,"./SyntheticMouseEvent":278,"./keyOf":322}],191:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -29871,7 +44804,7 @@ var EventConstants = {
 
 module.exports = EventConstants;
 
-},{"./keyMirror":255}],126:[function(require,module,exports){
+},{"./keyMirror":321}],192:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014 Facebook, Inc.
@@ -29961,7 +44894,7 @@ var EventListener = {
 module.exports = EventListener;
 
 }).call(this,require("DF1urx"))
-},{"./emptyFunction":230,"DF1urx":41}],127:[function(require,module,exports){
+},{"./emptyFunction":296,"DF1urx":43}],193:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -30237,7 +45170,7 @@ var EventPluginHub = {
 module.exports = EventPluginHub;
 
 }).call(this,require("DF1urx"))
-},{"./EventPluginRegistry":128,"./EventPluginUtils":129,"./accumulateInto":218,"./forEachAccumulated":235,"./invariant":249,"DF1urx":41}],128:[function(require,module,exports){
+},{"./EventPluginRegistry":194,"./EventPluginUtils":195,"./accumulateInto":284,"./forEachAccumulated":301,"./invariant":315,"DF1urx":43}],194:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -30517,7 +45450,7 @@ var EventPluginRegistry = {
 module.exports = EventPluginRegistry;
 
 }).call(this,require("DF1urx"))
-},{"./invariant":249,"DF1urx":41}],129:[function(require,module,exports){
+},{"./invariant":315,"DF1urx":43}],195:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -30738,7 +45671,7 @@ var EventPluginUtils = {
 module.exports = EventPluginUtils;
 
 }).call(this,require("DF1urx"))
-},{"./EventConstants":125,"./invariant":249,"DF1urx":41}],130:[function(require,module,exports){
+},{"./EventConstants":191,"./invariant":315,"DF1urx":43}],196:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -30880,7 +45813,7 @@ var EventPropagators = {
 module.exports = EventPropagators;
 
 }).call(this,require("DF1urx"))
-},{"./EventConstants":125,"./EventPluginHub":127,"./accumulateInto":218,"./forEachAccumulated":235,"DF1urx":41}],131:[function(require,module,exports){
+},{"./EventConstants":191,"./EventPluginHub":193,"./accumulateInto":284,"./forEachAccumulated":301,"DF1urx":43}],197:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -30925,7 +45858,7 @@ var ExecutionEnvironment = {
 
 module.exports = ExecutionEnvironment;
 
-},{}],132:[function(require,module,exports){
+},{}],198:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -31117,7 +46050,7 @@ var HTMLDOMPropertyConfig = {
 
 module.exports = HTMLDOMPropertyConfig;
 
-},{"./DOMProperty":120,"./ExecutionEnvironment":131}],133:[function(require,module,exports){
+},{"./DOMProperty":186,"./ExecutionEnvironment":197}],199:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -31158,7 +46091,7 @@ var LinkedStateMixin = {
 
 module.exports = LinkedStateMixin;
 
-},{"./ReactLink":176,"./ReactStateSetters":193}],134:[function(require,module,exports){
+},{"./ReactLink":242,"./ReactStateSetters":259}],200:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -31314,7 +46247,7 @@ var LinkedValueUtils = {
 module.exports = LinkedValueUtils;
 
 }).call(this,require("DF1urx"))
-},{"./ReactPropTypes":187,"./invariant":249,"DF1urx":41}],135:[function(require,module,exports){
+},{"./ReactPropTypes":253,"./invariant":315,"DF1urx":43}],201:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -31364,7 +46297,7 @@ var LocalEventTrapMixin = {
 module.exports = LocalEventTrapMixin;
 
 }).call(this,require("DF1urx"))
-},{"./ReactBrowserEventEmitter":141,"./accumulateInto":218,"./forEachAccumulated":235,"./invariant":249,"DF1urx":41}],136:[function(require,module,exports){
+},{"./ReactBrowserEventEmitter":207,"./accumulateInto":284,"./forEachAccumulated":301,"./invariant":315,"DF1urx":43}],202:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -31422,7 +46355,7 @@ var MobileSafariClickEventPlugin = {
 
 module.exports = MobileSafariClickEventPlugin;
 
-},{"./EventConstants":125,"./emptyFunction":230}],137:[function(require,module,exports){
+},{"./EventConstants":191,"./emptyFunction":296}],203:[function(require,module,exports){
 /**
  * Copyright 2014, Facebook, Inc.
  * All rights reserved.
@@ -31469,7 +46402,7 @@ function assign(target, sources) {
 
 module.exports = assign;
 
-},{}],138:[function(require,module,exports){
+},{}],204:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -31585,7 +46518,7 @@ var PooledClass = {
 module.exports = PooledClass;
 
 }).call(this,require("DF1urx"))
-},{"./invariant":249,"DF1urx":41}],139:[function(require,module,exports){
+},{"./invariant":315,"DF1urx":43}],205:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -31773,7 +46706,7 @@ React.version = '0.12.2';
 module.exports = React;
 
 }).call(this,require("DF1urx"))
-},{"./DOMPropertyOperations":121,"./EventPluginUtils":129,"./ExecutionEnvironment":131,"./Object.assign":137,"./ReactChildren":144,"./ReactComponent":145,"./ReactCompositeComponent":148,"./ReactContext":149,"./ReactCurrentOwner":150,"./ReactDOM":151,"./ReactDOMComponent":153,"./ReactDefaultInjection":163,"./ReactElement":166,"./ReactElementValidator":167,"./ReactInstanceHandles":174,"./ReactLegacyElement":175,"./ReactMount":178,"./ReactMultiChild":179,"./ReactPerf":183,"./ReactPropTypes":187,"./ReactServerRendering":191,"./ReactTextComponent":195,"./deprecated":229,"./onlyChild":260,"DF1urx":41}],140:[function(require,module,exports){
+},{"./DOMPropertyOperations":187,"./EventPluginUtils":195,"./ExecutionEnvironment":197,"./Object.assign":203,"./ReactChildren":210,"./ReactComponent":211,"./ReactCompositeComponent":214,"./ReactContext":215,"./ReactCurrentOwner":216,"./ReactDOM":217,"./ReactDOMComponent":219,"./ReactDefaultInjection":229,"./ReactElement":232,"./ReactElementValidator":233,"./ReactInstanceHandles":240,"./ReactLegacyElement":241,"./ReactMount":244,"./ReactMultiChild":245,"./ReactPerf":249,"./ReactPropTypes":253,"./ReactServerRendering":257,"./ReactTextComponent":261,"./deprecated":295,"./onlyChild":326,"DF1urx":43}],206:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -31816,7 +46749,7 @@ var ReactBrowserComponentMixin = {
 module.exports = ReactBrowserComponentMixin;
 
 }).call(this,require("DF1urx"))
-},{"./ReactEmptyComponent":168,"./ReactMount":178,"./invariant":249,"DF1urx":41}],141:[function(require,module,exports){
+},{"./ReactEmptyComponent":234,"./ReactMount":244,"./invariant":315,"DF1urx":43}],207:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -32171,7 +47104,7 @@ var ReactBrowserEventEmitter = assign({}, ReactEventEmitterMixin, {
 
 module.exports = ReactBrowserEventEmitter;
 
-},{"./EventConstants":125,"./EventPluginHub":127,"./EventPluginRegistry":128,"./Object.assign":137,"./ReactEventEmitterMixin":170,"./ViewportMetrics":217,"./isEventSupported":250}],142:[function(require,module,exports){
+},{"./EventConstants":191,"./EventPluginHub":193,"./EventPluginRegistry":194,"./Object.assign":203,"./ReactEventEmitterMixin":236,"./ViewportMetrics":283,"./isEventSupported":316}],208:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -32238,7 +47171,7 @@ var ReactCSSTransitionGroup = React.createClass({
 
 module.exports = ReactCSSTransitionGroup;
 
-},{"./Object.assign":137,"./React":139,"./ReactCSSTransitionGroupChild":143,"./ReactTransitionGroup":198}],143:[function(require,module,exports){
+},{"./Object.assign":203,"./React":205,"./ReactCSSTransitionGroupChild":209,"./ReactTransitionGroup":264}],209:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -32373,7 +47306,7 @@ var ReactCSSTransitionGroupChild = React.createClass({
 module.exports = ReactCSSTransitionGroupChild;
 
 }).call(this,require("DF1urx"))
-},{"./CSSCore":112,"./React":139,"./ReactTransitionEvents":197,"./onlyChild":260,"DF1urx":41}],144:[function(require,module,exports){
+},{"./CSSCore":178,"./React":205,"./ReactTransitionEvents":263,"./onlyChild":326,"DF1urx":43}],210:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -32523,7 +47456,7 @@ var ReactChildren = {
 module.exports = ReactChildren;
 
 }).call(this,require("DF1urx"))
-},{"./PooledClass":138,"./traverseAllChildren":267,"./warning":269,"DF1urx":41}],145:[function(require,module,exports){
+},{"./PooledClass":204,"./traverseAllChildren":333,"./warning":335,"DF1urx":43}],211:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -32966,7 +47899,7 @@ var ReactComponent = {
 module.exports = ReactComponent;
 
 }).call(this,require("DF1urx"))
-},{"./Object.assign":137,"./ReactElement":166,"./ReactOwner":182,"./ReactUpdates":199,"./invariant":249,"./keyMirror":255,"DF1urx":41}],146:[function(require,module,exports){
+},{"./Object.assign":203,"./ReactElement":232,"./ReactOwner":248,"./ReactUpdates":265,"./invariant":315,"./keyMirror":321,"DF1urx":43}],212:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -33088,7 +48021,7 @@ var ReactComponentBrowserEnvironment = {
 module.exports = ReactComponentBrowserEnvironment;
 
 }).call(this,require("DF1urx"))
-},{"./ReactDOMIDOperations":155,"./ReactMarkupChecksum":177,"./ReactMount":178,"./ReactPerf":183,"./ReactReconcileTransaction":189,"./getReactRootElementInContainer":243,"./invariant":249,"./setInnerHTML":263,"DF1urx":41}],147:[function(require,module,exports){
+},{"./ReactDOMIDOperations":221,"./ReactMarkupChecksum":243,"./ReactMount":244,"./ReactPerf":249,"./ReactReconcileTransaction":255,"./getReactRootElementInContainer":309,"./invariant":315,"./setInnerHTML":329,"DF1urx":43}],213:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -33137,7 +48070,7 @@ var ReactComponentWithPureRenderMixin = {
 
 module.exports = ReactComponentWithPureRenderMixin;
 
-},{"./shallowEqual":264}],148:[function(require,module,exports){
+},{"./shallowEqual":330}],214:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -34577,7 +49510,7 @@ var ReactCompositeComponent = {
 module.exports = ReactCompositeComponent;
 
 }).call(this,require("DF1urx"))
-},{"./Object.assign":137,"./ReactComponent":145,"./ReactContext":149,"./ReactCurrentOwner":150,"./ReactElement":166,"./ReactElementValidator":167,"./ReactEmptyComponent":168,"./ReactErrorUtils":169,"./ReactLegacyElement":175,"./ReactOwner":182,"./ReactPerf":183,"./ReactPropTransferer":184,"./ReactPropTypeLocationNames":185,"./ReactPropTypeLocations":186,"./ReactUpdates":199,"./instantiateReactComponent":248,"./invariant":249,"./keyMirror":255,"./keyOf":256,"./mapObject":257,"./monitorCodeUse":259,"./shouldUpdateReactComponent":265,"./warning":269,"DF1urx":41}],149:[function(require,module,exports){
+},{"./Object.assign":203,"./ReactComponent":211,"./ReactContext":215,"./ReactCurrentOwner":216,"./ReactElement":232,"./ReactElementValidator":233,"./ReactEmptyComponent":234,"./ReactErrorUtils":235,"./ReactLegacyElement":241,"./ReactOwner":248,"./ReactPerf":249,"./ReactPropTransferer":250,"./ReactPropTypeLocationNames":251,"./ReactPropTypeLocations":252,"./ReactUpdates":265,"./instantiateReactComponent":314,"./invariant":315,"./keyMirror":321,"./keyOf":322,"./mapObject":323,"./monitorCodeUse":325,"./shouldUpdateReactComponent":331,"./warning":335,"DF1urx":43}],215:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -34639,7 +49572,7 @@ var ReactContext = {
 
 module.exports = ReactContext;
 
-},{"./Object.assign":137}],150:[function(require,module,exports){
+},{"./Object.assign":203}],216:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -34673,7 +49606,7 @@ var ReactCurrentOwner = {
 
 module.exports = ReactCurrentOwner;
 
-},{}],151:[function(require,module,exports){
+},{}],217:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -34856,7 +49789,7 @@ var ReactDOM = mapObject({
 module.exports = ReactDOM;
 
 }).call(this,require("DF1urx"))
-},{"./ReactElement":166,"./ReactElementValidator":167,"./ReactLegacyElement":175,"./mapObject":257,"DF1urx":41}],152:[function(require,module,exports){
+},{"./ReactElement":232,"./ReactElementValidator":233,"./ReactLegacyElement":241,"./mapObject":323,"DF1urx":43}],218:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -34921,7 +49854,7 @@ var ReactDOMButton = ReactCompositeComponent.createClass({
 
 module.exports = ReactDOMButton;
 
-},{"./AutoFocusMixin":110,"./ReactBrowserComponentMixin":140,"./ReactCompositeComponent":148,"./ReactDOM":151,"./ReactElement":166,"./keyMirror":255}],153:[function(require,module,exports){
+},{"./AutoFocusMixin":176,"./ReactBrowserComponentMixin":206,"./ReactCompositeComponent":214,"./ReactDOM":217,"./ReactElement":232,"./keyMirror":321}],219:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -35408,7 +50341,7 @@ assign(
 module.exports = ReactDOMComponent;
 
 }).call(this,require("DF1urx"))
-},{"./CSSPropertyOperations":114,"./DOMProperty":120,"./DOMPropertyOperations":121,"./Object.assign":137,"./ReactBrowserComponentMixin":140,"./ReactBrowserEventEmitter":141,"./ReactComponent":145,"./ReactMount":178,"./ReactMultiChild":179,"./ReactPerf":183,"./escapeTextForBrowser":232,"./invariant":249,"./isEventSupported":250,"./keyOf":256,"./monitorCodeUse":259,"DF1urx":41}],154:[function(require,module,exports){
+},{"./CSSPropertyOperations":180,"./DOMProperty":186,"./DOMPropertyOperations":187,"./Object.assign":203,"./ReactBrowserComponentMixin":206,"./ReactBrowserEventEmitter":207,"./ReactComponent":211,"./ReactMount":244,"./ReactMultiChild":245,"./ReactPerf":249,"./escapeTextForBrowser":298,"./invariant":315,"./isEventSupported":316,"./keyOf":322,"./monitorCodeUse":325,"DF1urx":43}],220:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -35458,7 +50391,7 @@ var ReactDOMForm = ReactCompositeComponent.createClass({
 
 module.exports = ReactDOMForm;
 
-},{"./EventConstants":125,"./LocalEventTrapMixin":135,"./ReactBrowserComponentMixin":140,"./ReactCompositeComponent":148,"./ReactDOM":151,"./ReactElement":166}],155:[function(require,module,exports){
+},{"./EventConstants":191,"./LocalEventTrapMixin":201,"./ReactBrowserComponentMixin":206,"./ReactCompositeComponent":214,"./ReactDOM":217,"./ReactElement":232}],221:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -35644,7 +50577,7 @@ var ReactDOMIDOperations = {
 module.exports = ReactDOMIDOperations;
 
 }).call(this,require("DF1urx"))
-},{"./CSSPropertyOperations":114,"./DOMChildrenOperations":119,"./DOMPropertyOperations":121,"./ReactMount":178,"./ReactPerf":183,"./invariant":249,"./setInnerHTML":263,"DF1urx":41}],156:[function(require,module,exports){
+},{"./CSSPropertyOperations":180,"./DOMChildrenOperations":185,"./DOMPropertyOperations":187,"./ReactMount":244,"./ReactPerf":249,"./invariant":315,"./setInnerHTML":329,"DF1urx":43}],222:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -35692,7 +50625,7 @@ var ReactDOMImg = ReactCompositeComponent.createClass({
 
 module.exports = ReactDOMImg;
 
-},{"./EventConstants":125,"./LocalEventTrapMixin":135,"./ReactBrowserComponentMixin":140,"./ReactCompositeComponent":148,"./ReactDOM":151,"./ReactElement":166}],157:[function(require,module,exports){
+},{"./EventConstants":191,"./LocalEventTrapMixin":201,"./ReactBrowserComponentMixin":206,"./ReactCompositeComponent":214,"./ReactDOM":217,"./ReactElement":232}],223:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -35870,7 +50803,7 @@ var ReactDOMInput = ReactCompositeComponent.createClass({
 module.exports = ReactDOMInput;
 
 }).call(this,require("DF1urx"))
-},{"./AutoFocusMixin":110,"./DOMPropertyOperations":121,"./LinkedValueUtils":134,"./Object.assign":137,"./ReactBrowserComponentMixin":140,"./ReactCompositeComponent":148,"./ReactDOM":151,"./ReactElement":166,"./ReactMount":178,"./ReactUpdates":199,"./invariant":249,"DF1urx":41}],158:[function(require,module,exports){
+},{"./AutoFocusMixin":176,"./DOMPropertyOperations":187,"./LinkedValueUtils":200,"./Object.assign":203,"./ReactBrowserComponentMixin":206,"./ReactCompositeComponent":214,"./ReactDOM":217,"./ReactElement":232,"./ReactMount":244,"./ReactUpdates":265,"./invariant":315,"DF1urx":43}],224:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -35923,7 +50856,7 @@ var ReactDOMOption = ReactCompositeComponent.createClass({
 module.exports = ReactDOMOption;
 
 }).call(this,require("DF1urx"))
-},{"./ReactBrowserComponentMixin":140,"./ReactCompositeComponent":148,"./ReactDOM":151,"./ReactElement":166,"./warning":269,"DF1urx":41}],159:[function(require,module,exports){
+},{"./ReactBrowserComponentMixin":206,"./ReactCompositeComponent":214,"./ReactDOM":217,"./ReactElement":232,"./warning":335,"DF1urx":43}],225:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -36107,7 +51040,7 @@ var ReactDOMSelect = ReactCompositeComponent.createClass({
 
 module.exports = ReactDOMSelect;
 
-},{"./AutoFocusMixin":110,"./LinkedValueUtils":134,"./Object.assign":137,"./ReactBrowserComponentMixin":140,"./ReactCompositeComponent":148,"./ReactDOM":151,"./ReactElement":166,"./ReactUpdates":199}],160:[function(require,module,exports){
+},{"./AutoFocusMixin":176,"./LinkedValueUtils":200,"./Object.assign":203,"./ReactBrowserComponentMixin":206,"./ReactCompositeComponent":214,"./ReactDOM":217,"./ReactElement":232,"./ReactUpdates":265}],226:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -36316,7 +51249,7 @@ var ReactDOMSelection = {
 
 module.exports = ReactDOMSelection;
 
-},{"./ExecutionEnvironment":131,"./getNodeForCharacterOffset":242,"./getTextContentAccessor":244}],161:[function(require,module,exports){
+},{"./ExecutionEnvironment":197,"./getNodeForCharacterOffset":308,"./getTextContentAccessor":310}],227:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -36457,7 +51390,7 @@ var ReactDOMTextarea = ReactCompositeComponent.createClass({
 module.exports = ReactDOMTextarea;
 
 }).call(this,require("DF1urx"))
-},{"./AutoFocusMixin":110,"./DOMPropertyOperations":121,"./LinkedValueUtils":134,"./Object.assign":137,"./ReactBrowserComponentMixin":140,"./ReactCompositeComponent":148,"./ReactDOM":151,"./ReactElement":166,"./ReactUpdates":199,"./invariant":249,"./warning":269,"DF1urx":41}],162:[function(require,module,exports){
+},{"./AutoFocusMixin":176,"./DOMPropertyOperations":187,"./LinkedValueUtils":200,"./Object.assign":203,"./ReactBrowserComponentMixin":206,"./ReactCompositeComponent":214,"./ReactDOM":217,"./ReactElement":232,"./ReactUpdates":265,"./invariant":315,"./warning":335,"DF1urx":43}],228:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -36530,7 +51463,7 @@ var ReactDefaultBatchingStrategy = {
 
 module.exports = ReactDefaultBatchingStrategy;
 
-},{"./Object.assign":137,"./ReactUpdates":199,"./Transaction":216,"./emptyFunction":230}],163:[function(require,module,exports){
+},{"./Object.assign":203,"./ReactUpdates":265,"./Transaction":282,"./emptyFunction":296}],229:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -36659,7 +51592,7 @@ module.exports = {
 };
 
 }).call(this,require("DF1urx"))
-},{"./BeforeInputEventPlugin":111,"./ChangeEventPlugin":116,"./ClientReactRootIndex":117,"./CompositionEventPlugin":118,"./DefaultEventPluginOrder":123,"./EnterLeaveEventPlugin":124,"./ExecutionEnvironment":131,"./HTMLDOMPropertyConfig":132,"./MobileSafariClickEventPlugin":136,"./ReactBrowserComponentMixin":140,"./ReactComponentBrowserEnvironment":146,"./ReactDOMButton":152,"./ReactDOMComponent":153,"./ReactDOMForm":154,"./ReactDOMImg":156,"./ReactDOMInput":157,"./ReactDOMOption":158,"./ReactDOMSelect":159,"./ReactDOMTextarea":161,"./ReactDefaultBatchingStrategy":162,"./ReactDefaultPerf":164,"./ReactEventListener":171,"./ReactInjection":172,"./ReactInstanceHandles":174,"./ReactMount":178,"./SVGDOMPropertyConfig":201,"./SelectEventPlugin":202,"./ServerReactRootIndex":203,"./SimpleEventPlugin":204,"./createFullPageComponent":225,"DF1urx":41}],164:[function(require,module,exports){
+},{"./BeforeInputEventPlugin":177,"./ChangeEventPlugin":182,"./ClientReactRootIndex":183,"./CompositionEventPlugin":184,"./DefaultEventPluginOrder":189,"./EnterLeaveEventPlugin":190,"./ExecutionEnvironment":197,"./HTMLDOMPropertyConfig":198,"./MobileSafariClickEventPlugin":202,"./ReactBrowserComponentMixin":206,"./ReactComponentBrowserEnvironment":212,"./ReactDOMButton":218,"./ReactDOMComponent":219,"./ReactDOMForm":220,"./ReactDOMImg":222,"./ReactDOMInput":223,"./ReactDOMOption":224,"./ReactDOMSelect":225,"./ReactDOMTextarea":227,"./ReactDefaultBatchingStrategy":228,"./ReactDefaultPerf":230,"./ReactEventListener":237,"./ReactInjection":238,"./ReactInstanceHandles":240,"./ReactMount":244,"./SVGDOMPropertyConfig":267,"./SelectEventPlugin":268,"./ServerReactRootIndex":269,"./SimpleEventPlugin":270,"./createFullPageComponent":291,"DF1urx":43}],230:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -36919,7 +51852,7 @@ var ReactDefaultPerf = {
 
 module.exports = ReactDefaultPerf;
 
-},{"./DOMProperty":120,"./ReactDefaultPerfAnalysis":165,"./ReactMount":178,"./ReactPerf":183,"./performanceNow":262}],165:[function(require,module,exports){
+},{"./DOMProperty":186,"./ReactDefaultPerfAnalysis":231,"./ReactMount":244,"./ReactPerf":249,"./performanceNow":328}],231:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -37125,7 +52058,7 @@ var ReactDefaultPerfAnalysis = {
 
 module.exports = ReactDefaultPerfAnalysis;
 
-},{"./Object.assign":137}],166:[function(require,module,exports){
+},{"./Object.assign":203}],232:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -37371,7 +52304,7 @@ ReactElement.isValidElement = function(object) {
 module.exports = ReactElement;
 
 }).call(this,require("DF1urx"))
-},{"./ReactContext":149,"./ReactCurrentOwner":150,"./warning":269,"DF1urx":41}],167:[function(require,module,exports){
+},{"./ReactContext":215,"./ReactCurrentOwner":216,"./warning":335,"DF1urx":43}],233:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -37653,7 +52586,7 @@ var ReactElementValidator = {
 module.exports = ReactElementValidator;
 
 }).call(this,require("DF1urx"))
-},{"./ReactCurrentOwner":150,"./ReactElement":166,"./ReactPropTypeLocations":186,"./monitorCodeUse":259,"./warning":269,"DF1urx":41}],168:[function(require,module,exports){
+},{"./ReactCurrentOwner":216,"./ReactElement":232,"./ReactPropTypeLocations":252,"./monitorCodeUse":325,"./warning":335,"DF1urx":43}],234:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -37730,7 +52663,7 @@ var ReactEmptyComponent = {
 module.exports = ReactEmptyComponent;
 
 }).call(this,require("DF1urx"))
-},{"./ReactElement":166,"./invariant":249,"DF1urx":41}],169:[function(require,module,exports){
+},{"./ReactElement":232,"./invariant":315,"DF1urx":43}],235:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -37762,7 +52695,7 @@ var ReactErrorUtils = {
 
 module.exports = ReactErrorUtils;
 
-},{}],170:[function(require,module,exports){
+},{}],236:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -37812,7 +52745,7 @@ var ReactEventEmitterMixin = {
 
 module.exports = ReactEventEmitterMixin;
 
-},{"./EventPluginHub":127}],171:[function(require,module,exports){
+},{"./EventPluginHub":193}],237:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -37996,7 +52929,7 @@ var ReactEventListener = {
 
 module.exports = ReactEventListener;
 
-},{"./EventListener":126,"./ExecutionEnvironment":131,"./Object.assign":137,"./PooledClass":138,"./ReactInstanceHandles":174,"./ReactMount":178,"./ReactUpdates":199,"./getEventTarget":240,"./getUnboundedScrollPosition":245}],172:[function(require,module,exports){
+},{"./EventListener":192,"./ExecutionEnvironment":197,"./Object.assign":203,"./PooledClass":204,"./ReactInstanceHandles":240,"./ReactMount":244,"./ReactUpdates":265,"./getEventTarget":306,"./getUnboundedScrollPosition":311}],238:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -38036,7 +52969,7 @@ var ReactInjection = {
 
 module.exports = ReactInjection;
 
-},{"./DOMProperty":120,"./EventPluginHub":127,"./ReactBrowserEventEmitter":141,"./ReactComponent":145,"./ReactCompositeComponent":148,"./ReactEmptyComponent":168,"./ReactNativeComponent":181,"./ReactPerf":183,"./ReactRootIndex":190,"./ReactUpdates":199}],173:[function(require,module,exports){
+},{"./DOMProperty":186,"./EventPluginHub":193,"./ReactBrowserEventEmitter":207,"./ReactComponent":211,"./ReactCompositeComponent":214,"./ReactEmptyComponent":234,"./ReactNativeComponent":247,"./ReactPerf":249,"./ReactRootIndex":256,"./ReactUpdates":265}],239:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -38172,7 +53105,7 @@ var ReactInputSelection = {
 
 module.exports = ReactInputSelection;
 
-},{"./ReactDOMSelection":160,"./containsNode":223,"./focusNode":234,"./getActiveElement":236}],174:[function(require,module,exports){
+},{"./ReactDOMSelection":226,"./containsNode":289,"./focusNode":300,"./getActiveElement":302}],240:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -38507,7 +53440,7 @@ var ReactInstanceHandles = {
 module.exports = ReactInstanceHandles;
 
 }).call(this,require("DF1urx"))
-},{"./ReactRootIndex":190,"./invariant":249,"DF1urx":41}],175:[function(require,module,exports){
+},{"./ReactRootIndex":256,"./invariant":315,"DF1urx":43}],241:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -38754,7 +53687,7 @@ ReactLegacyElementFactory._isLegacyCallWarningEnabled = true;
 module.exports = ReactLegacyElementFactory;
 
 }).call(this,require("DF1urx"))
-},{"./ReactCurrentOwner":150,"./invariant":249,"./monitorCodeUse":259,"./warning":269,"DF1urx":41}],176:[function(require,module,exports){
+},{"./ReactCurrentOwner":216,"./invariant":315,"./monitorCodeUse":325,"./warning":335,"DF1urx":43}],242:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -38827,7 +53760,7 @@ ReactLink.PropTypes = {
 
 module.exports = ReactLink;
 
-},{"./React":139}],177:[function(require,module,exports){
+},{"./React":205}],243:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -38875,7 +53808,7 @@ var ReactMarkupChecksum = {
 
 module.exports = ReactMarkupChecksum;
 
-},{"./adler32":219}],178:[function(require,module,exports){
+},{"./adler32":285}],244:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -39573,7 +54506,7 @@ ReactMount.renderComponent = deprecated(
 module.exports = ReactMount;
 
 }).call(this,require("DF1urx"))
-},{"./DOMProperty":120,"./ReactBrowserEventEmitter":141,"./ReactCurrentOwner":150,"./ReactElement":166,"./ReactInstanceHandles":174,"./ReactLegacyElement":175,"./ReactPerf":183,"./containsNode":223,"./deprecated":229,"./getReactRootElementInContainer":243,"./instantiateReactComponent":248,"./invariant":249,"./shouldUpdateReactComponent":265,"./warning":269,"DF1urx":41}],179:[function(require,module,exports){
+},{"./DOMProperty":186,"./ReactBrowserEventEmitter":207,"./ReactCurrentOwner":216,"./ReactElement":232,"./ReactInstanceHandles":240,"./ReactLegacyElement":241,"./ReactPerf":249,"./containsNode":289,"./deprecated":295,"./getReactRootElementInContainer":309,"./instantiateReactComponent":314,"./invariant":315,"./shouldUpdateReactComponent":331,"./warning":335,"DF1urx":43}],245:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -40001,7 +54934,7 @@ var ReactMultiChild = {
 
 module.exports = ReactMultiChild;
 
-},{"./ReactComponent":145,"./ReactMultiChildUpdateTypes":180,"./flattenChildren":233,"./instantiateReactComponent":248,"./shouldUpdateReactComponent":265}],180:[function(require,module,exports){
+},{"./ReactComponent":211,"./ReactMultiChildUpdateTypes":246,"./flattenChildren":299,"./instantiateReactComponent":314,"./shouldUpdateReactComponent":331}],246:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -40034,7 +54967,7 @@ var ReactMultiChildUpdateTypes = keyMirror({
 
 module.exports = ReactMultiChildUpdateTypes;
 
-},{"./keyMirror":255}],181:[function(require,module,exports){
+},{"./keyMirror":321}],247:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -40107,7 +55040,7 @@ var ReactNativeComponent = {
 module.exports = ReactNativeComponent;
 
 }).call(this,require("DF1urx"))
-},{"./Object.assign":137,"./invariant":249,"DF1urx":41}],182:[function(require,module,exports){
+},{"./Object.assign":203,"./invariant":315,"DF1urx":43}],248:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -40263,7 +55196,7 @@ var ReactOwner = {
 module.exports = ReactOwner;
 
 }).call(this,require("DF1urx"))
-},{"./emptyObject":231,"./invariant":249,"DF1urx":41}],183:[function(require,module,exports){
+},{"./emptyObject":297,"./invariant":315,"DF1urx":43}],249:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -40347,7 +55280,7 @@ function _noMeasure(objName, fnName, func) {
 module.exports = ReactPerf;
 
 }).call(this,require("DF1urx"))
-},{"DF1urx":41}],184:[function(require,module,exports){
+},{"DF1urx":43}],250:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -40514,7 +55447,7 @@ var ReactPropTransferer = {
 module.exports = ReactPropTransferer;
 
 }).call(this,require("DF1urx"))
-},{"./Object.assign":137,"./emptyFunction":230,"./invariant":249,"./joinClasses":254,"./warning":269,"DF1urx":41}],185:[function(require,module,exports){
+},{"./Object.assign":203,"./emptyFunction":296,"./invariant":315,"./joinClasses":320,"./warning":335,"DF1urx":43}],251:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -40542,7 +55475,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = ReactPropTypeLocationNames;
 
 }).call(this,require("DF1urx"))
-},{"DF1urx":41}],186:[function(require,module,exports){
+},{"DF1urx":43}],252:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -40566,7 +55499,7 @@ var ReactPropTypeLocations = keyMirror({
 
 module.exports = ReactPropTypeLocations;
 
-},{"./keyMirror":255}],187:[function(require,module,exports){
+},{"./keyMirror":321}],253:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -40920,7 +55853,7 @@ function getPreciseType(propValue) {
 
 module.exports = ReactPropTypes;
 
-},{"./ReactElement":166,"./ReactPropTypeLocationNames":185,"./deprecated":229,"./emptyFunction":230}],188:[function(require,module,exports){
+},{"./ReactElement":232,"./ReactPropTypeLocationNames":251,"./deprecated":295,"./emptyFunction":296}],254:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -40976,7 +55909,7 @@ PooledClass.addPoolingTo(ReactPutListenerQueue);
 
 module.exports = ReactPutListenerQueue;
 
-},{"./Object.assign":137,"./PooledClass":138,"./ReactBrowserEventEmitter":141}],189:[function(require,module,exports){
+},{"./Object.assign":203,"./PooledClass":204,"./ReactBrowserEventEmitter":207}],255:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -41152,7 +56085,7 @@ PooledClass.addPoolingTo(ReactReconcileTransaction);
 
 module.exports = ReactReconcileTransaction;
 
-},{"./CallbackQueue":115,"./Object.assign":137,"./PooledClass":138,"./ReactBrowserEventEmitter":141,"./ReactInputSelection":173,"./ReactPutListenerQueue":188,"./Transaction":216}],190:[function(require,module,exports){
+},{"./CallbackQueue":181,"./Object.assign":203,"./PooledClass":204,"./ReactBrowserEventEmitter":207,"./ReactInputSelection":239,"./ReactPutListenerQueue":254,"./Transaction":282}],256:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -41183,7 +56116,7 @@ var ReactRootIndex = {
 
 module.exports = ReactRootIndex;
 
-},{}],191:[function(require,module,exports){
+},{}],257:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -41263,7 +56196,7 @@ module.exports = {
 };
 
 }).call(this,require("DF1urx"))
-},{"./ReactElement":166,"./ReactInstanceHandles":174,"./ReactMarkupChecksum":177,"./ReactServerRenderingTransaction":192,"./instantiateReactComponent":248,"./invariant":249,"DF1urx":41}],192:[function(require,module,exports){
+},{"./ReactElement":232,"./ReactInstanceHandles":240,"./ReactMarkupChecksum":243,"./ReactServerRenderingTransaction":258,"./instantiateReactComponent":314,"./invariant":315,"DF1urx":43}],258:[function(require,module,exports){
 /**
  * Copyright 2014, Facebook, Inc.
  * All rights reserved.
@@ -41376,7 +56309,7 @@ PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 
 module.exports = ReactServerRenderingTransaction;
 
-},{"./CallbackQueue":115,"./Object.assign":137,"./PooledClass":138,"./ReactPutListenerQueue":188,"./Transaction":216,"./emptyFunction":230}],193:[function(require,module,exports){
+},{"./CallbackQueue":181,"./Object.assign":203,"./PooledClass":204,"./ReactPutListenerQueue":254,"./Transaction":282,"./emptyFunction":296}],259:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -41482,7 +56415,7 @@ ReactStateSetters.Mixin = {
 
 module.exports = ReactStateSetters;
 
-},{}],194:[function(require,module,exports){
+},{}],260:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -41894,7 +56827,7 @@ for (eventType in topLevelTypes) {
 
 module.exports = ReactTestUtils;
 
-},{"./EventConstants":125,"./EventPluginHub":127,"./EventPropagators":130,"./Object.assign":137,"./React":139,"./ReactBrowserEventEmitter":141,"./ReactElement":166,"./ReactMount":178,"./ReactTextComponent":195,"./ReactUpdates":199,"./SyntheticEvent":208}],195:[function(require,module,exports){
+},{"./EventConstants":191,"./EventPluginHub":193,"./EventPropagators":196,"./Object.assign":203,"./React":205,"./ReactBrowserEventEmitter":207,"./ReactElement":232,"./ReactMount":244,"./ReactTextComponent":261,"./ReactUpdates":265,"./SyntheticEvent":274}],261:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -42000,7 +56933,7 @@ ReactTextComponentFactory.type = ReactTextComponent;
 
 module.exports = ReactTextComponentFactory;
 
-},{"./DOMPropertyOperations":121,"./Object.assign":137,"./ReactComponent":145,"./ReactElement":166,"./escapeTextForBrowser":232}],196:[function(require,module,exports){
+},{"./DOMPropertyOperations":187,"./Object.assign":203,"./ReactComponent":211,"./ReactElement":232,"./escapeTextForBrowser":298}],262:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -42101,7 +57034,7 @@ var ReactTransitionChildMapping = {
 
 module.exports = ReactTransitionChildMapping;
 
-},{"./ReactChildren":144}],197:[function(require,module,exports){
+},{"./ReactChildren":210}],263:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -42212,7 +57145,7 @@ var ReactTransitionEvents = {
 
 module.exports = ReactTransitionEvents;
 
-},{"./ExecutionEnvironment":131}],198:[function(require,module,exports){
+},{"./ExecutionEnvironment":197}],264:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -42401,7 +57334,7 @@ var ReactTransitionGroup = React.createClass({
 
 module.exports = ReactTransitionGroup;
 
-},{"./Object.assign":137,"./React":139,"./ReactTransitionChildMapping":196,"./cloneWithProps":222,"./emptyFunction":230}],199:[function(require,module,exports){
+},{"./Object.assign":203,"./React":205,"./ReactTransitionChildMapping":262,"./cloneWithProps":288,"./emptyFunction":296}],265:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -42691,7 +57624,7 @@ var ReactUpdates = {
 module.exports = ReactUpdates;
 
 }).call(this,require("DF1urx"))
-},{"./CallbackQueue":115,"./Object.assign":137,"./PooledClass":138,"./ReactCurrentOwner":150,"./ReactPerf":183,"./Transaction":216,"./invariant":249,"./warning":269,"DF1urx":41}],200:[function(require,module,exports){
+},{"./CallbackQueue":181,"./Object.assign":203,"./PooledClass":204,"./ReactCurrentOwner":216,"./ReactPerf":249,"./Transaction":282,"./invariant":315,"./warning":335,"DF1urx":43}],266:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -42745,7 +57678,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = React;
 
 }).call(this,require("DF1urx"))
-},{"./LinkedStateMixin":133,"./React":139,"./ReactCSSTransitionGroup":142,"./ReactComponentWithPureRenderMixin":147,"./ReactDefaultPerf":164,"./ReactTestUtils":194,"./ReactTransitionGroup":198,"./ReactUpdates":199,"./cloneWithProps":222,"./cx":227,"./update":268,"DF1urx":41}],201:[function(require,module,exports){
+},{"./LinkedStateMixin":199,"./React":205,"./ReactCSSTransitionGroup":208,"./ReactComponentWithPureRenderMixin":213,"./ReactDefaultPerf":230,"./ReactTestUtils":260,"./ReactTransitionGroup":264,"./ReactUpdates":265,"./cloneWithProps":288,"./cx":293,"./update":334,"DF1urx":43}],267:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -42837,7 +57770,7 @@ var SVGDOMPropertyConfig = {
 
 module.exports = SVGDOMPropertyConfig;
 
-},{"./DOMProperty":120}],202:[function(require,module,exports){
+},{"./DOMProperty":186}],268:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -43032,7 +57965,7 @@ var SelectEventPlugin = {
 
 module.exports = SelectEventPlugin;
 
-},{"./EventConstants":125,"./EventPropagators":130,"./ReactInputSelection":173,"./SyntheticEvent":208,"./getActiveElement":236,"./isTextInputElement":252,"./keyOf":256,"./shallowEqual":264}],203:[function(require,module,exports){
+},{"./EventConstants":191,"./EventPropagators":196,"./ReactInputSelection":239,"./SyntheticEvent":274,"./getActiveElement":302,"./isTextInputElement":318,"./keyOf":322,"./shallowEqual":330}],269:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -43063,7 +57996,7 @@ var ServerReactRootIndex = {
 
 module.exports = ServerReactRootIndex;
 
-},{}],204:[function(require,module,exports){
+},{}],270:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -43491,7 +58424,7 @@ var SimpleEventPlugin = {
 module.exports = SimpleEventPlugin;
 
 }).call(this,require("DF1urx"))
-},{"./EventConstants":125,"./EventPluginUtils":129,"./EventPropagators":130,"./SyntheticClipboardEvent":205,"./SyntheticDragEvent":207,"./SyntheticEvent":208,"./SyntheticFocusEvent":209,"./SyntheticKeyboardEvent":211,"./SyntheticMouseEvent":212,"./SyntheticTouchEvent":213,"./SyntheticUIEvent":214,"./SyntheticWheelEvent":215,"./getEventCharCode":237,"./invariant":249,"./keyOf":256,"./warning":269,"DF1urx":41}],205:[function(require,module,exports){
+},{"./EventConstants":191,"./EventPluginUtils":195,"./EventPropagators":196,"./SyntheticClipboardEvent":271,"./SyntheticDragEvent":273,"./SyntheticEvent":274,"./SyntheticFocusEvent":275,"./SyntheticKeyboardEvent":277,"./SyntheticMouseEvent":278,"./SyntheticTouchEvent":279,"./SyntheticUIEvent":280,"./SyntheticWheelEvent":281,"./getEventCharCode":303,"./invariant":315,"./keyOf":322,"./warning":335,"DF1urx":43}],271:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -43537,7 +58470,7 @@ SyntheticEvent.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 module.exports = SyntheticClipboardEvent;
 
 
-},{"./SyntheticEvent":208}],206:[function(require,module,exports){
+},{"./SyntheticEvent":274}],272:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -43583,7 +58516,7 @@ SyntheticEvent.augmentClass(
 module.exports = SyntheticCompositionEvent;
 
 
-},{"./SyntheticEvent":208}],207:[function(require,module,exports){
+},{"./SyntheticEvent":274}],273:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -43622,7 +58555,7 @@ SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
 
 module.exports = SyntheticDragEvent;
 
-},{"./SyntheticMouseEvent":212}],208:[function(require,module,exports){
+},{"./SyntheticMouseEvent":278}],274:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -43780,7 +58713,7 @@ PooledClass.addPoolingTo(SyntheticEvent, PooledClass.threeArgumentPooler);
 
 module.exports = SyntheticEvent;
 
-},{"./Object.assign":137,"./PooledClass":138,"./emptyFunction":230,"./getEventTarget":240}],209:[function(require,module,exports){
+},{"./Object.assign":203,"./PooledClass":204,"./emptyFunction":296,"./getEventTarget":306}],275:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -43819,7 +58752,7 @@ SyntheticUIEvent.augmentClass(SyntheticFocusEvent, FocusEventInterface);
 
 module.exports = SyntheticFocusEvent;
 
-},{"./SyntheticUIEvent":214}],210:[function(require,module,exports){
+},{"./SyntheticUIEvent":280}],276:[function(require,module,exports){
 /**
  * Copyright 2013 Facebook, Inc.
  * All rights reserved.
@@ -43866,7 +58799,7 @@ SyntheticEvent.augmentClass(
 module.exports = SyntheticInputEvent;
 
 
-},{"./SyntheticEvent":208}],211:[function(require,module,exports){
+},{"./SyntheticEvent":274}],277:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -43953,7 +58886,7 @@ SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 
 module.exports = SyntheticKeyboardEvent;
 
-},{"./SyntheticUIEvent":214,"./getEventCharCode":237,"./getEventKey":238,"./getEventModifierState":239}],212:[function(require,module,exports){
+},{"./SyntheticUIEvent":280,"./getEventCharCode":303,"./getEventKey":304,"./getEventModifierState":305}],278:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -44036,7 +58969,7 @@ SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
 
 module.exports = SyntheticMouseEvent;
 
-},{"./SyntheticUIEvent":214,"./ViewportMetrics":217,"./getEventModifierState":239}],213:[function(require,module,exports){
+},{"./SyntheticUIEvent":280,"./ViewportMetrics":283,"./getEventModifierState":305}],279:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -44084,7 +59017,7 @@ SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 
 module.exports = SyntheticTouchEvent;
 
-},{"./SyntheticUIEvent":214,"./getEventModifierState":239}],214:[function(require,module,exports){
+},{"./SyntheticUIEvent":280,"./getEventModifierState":305}],280:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -44146,7 +59079,7 @@ SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 
 module.exports = SyntheticUIEvent;
 
-},{"./SyntheticEvent":208,"./getEventTarget":240}],215:[function(require,module,exports){
+},{"./SyntheticEvent":274,"./getEventTarget":306}],281:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -44207,7 +59140,7 @@ SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 
 module.exports = SyntheticWheelEvent;
 
-},{"./SyntheticMouseEvent":212}],216:[function(require,module,exports){
+},{"./SyntheticMouseEvent":278}],282:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -44448,7 +59381,7 @@ var Transaction = {
 module.exports = Transaction;
 
 }).call(this,require("DF1urx"))
-},{"./invariant":249,"DF1urx":41}],217:[function(require,module,exports){
+},{"./invariant":315,"DF1urx":43}],283:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -44480,7 +59413,7 @@ var ViewportMetrics = {
 
 module.exports = ViewportMetrics;
 
-},{"./getUnboundedScrollPosition":245}],218:[function(require,module,exports){
+},{"./getUnboundedScrollPosition":311}],284:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -44546,7 +59479,7 @@ function accumulateInto(current, next) {
 module.exports = accumulateInto;
 
 }).call(this,require("DF1urx"))
-},{"./invariant":249,"DF1urx":41}],219:[function(require,module,exports){
+},{"./invariant":315,"DF1urx":43}],285:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -44580,7 +59513,7 @@ function adler32(data) {
 
 module.exports = adler32;
 
-},{}],220:[function(require,module,exports){
+},{}],286:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -44612,7 +59545,7 @@ function camelize(string) {
 
 module.exports = camelize;
 
-},{}],221:[function(require,module,exports){
+},{}],287:[function(require,module,exports){
 /**
  * Copyright 2014, Facebook, Inc.
  * All rights reserved.
@@ -44654,7 +59587,7 @@ function camelizeStyleName(string) {
 
 module.exports = camelizeStyleName;
 
-},{"./camelize":220}],222:[function(require,module,exports){
+},{"./camelize":286}],288:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -44713,7 +59646,7 @@ function cloneWithProps(child, props) {
 module.exports = cloneWithProps;
 
 }).call(this,require("DF1urx"))
-},{"./ReactElement":166,"./ReactPropTransferer":184,"./keyOf":256,"./warning":269,"DF1urx":41}],223:[function(require,module,exports){
+},{"./ReactElement":232,"./ReactPropTransferer":250,"./keyOf":322,"./warning":335,"DF1urx":43}],289:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -44757,7 +59690,7 @@ function containsNode(outerNode, innerNode) {
 
 module.exports = containsNode;
 
-},{"./isTextNode":253}],224:[function(require,module,exports){
+},{"./isTextNode":319}],290:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -44843,7 +59776,7 @@ function createArrayFrom(obj) {
 
 module.exports = createArrayFrom;
 
-},{"./toArray":266}],225:[function(require,module,exports){
+},{"./toArray":332}],291:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -44904,7 +59837,7 @@ function createFullPageComponent(tag) {
 module.exports = createFullPageComponent;
 
 }).call(this,require("DF1urx"))
-},{"./ReactCompositeComponent":148,"./ReactElement":166,"./invariant":249,"DF1urx":41}],226:[function(require,module,exports){
+},{"./ReactCompositeComponent":214,"./ReactElement":232,"./invariant":315,"DF1urx":43}],292:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -44994,7 +59927,7 @@ function createNodesFromMarkup(markup, handleScript) {
 module.exports = createNodesFromMarkup;
 
 }).call(this,require("DF1urx"))
-},{"./ExecutionEnvironment":131,"./createArrayFrom":224,"./getMarkupWrap":241,"./invariant":249,"DF1urx":41}],227:[function(require,module,exports){
+},{"./ExecutionEnvironment":197,"./createArrayFrom":290,"./getMarkupWrap":307,"./invariant":315,"DF1urx":43}],293:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45033,7 +59966,7 @@ function cx(classNames) {
 
 module.exports = cx;
 
-},{}],228:[function(require,module,exports){
+},{}],294:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45091,7 +60024,7 @@ function dangerousStyleValue(name, value) {
 
 module.exports = dangerousStyleValue;
 
-},{"./CSSProperty":113}],229:[function(require,module,exports){
+},{"./CSSProperty":179}],295:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -45142,7 +60075,7 @@ function deprecated(namespace, oldName, newName, ctx, fn) {
 module.exports = deprecated;
 
 }).call(this,require("DF1urx"))
-},{"./Object.assign":137,"./warning":269,"DF1urx":41}],230:[function(require,module,exports){
+},{"./Object.assign":203,"./warning":335,"DF1urx":43}],296:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45176,7 +60109,7 @@ emptyFunction.thatReturnsArgument = function(arg) { return arg; };
 
 module.exports = emptyFunction;
 
-},{}],231:[function(require,module,exports){
+},{}],297:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -45200,7 +60133,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = emptyObject;
 
 }).call(this,require("DF1urx"))
-},{"DF1urx":41}],232:[function(require,module,exports){
+},{"DF1urx":43}],298:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45241,7 +60174,7 @@ function escapeTextForBrowser(text) {
 
 module.exports = escapeTextForBrowser;
 
-},{}],233:[function(require,module,exports){
+},{}],299:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -45310,7 +60243,7 @@ function flattenChildren(children) {
 module.exports = flattenChildren;
 
 }).call(this,require("DF1urx"))
-},{"./ReactTextComponent":195,"./traverseAllChildren":267,"./warning":269,"DF1urx":41}],234:[function(require,module,exports){
+},{"./ReactTextComponent":261,"./traverseAllChildren":333,"./warning":335,"DF1urx":43}],300:[function(require,module,exports){
 /**
  * Copyright 2014, Facebook, Inc.
  * All rights reserved.
@@ -45339,7 +60272,7 @@ function focusNode(node) {
 
 module.exports = focusNode;
 
-},{}],235:[function(require,module,exports){
+},{}],301:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45370,7 +60303,7 @@ var forEachAccumulated = function(arr, cb, scope) {
 
 module.exports = forEachAccumulated;
 
-},{}],236:[function(require,module,exports){
+},{}],302:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45399,7 +60332,7 @@ function getActiveElement() /*?DOMElement*/ {
 
 module.exports = getActiveElement;
 
-},{}],237:[function(require,module,exports){
+},{}],303:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45451,7 +60384,7 @@ function getEventCharCode(nativeEvent) {
 
 module.exports = getEventCharCode;
 
-},{}],238:[function(require,module,exports){
+},{}],304:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45556,7 +60489,7 @@ function getEventKey(nativeEvent) {
 
 module.exports = getEventKey;
 
-},{"./getEventCharCode":237}],239:[function(require,module,exports){
+},{"./getEventCharCode":303}],305:[function(require,module,exports){
 /**
  * Copyright 2013 Facebook, Inc.
  * All rights reserved.
@@ -45603,7 +60536,7 @@ function getEventModifierState(nativeEvent) {
 
 module.exports = getEventModifierState;
 
-},{}],240:[function(require,module,exports){
+},{}],306:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45634,7 +60567,7 @@ function getEventTarget(nativeEvent) {
 
 module.exports = getEventTarget;
 
-},{}],241:[function(require,module,exports){
+},{}],307:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -45751,7 +60684,7 @@ function getMarkupWrap(nodeName) {
 module.exports = getMarkupWrap;
 
 }).call(this,require("DF1urx"))
-},{"./ExecutionEnvironment":131,"./invariant":249,"DF1urx":41}],242:[function(require,module,exports){
+},{"./ExecutionEnvironment":197,"./invariant":315,"DF1urx":43}],308:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45826,7 +60759,7 @@ function getNodeForCharacterOffset(root, offset) {
 
 module.exports = getNodeForCharacterOffset;
 
-},{}],243:[function(require,module,exports){
+},{}],309:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45861,7 +60794,7 @@ function getReactRootElementInContainer(container) {
 
 module.exports = getReactRootElementInContainer;
 
-},{}],244:[function(require,module,exports){
+},{}],310:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45898,7 +60831,7 @@ function getTextContentAccessor() {
 
 module.exports = getTextContentAccessor;
 
-},{"./ExecutionEnvironment":131}],245:[function(require,module,exports){
+},{"./ExecutionEnvironment":197}],311:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45938,7 +60871,7 @@ function getUnboundedScrollPosition(scrollable) {
 
 module.exports = getUnboundedScrollPosition;
 
-},{}],246:[function(require,module,exports){
+},{}],312:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -45971,7 +60904,7 @@ function hyphenate(string) {
 
 module.exports = hyphenate;
 
-},{}],247:[function(require,module,exports){
+},{}],313:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46012,7 +60945,7 @@ function hyphenateStyleName(string) {
 
 module.exports = hyphenateStyleName;
 
-},{"./hyphenate":246}],248:[function(require,module,exports){
+},{"./hyphenate":312}],314:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -46126,7 +61059,7 @@ function instantiateReactComponent(element, parentCompositeType) {
 module.exports = instantiateReactComponent;
 
 }).call(this,require("DF1urx"))
-},{"./ReactElement":166,"./ReactEmptyComponent":168,"./ReactLegacyElement":175,"./ReactNativeComponent":181,"./warning":269,"DF1urx":41}],249:[function(require,module,exports){
+},{"./ReactElement":232,"./ReactEmptyComponent":234,"./ReactLegacyElement":241,"./ReactNativeComponent":247,"./warning":335,"DF1urx":43}],315:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -46183,7 +61116,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 }).call(this,require("DF1urx"))
-},{"DF1urx":41}],250:[function(require,module,exports){
+},{"DF1urx":43}],316:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46248,7 +61181,7 @@ function isEventSupported(eventNameSuffix, capture) {
 
 module.exports = isEventSupported;
 
-},{"./ExecutionEnvironment":131}],251:[function(require,module,exports){
+},{"./ExecutionEnvironment":197}],317:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46276,7 +61209,7 @@ function isNode(object) {
 
 module.exports = isNode;
 
-},{}],252:[function(require,module,exports){
+},{}],318:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46320,7 +61253,7 @@ function isTextInputElement(elem) {
 
 module.exports = isTextInputElement;
 
-},{}],253:[function(require,module,exports){
+},{}],319:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46345,7 +61278,7 @@ function isTextNode(object) {
 
 module.exports = isTextNode;
 
-},{"./isNode":251}],254:[function(require,module,exports){
+},{"./isNode":317}],320:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46386,7 +61319,7 @@ function joinClasses(className/*, ... */) {
 
 module.exports = joinClasses;
 
-},{}],255:[function(require,module,exports){
+},{}],321:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -46441,7 +61374,7 @@ var keyMirror = function(obj) {
 module.exports = keyMirror;
 
 }).call(this,require("DF1urx"))
-},{"./invariant":249,"DF1urx":41}],256:[function(require,module,exports){
+},{"./invariant":315,"DF1urx":43}],322:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46477,7 +61410,7 @@ var keyOf = function(oneKeyObj) {
 
 module.exports = keyOf;
 
-},{}],257:[function(require,module,exports){
+},{}],323:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46530,7 +61463,7 @@ function mapObject(object, callback, context) {
 
 module.exports = mapObject;
 
-},{}],258:[function(require,module,exports){
+},{}],324:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46564,7 +61497,7 @@ function memoizeStringOnly(callback) {
 
 module.exports = memoizeStringOnly;
 
-},{}],259:[function(require,module,exports){
+},{}],325:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -46598,7 +61531,7 @@ function monitorCodeUse(eventName, data) {
 module.exports = monitorCodeUse;
 
 }).call(this,require("DF1urx"))
-},{"./invariant":249,"DF1urx":41}],260:[function(require,module,exports){
+},{"./invariant":315,"DF1urx":43}],326:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -46638,7 +61571,7 @@ function onlyChild(children) {
 module.exports = onlyChild;
 
 }).call(this,require("DF1urx"))
-},{"./ReactElement":166,"./invariant":249,"DF1urx":41}],261:[function(require,module,exports){
+},{"./ReactElement":232,"./invariant":315,"DF1urx":43}],327:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46666,7 +61599,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = performance || {};
 
-},{"./ExecutionEnvironment":131}],262:[function(require,module,exports){
+},{"./ExecutionEnvironment":197}],328:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46694,7 +61627,7 @@ var performanceNow = performance.now.bind(performance);
 
 module.exports = performanceNow;
 
-},{"./performance":261}],263:[function(require,module,exports){
+},{"./performance":327}],329:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46772,7 +61705,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = setInnerHTML;
 
-},{"./ExecutionEnvironment":131}],264:[function(require,module,exports){
+},{"./ExecutionEnvironment":197}],330:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46816,7 +61749,7 @@ function shallowEqual(objA, objB) {
 
 module.exports = shallowEqual;
 
-},{}],265:[function(require,module,exports){
+},{}],331:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -46854,7 +61787,7 @@ function shouldUpdateReactComponent(prevElement, nextElement) {
 
 module.exports = shouldUpdateReactComponent;
 
-},{}],266:[function(require,module,exports){
+},{}],332:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -46926,7 +61859,7 @@ function toArray(obj) {
 module.exports = toArray;
 
 }).call(this,require("DF1urx"))
-},{"./invariant":249,"DF1urx":41}],267:[function(require,module,exports){
+},{"./invariant":315,"DF1urx":43}],333:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -47109,7 +62042,7 @@ function traverseAllChildren(children, callback, traverseContext) {
 module.exports = traverseAllChildren;
 
 }).call(this,require("DF1urx"))
-},{"./ReactElement":166,"./ReactInstanceHandles":174,"./invariant":249,"DF1urx":41}],268:[function(require,module,exports){
+},{"./ReactElement":232,"./ReactInstanceHandles":240,"./invariant":315,"DF1urx":43}],334:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -47277,7 +62210,7 @@ function update(value, spec) {
 module.exports = update;
 
 }).call(this,require("DF1urx"))
-},{"./Object.assign":137,"./invariant":249,"./keyOf":256,"DF1urx":41}],269:[function(require,module,exports){
+},{"./Object.assign":203,"./invariant":315,"./keyOf":322,"DF1urx":43}],335:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -47322,14 +62255,14 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = warning;
 
 }).call(this,require("DF1urx"))
-},{"./emptyFunction":230,"DF1urx":41}],270:[function(require,module,exports){
+},{"./emptyFunction":296,"DF1urx":43}],336:[function(require,module,exports){
 module.exports = require('./lib/React');
 
-},{"./lib/React":139}],271:[function(require,module,exports){
+},{"./lib/React":205}],337:[function(require,module,exports){
 
 module.exports = require('./lib/');
 
-},{"./lib/":272}],272:[function(require,module,exports){
+},{"./lib/":338}],338:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -47418,7 +62351,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":273,"./socket":275,"./url":276,"debug":280,"socket.io-parser":314}],273:[function(require,module,exports){
+},{"./manager":339,"./socket":341,"./url":342,"debug":346,"socket.io-parser":380}],339:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -47923,7 +62856,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":274,"./socket":275,"./url":276,"backo2":277,"component-bind":278,"component-emitter":279,"debug":280,"engine.io-client":281,"indexof":310,"object-component":311,"socket.io-parser":314}],274:[function(require,module,exports){
+},{"./on":340,"./socket":341,"./url":342,"backo2":343,"component-bind":344,"component-emitter":345,"debug":346,"engine.io-client":347,"indexof":376,"object-component":377,"socket.io-parser":380}],340:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -47949,7 +62882,7 @@ function on(obj, ev, fn) {
   };
 }
 
-},{}],275:[function(require,module,exports){
+},{}],341:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -48336,7 +63269,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":274,"component-bind":278,"component-emitter":279,"debug":280,"has-binary":308,"socket.io-parser":314,"to-array":318}],276:[function(require,module,exports){
+},{"./on":340,"component-bind":344,"component-emitter":345,"debug":346,"has-binary":374,"socket.io-parser":380,"to-array":384}],342:[function(require,module,exports){
 (function (global){
 
 /**
@@ -48413,7 +63346,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":280,"parseuri":312}],277:[function(require,module,exports){
+},{"debug":346,"parseuri":378}],343:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -48500,7 +63433,7 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
-},{}],278:[function(require,module,exports){
+},{}],344:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -48525,7 +63458,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],279:[function(require,module,exports){
+},{}],345:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -48691,7 +63624,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],280:[function(require,module,exports){
+},{}],346:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -48830,11 +63763,11 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],281:[function(require,module,exports){
+},{}],347:[function(require,module,exports){
 
 module.exports =  require('./lib/');
 
-},{"./lib/":282}],282:[function(require,module,exports){
+},{"./lib/":348}],348:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -48846,7 +63779,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":283,"engine.io-parser":295}],283:[function(require,module,exports){
+},{"./socket":349,"engine.io-parser":361}],349:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -49555,7 +64488,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":284,"./transports":285,"component-emitter":279,"debug":292,"engine.io-parser":295,"indexof":310,"parsejson":304,"parseqs":305,"parseuri":306}],284:[function(require,module,exports){
+},{"./transport":350,"./transports":351,"component-emitter":345,"debug":358,"engine.io-parser":361,"indexof":376,"parsejson":370,"parseqs":371,"parseuri":372}],350:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -49716,7 +64649,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":279,"engine.io-parser":295}],285:[function(require,module,exports){
+},{"component-emitter":345,"engine.io-parser":361}],351:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -49773,7 +64706,7 @@ function polling(opts){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":286,"./polling-xhr":287,"./websocket":289,"xmlhttprequest":290}],286:[function(require,module,exports){
+},{"./polling-jsonp":352,"./polling-xhr":353,"./websocket":355,"xmlhttprequest":356}],352:[function(require,module,exports){
 (function (global){
 
 /**
@@ -50010,7 +64943,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":288,"component-inherit":291}],287:[function(require,module,exports){
+},{"./polling":354,"component-inherit":357}],353:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -50398,7 +65331,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":288,"component-emitter":279,"component-inherit":291,"debug":292,"xmlhttprequest":290}],288:[function(require,module,exports){
+},{"./polling":354,"component-emitter":345,"component-inherit":357,"debug":358,"xmlhttprequest":356}],354:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -50645,7 +65578,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":284,"component-inherit":291,"debug":292,"engine.io-parser":295,"parseqs":305,"xmlhttprequest":290}],289:[function(require,module,exports){
+},{"../transport":350,"component-inherit":357,"debug":358,"engine.io-parser":361,"parseqs":371,"xmlhttprequest":356}],355:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -50885,7 +65818,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":284,"component-inherit":291,"debug":292,"engine.io-parser":295,"parseqs":305,"ws":307}],290:[function(require,module,exports){
+},{"../transport":350,"component-inherit":357,"debug":358,"engine.io-parser":361,"parseqs":371,"ws":373}],356:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -50923,7 +65856,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":302}],291:[function(require,module,exports){
+},{"has-cors":368}],357:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -50931,7 +65864,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],292:[function(require,module,exports){
+},{}],358:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -51080,7 +66013,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":293}],293:[function(require,module,exports){
+},{"./debug":359}],359:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -51279,7 +66212,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":294}],294:[function(require,module,exports){
+},{"ms":360}],360:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -51392,7 +66325,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],295:[function(require,module,exports){
+},{}],361:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -51990,7 +66923,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":296,"after":297,"arraybuffer.slice":298,"base64-arraybuffer":299,"blob":300,"has-binary":308,"utf8":301}],296:[function(require,module,exports){
+},{"./keys":362,"after":363,"arraybuffer.slice":364,"base64-arraybuffer":365,"blob":366,"has-binary":374,"utf8":367}],362:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -52011,7 +66944,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],297:[function(require,module,exports){
+},{}],363:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -52041,7 +66974,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],298:[function(require,module,exports){
+},{}],364:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -52072,7 +67005,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],299:[function(require,module,exports){
+},{}],365:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -52133,7 +67066,7 @@ module.exports = function(arraybuffer, start, end) {
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],300:[function(require,module,exports){
+},{}],366:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -52186,7 +67119,7 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],301:[function(require,module,exports){
+},{}],367:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
@@ -52429,7 +67362,7 @@ module.exports = (function() {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],302:[function(require,module,exports){
+},{}],368:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -52454,7 +67387,7 @@ try {
   module.exports = false;
 }
 
-},{"global":303}],303:[function(require,module,exports){
+},{"global":369}],369:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -52464,7 +67397,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],304:[function(require,module,exports){
+},{}],370:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -52499,7 +67432,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],305:[function(require,module,exports){
+},{}],371:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -52538,7 +67471,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],306:[function(require,module,exports){
+},{}],372:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -52579,7 +67512,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],307:[function(require,module,exports){
+},{}],373:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -52624,7 +67557,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],308:[function(require,module,exports){
+},{}],374:[function(require,module,exports){
 (function (global){
 
 /*
@@ -52686,12 +67619,12 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":309}],309:[function(require,module,exports){
+},{"isarray":375}],375:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],310:[function(require,module,exports){
+},{}],376:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -52702,7 +67635,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],311:[function(require,module,exports){
+},{}],377:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -52787,7 +67720,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],312:[function(require,module,exports){
+},{}],378:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -52814,7 +67747,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],313:[function(require,module,exports){
+},{}],379:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -52959,7 +67892,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":315,"isarray":316}],314:[function(require,module,exports){
+},{"./is-buffer":381,"isarray":382}],380:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -53357,7 +68290,7 @@ function error(data){
   };
 }
 
-},{"./binary":313,"./is-buffer":315,"component-emitter":279,"debug":280,"isarray":316,"json3":317}],315:[function(require,module,exports){
+},{"./binary":379,"./is-buffer":381,"component-emitter":345,"debug":346,"isarray":382,"json3":383}],381:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -53374,9 +68307,9 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],316:[function(require,module,exports){
-module.exports=require(309)
-},{}],317:[function(require,module,exports){
+},{}],382:[function(require,module,exports){
+module.exports=require(375)
+},{}],383:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -54239,7 +69172,7 @@ module.exports=require(309)
   }
 }(this));
 
-},{}],318:[function(require,module,exports){
+},{}],384:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -54254,7 +69187,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],319:[function(require,module,exports){
+},{}],385:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -55337,9 +70270,9 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":320,"reduce":321}],320:[function(require,module,exports){
-module.exports=require(279)
-},{}],321:[function(require,module,exports){
+},{"emitter":386,"reduce":387}],386:[function(require,module,exports){
+module.exports=require(345)
+},{}],387:[function(require,module,exports){
 
 /**
  * Reduce `arr` with `fn`.
@@ -55364,4 +70297,4 @@ module.exports = function(arr, fn, initial){
   
   return curr;
 };
-},{}]},{},[27])
+},{}]},{},[29])

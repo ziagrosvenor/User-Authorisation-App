@@ -1,17 +1,30 @@
 # @cjsx React.DOM
 React = require 'react'
+{Paper, Checkbox} = require 'material-ui'
+moment = require 'moment'
+
 
 Post = React.createClass
   render: ->
-    <div className="post">
-      <h2>{this.props.data.title}</h2>
-      <h5>{this.props.data.author}</h5>
-      <p>{this.props.data.content}</p>
-      <h6>{this.props.data.updated}</h6>
-      <h6>Likes {this.props.data.likes.length}</h6>
-      <div>
-        {@props.children}
+    date = @props.data.updated
+    postUpdateTime = moment(date).fromNow()
+
+    <Paper zDepth={1}>
+      <div className="post">
+        <h2 className="post-title">{this.props.data.title}</h2>
+        <p className="post-content">{this.props.data.content}</p>
+
+        <div className="post-row">
+          <h6 className="post-date">{postUpdateTime}</h6>
+          <div className="post-likes">
+
+            <span >Likes {this.props.data.likes.length}</span>
+          </div>
+          <div className="post-ui">
+            {@props.children}
+          </div>
+        </div>
       </div>
-    </div>
+    </Paper>
 
 module.exports = Post

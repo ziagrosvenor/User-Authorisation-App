@@ -1,8 +1,7 @@
 # @cjsx React.DOM
 React = require 'react'
 Router = require 'react-router'
-injectTapEventPlugin = require 'react-tap-event-plugin'
-injectTapEventPlugin()
+{FlatButton} = require 'material-ui'
 
 # React.initializeTouchEvents(true)
 
@@ -11,8 +10,8 @@ EditPost = React.createClass
   handleTap: (e, item) ->
     @transitionTo('/edit-post/' + @props.id)
   render: ->
-    <button onTouchTap={@handleTap} id='editBtn' className='btn'>
+    <FlatButton onTouchTap={@handleTap} id='editBtn'>
       Edit
-    </button>
+    </FlatButton>
 
 module.exports = EditPost

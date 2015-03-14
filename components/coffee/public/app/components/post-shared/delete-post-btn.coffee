@@ -1,13 +1,17 @@
 # @cjsx React.DOM
 React = require 'react'
 AppActions = require '../../actions/app-actions'
-injectTapEventPlugin = require 'react-tap-event-plugin'
-injectTapEventPlugin()
+{FloatingActionButton} = require "material-ui"
 
 DeletePost = React.createClass
   handleTap: ->
     AppActions.deletePost(this.props.id)
   render: () ->
-    <button className='btn' id='deleteBtn' onTouchTap={this.handleTap}>X</button>
-
+    <FloatingActionButton
+      {...@props}
+      onTouchTap={this.handleTap}
+      mini={true}
+    >
+      X
+    </FloatingActionButton>
 module.exports = DeletePost

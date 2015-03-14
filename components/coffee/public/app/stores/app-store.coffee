@@ -1,6 +1,7 @@
 AppConstants = require '../constants/app-constants'
 AppDispatcher = require '../dispatchers/app-dispatcher'
 UserStore = require './user-store'
+_ = require 'lodash'
 assign = require 'object-assign'
 EventEmitter = require('events').EventEmitter
 
@@ -41,13 +42,13 @@ _addLike = (like) ->
   if UserStore.getOtherUsersId() is like.authorId
     otherUsersPosts.map (post, i) ->
       if like.postId == post.id
-        console.log like.postId, post.id
         otherUsersPosts[i]['likes'].push(like)
+        
   if UserStore.getId() is like.authorId
     posts.map (post, i) ->
       if like.postId == post.id
-        console.log like.postId, post.id
         posts[i]['likes'].push(like)
+
 
 PostStore = assign {}, EventEmitter.prototype,
   emitChange: ->
@@ -59,14 +60,20 @@ PostStore = assign {}, EventEmitter.prototype,
 
   getNewPostData: (post) ->
     timestamp = Date.now()
-    
-    id: 'p_' + timestamp
-    authorId: UserStore.getId()
-    authorEmail: UserStore.getEmail()
-    author: UserStore.getFullName()
-    date: new Date(timestamp)
-    title: post.title
-    content: post.content
+
+    post['uid'] = 'p_' + timestamp
+
+    post['meta'] =
+      type: "job"
+      dateAdded: new Date(timestamp)
+      deleted: false
+
+    post['author'] =
+      id: UserStore.getId()
+      email: UserStore.getEmail()
+      name: UserStore.getFullName()
+
+    post
 
   getPosts: ->
     return posts

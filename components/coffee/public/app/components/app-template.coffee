@@ -16,12 +16,14 @@ injectTapEventPlugin = require 'react-tap-event-plugin'
 injectTapEventPlugin()
 
 SIDEBAR_WIDTH = 192
-TOPBAR_HEIGHT = 62
+TOPBAR_HEIGHT = 52
 
 SideNavItem = React.createClass
   mixins: [Router.Navigation, Router.State]
+  
   handleTap: ->
     @transitionTo(@props.href)
+
   render: ->
     <div className='sideNavItem' onTouchTap={@handleTap}>
       {@props.children}
@@ -46,12 +48,18 @@ Layout = React.createClass
             <SearchIcon className='iconSideNav'/>
             <span>Find People</span>
           </SideNavItem>
-          <SideNavItem href='/posts'>
+          <SideNavItem href='/homepage'>
             <MenuIcon className='iconSideNav'/>
             <span>Home Page</span>
           </SideNavItem>
-          <SideNavItem href='/stats'>
+          <SideNavItem href='/posts'>
             <MenuIcon className='iconSideNav'/>
+            <span>Job History</span>
+          </SideNavItem>
+          <SideNavItem href='/stats'>
+            <MenuIcon
+              className='iconSideNav'
+            />
             <span>Stats</span>
           </SideNavItem>
         </div>

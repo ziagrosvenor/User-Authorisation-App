@@ -1,10 +1,34 @@
 module.exports = function(Schema) {
-  var Activity, UserSchema;
+  var Activity, Job, UserSchema;
   Activity = new Schema({
     userId: String,
     type: String,
     seen: Boolean,
     timestamp: Number
+  });
+  Job = new Schema({
+    role: String,
+    description: String,
+    location: String,
+    details: {
+      employerName: String,
+      rating: Number,
+      typeOfWork: String,
+      wage: String,
+      workTimes: String,
+      startDate: Date,
+      endDate: Date
+    },
+    meta: {
+      type: String,
+      dateAdded: Date,
+      deleted: String
+    },
+    author: {
+      id: String,
+      email: String,
+      name: String
+    }
   });
   UserSchema = new Schema({
     firstName: {
@@ -26,6 +50,7 @@ module.exports = function(Schema) {
       required: true
     },
     activity: [Activity],
+    jobHistory: [Job],
     timestamp: Number
   });
   return UserSchema;

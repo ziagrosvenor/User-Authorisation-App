@@ -1,8 +1,6 @@
 # @cjsx React.DOM
 React = require 'react/addons'
 _ = require 'lodash'
-injectTapEventPlugin = require 'react-tap-event-plugin'
-injectTapEventPlugin()
 
 AppActions = require '../../actions/app-actions'
 
@@ -41,11 +39,14 @@ UserActivity = React.createClass
         if i < 5
           <li key={i}> {item.type} </li>
 
-    <div style={iconStyle}>
+    <div className="notifications" style={iconStyle}>
       <IconAlert style={iconStyle} className={iconClasses} onTouchTap={this.handleClick}/>
-      <ul className={dropdownClasses}>
-        {activity}
-      </ul>
+      <div className={dropdownClasses}>
+        <span className="tool-tip"></span>
+        <ul>
+          {activity}
+        </ul>
+      </div>
     </div>
 
 module.exports = UserActivity

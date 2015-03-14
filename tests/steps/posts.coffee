@@ -1,11 +1,11 @@
-module.exports = () ->
-  this.Given /^I visit Auth App$/, () ->
+module.exports = ->
+  this.Given /^I visit Auth App$/, ->
     this.driver.get('http://localhost:3000')
 
   @When /^I login with "([^"]*)", "([^"]*)"$/, (email, password) ->
     LoginForm = @Widget.Form.extend
       root: '.login-form'
-      submitSelector: () ->
+      submitSelector: ->
         @find('button')
 
     form = new LoginForm

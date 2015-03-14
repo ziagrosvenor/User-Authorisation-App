@@ -14,8 +14,7 @@ module.exports = (Post, User) ->
       timestamp: time.getTime()
 
     post.save (err) ->
-      if err
-        return console.error(err)
+      if err then return console.error(err)
       if !req.session
         return
       

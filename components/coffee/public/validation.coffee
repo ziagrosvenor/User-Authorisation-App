@@ -15,6 +15,7 @@ $(document).ready ->
       password:
         required: true
         minlength: 6
+        
     submitHandler: () ->
       $.post '/signup',
         form.serialize(),
